@@ -24,7 +24,6 @@ public:
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
 	void InitMap();
-	void InitRearMap();
 	void InitScreenMap();
 
 	//Codes for scrolling
@@ -45,7 +44,6 @@ public:
 
 	//Map Inits
 	CMap *m_cMap;
-	CMap *m_cRearMap;
 	CMap *m_cScreenMap;
 
 	vector<vector<int> > theScreenMap;

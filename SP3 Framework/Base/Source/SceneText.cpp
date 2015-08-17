@@ -166,15 +166,13 @@ void SceneText::Init()
 
 	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
 
-	// ============================== Load Map Screen tiles =============================
+	// ============================== Load Map tiles (Screen & scrolling) =============================
 
 	meshList[GEO_TILEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_S_TILEGROUND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEBACKGROUND]->textureID = LoadTGA("Image//tile0_blank.tga");
 
 	meshList[GEO_TILEWALL] = MeshBuilder::Generate2DMesh("GEO_S_TILEWALL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEWALL]->textureID = LoadTGA("Image//tile1_wall.tga");
-
-	// ================================= Load Map tiles =================================
 
 	meshList[GEO_TILE_KILLZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_KILLZONE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
@@ -185,11 +183,6 @@ void SceneText::Init()
 	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEHERO_FRAME0", 4, 4);
 	meshList[GEO_TILEHERO_FRAME0]->textureID = LoadTGA("Image//Hero//hero.tga");
 
-	// ================================= Load Rear Map Tiles =================================
-	
-	meshList[GEO_TILESTRUCT] = MeshBuilder::Generate2DMesh("GEO_TILESTRUCT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_TILESTRUCT]->textureID = LoadTGA("Image//MapRearTiles//tile3_structure.tga");
-
 	// ================================= Load Enemies =================================
 	
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -197,9 +190,6 @@ void SceneText::Init()
 
 	// === Initialise and load the tilemap ===
 	map.InitMap();
-
-	// === Initialise and Load the ReartileMap ===
-	map.InitRearMap();
 
 	// === Initialise and Load the Screenmap ===
 	map.InitScreenMap();
@@ -401,8 +391,6 @@ void SceneText::Update(double dt)
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
 	CHAR_HEROKEY = NULL;
-
-	std::cout << increase << std::endl;
 }
 
 void SceneText::UpdateCameraStatus(const unsigned char key, const bool status)
@@ -828,41 +816,6 @@ void SceneText::RenderScrollingMap()
 	}
 }
 
-void SceneText::RenderRearTileMap()
-{
-	map.m_cRearMap->rearWallOffset_x = (int)(map.m_cMap->mapOffset_x / 2);
-	map.m_cRearMap->rearWallOffset_y = 0;
-	map.m_cRearMap->rearWallTileOffset_y = 0;
-	map.m_cRearMap->rearWallTileOffset_x = (int)(map.m_cRearMap->rearWallOffset_x / map.m_cRearMap->GetTileSize());
-	
-	if(map.m_cRearMap->rearWallTileOffset_x + map.m_cRearMap->GetNumOfTiles_Width() > map.m_cRearMap->getNumOfTiles_MapWidth())
-	{
-		map.m_cRearMap->rearWallTileOffset_x = map.m_cRearMap->getNumOfTiles_MapWidth() - map.m_cRearMap->GetNumOfTiles_Width();
-	}
-	
-	map.m_cRearMap->rearWallFineOffset_x = map.m_cRearMap->rearWallOffset_x % map.m_cRearMap->GetTileSize();
-
-	int m = 0;
-	for(int i = 0; i < map.m_cRearMap->GetNumOfTiles_Height(); ++i)
-	{
-		for(int k = 0; k < map.m_cRearMap->GetNumOfTiles_Width() + 1; ++k)
-		{
-			m = map.m_cRearMap->rearWallTileOffset_x + k;
-
-			//If we have reached the right side of the map, then do not display the extra column of tiles
-			if(m >= map.m_cRearMap->getNumOfTiles_MapWidth())
-			{
-				break;
-			}
-
-			if(map.m_cRearMap->theScreenMap[i][m] == 3)
-			{
-				Render2DMesh(meshList[GEO_TILESTRUCT], false, 1.0f, k * map.m_cRearMap->GetTileSize() - map.m_cRearMap->rearWallFineOffset_x, 768 - i * map.m_cRearMap->GetTileSize());
-			}
-		}
-	}
-}
-
 void SceneText::RenderScreenMap()
 {
 	int m = 0;
@@ -913,7 +866,6 @@ void SceneText::Render()
 
 	else
 	{
-		RenderRearTileMap();
 		RenderScrollingMap();
 	}
 
