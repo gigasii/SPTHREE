@@ -23,7 +23,6 @@ CMap::CMap(void)
 , rearWallFineOffset_x(0)
 , rearWallFineOffset_y(0)
 , m_cMap(NULL)
-, m_cRearMap(NULL)
 , m_cScreenMap(NULL)
 {
 	theScreenMap.clear();
@@ -35,12 +34,6 @@ CMap::~CMap(void)
 	{
 		delete m_cMap;
 		m_cMap = NULL;
-	}
-
-	if(m_cRearMap)
-	{
-		delete m_cRearMap;
-		m_cRearMap = NULL;
 	}
 
 	if(m_cScreenMap)
@@ -75,13 +68,6 @@ void CMap::InitMap()
 	m_cMap = new CMap();
 	m_cMap->Init(800, 1024, 25, 32, 800, 2048, 32);
 	m_cMap->LoadMap("Image//MapDesign_Scrolling.csv");
-}
-
-void CMap::InitRearMap()
-{
-	m_cRearMap = new CMap();
-	m_cRearMap->Init(800, 1024, 25, 32, 800, 2048, 32);
-	m_cRearMap->LoadMap("Image//MapDesign_Rear.csv");
 }
 
 void CMap::InitScreenMap()

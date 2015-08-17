@@ -63,9 +63,6 @@ class SceneText : public Scene
 		GEO_TILEBACKGROUND,
 		GEO_TILEWALL,
 
-		//RearMap
-		GEO_TILESTRUCT,
-
 		//Hero sprite Animation
 		GEO_TILEHERO_FRAME0,
 
@@ -110,7 +107,6 @@ public:
 
 	//Render tilemaps
 	void RenderScrollingMap();
-	void RenderRearTileMap();
 	void RenderScreenMap();
 
 	//Render Goodies
