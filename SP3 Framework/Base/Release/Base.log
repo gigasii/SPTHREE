@@ -1,4 +1,4 @@
-﻿Build started 17/8/2015 1:57:15 PM.
+﻿Build started 17/8/2015 2:47:07 PM.
      1>Project "C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\Base\Base.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Release\Base.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -37,26 +37,26 @@
      1>Source\SceneText.cpp(232): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
      1>Source\SceneText.cpp(232): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
      1>Source\SceneText.cpp(232): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>Source\SceneText.cpp(758): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>Source\SceneText.cpp(763): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>Source\SceneText.cpp(768): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>Source\SceneText.cpp(773): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>Source\SceneText.cpp(779): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(779): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(787): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(787): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(809): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(809): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(814): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(814): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(849): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(849): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(874): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(874): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(879): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
-     1>Source\SceneText.cpp(879): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(769): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>Source\SceneText.cpp(774): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>Source\SceneText.cpp(779): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>Source\SceneText.cpp(784): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>Source\SceneText.cpp(790): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(790): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(798): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(798): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(820): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(820): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(825): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(825): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(860): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(860): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(885): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(885): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
      1>Source\SceneText.cpp(890): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
      1>Source\SceneText.cpp(890): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(901): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>Source\SceneText.cpp(901): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\Release\Base.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\Release" /LIBPATH:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\/glfw/lib-msvc100" /LIBPATH:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\/glew/lib" /LIBPATH:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\\irrKlang\lib" Common.lib winmm.lib opengl32.lib glu32.lib glew32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\Base.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\Release\Base.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Giggs\Documents\GitHub\SPTHREE\SP3 Framework\Release\Base.lib" /MACHINE:X86 Release\Application.obj
          Release\Camera.obj
@@ -90,4 +90,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.53
+Time Elapsed 00:00:02.60

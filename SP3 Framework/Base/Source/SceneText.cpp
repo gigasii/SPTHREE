@@ -182,7 +182,7 @@ void SceneText::Init()
 	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
 
-	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEHERO_FRAME0", 3, 3);
+	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEHERO_FRAME0", 4, 4);
 	meshList[GEO_TILEHERO_FRAME0]->textureID = LoadTGA("Image//Hero//hero.tga");
 
 	// ================================= Load Rear Map Tiles =================================
@@ -246,9 +246,8 @@ void SceneText::Init()
 
 	//Sound effects
 
-	// Sprites Animation Variable
+	// Sprites Variable
 	increase = 0;
-	totalSprites = 2;
 }
 
 void SceneText::Update(double dt)
@@ -299,10 +298,15 @@ void SceneText::Update(double dt)
 	{
 		CHAR_HEROKEY = 'a';
 	
-		increase++;
-		if(increase > 5)
+		//Sprite Animation
+		if(increase < 4)
 		{
-			increase = 3;
+			increase = 4;
+		}
+		increase++;
+		if(increase > 6)
+		{
+			increase = 4;
 		}
 	}
 
@@ -310,14 +314,15 @@ void SceneText::Update(double dt)
 	{
 		CHAR_HEROKEY = 'd';
 
-		if(increase < 6)
+		//Sprite Animation
+		if(increase < 8)
 		{
-			increase = 6;
+			increase = 8;
 		}
 		increase++;
-		if(increase > 8)
+		if(increase > 10)
 		{
-			increase = 6;
+			increase = 8;
 		}
 	}
 
@@ -325,10 +330,15 @@ void SceneText::Update(double dt)
 	{
 		CHAR_HEROKEY = 'w';
 		
-		increase++;
-		if(increase > totalSprites)
+		//Sprite Animation
+		if(increase < 12)
 		{
-			increase = 0;
+			increase = 12;
+		}
+		increase++;
+		if(increase > 14)
+		{
+			increase = 12;
 		}
 	}
 
@@ -336,14 +346,15 @@ void SceneText::Update(double dt)
 	{
 		CHAR_HEROKEY = 's';
 
-		if(increase > totalSprites)
-		{
-			increase = totalSprites;
-		}
-		increase--;
+		//Sprite Animation
 		if(increase < 0)
 		{
-			increase = totalSprites;
+			increase = 0;
+		}
+		increase++;
+		if(increase > 2)
+		{
+			increase = 0;
 		}
 	}
 

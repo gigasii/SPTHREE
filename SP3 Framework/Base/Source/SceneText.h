@@ -155,7 +155,6 @@ private:
 
 	//Sprites Variable
 	int increase;
-	int totalSprites;
 };
 
 #endif
