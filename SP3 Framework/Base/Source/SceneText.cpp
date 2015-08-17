@@ -18,7 +18,6 @@ static const float TILE_SIZE = 32;
 ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 
 SceneText::SceneText()
-	: enemy(NULL)
 {
 }
 
@@ -30,12 +29,6 @@ SceneText::~SceneText()
 	}
 	
 	delete theArrayOfGoodies;
-
-	if(enemy)
-	{
-		delete enemy;
-		enemy = NULL;
-	}
 }
 
 void SceneText::Init()
@@ -166,13 +159,15 @@ void SceneText::Init()
 
 	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
 
-	// ============================== Load Map tiles (Screen & scrolling) =============================
+	// ============================== Load Map Screen tiles =============================
 
 	meshList[GEO_TILEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_S_TILEGROUND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEBACKGROUND]->textureID = LoadTGA("Image//tile0_blank.tga");
 
 	meshList[GEO_TILEWALL] = MeshBuilder::Generate2DMesh("GEO_S_TILEWALL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEWALL]->textureID = LoadTGA("Image//tile1_wall.tga");
+
+	// ================================= Load Map tiles =================================
 
 	meshList[GEO_TILE_KILLZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_KILLZONE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
@@ -183,6 +178,7 @@ void SceneText::Init()
 	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEHERO_FRAME0", 4, 4);
 	meshList[GEO_TILEHERO_FRAME0]->textureID = LoadTGA("Image//Hero//hero.tga");
 
+
 	// ================================= Load Enemies =================================
 	
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -192,17 +188,12 @@ void SceneText::Init()
 	map.InitMap();
 
 	// === Initialise and Load the Screenmap ===
-	map.InitScreenMap();
+	map.InitScreenMap(enemyList);
 
 	// === Set hero's position ===
 	hero.settheHeroPositionx(920);
 	hero.settheHeroPositiony(655);
 
-	// === Set the enemy's position ===
-	enemy = new CEnemy();
-	enemy->ChangeStrategy(NULL, false);
-	enemy->SetPos_x(575);
-	enemy->SetPos_y(190);
 
 	// === Set the array of goodies ===
 	theArrayOfGoodies = new CGoodies*[10];
@@ -360,21 +351,21 @@ void SceneText::Update(double dt)
 
 	// =================================== UPDATE THE ENEMY ===================================
 	
-	int checkPosition_X = (int)((map.m_cMap->mapOffset_x + hero.gettheHeroPositionx()) /map.m_cMap->GetTileSize());
-	int checkPosition_Y = map.m_cMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + map.m_cMap->GetTileSize()) / map.m_cMap->GetTileSize());
-
-	if(map.m_cMap->theScreenMap[checkPosition_Y][checkPosition_X] == 10)
+	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
-		enemy->ChangeStrategy(new CStrategy_Kill());
-	}
+		CEnemy *go = (CEnemy *)*it;
+		if(go->active)	
+		{
+			if (go->currentStrat != CEnemy::STRAT_KILL)
+			{
+				go->ChangeStrategy(new CStrategy_Kill());
+				go->currentStrat = CEnemy::STRAT_KILL;
+			}
 
-	else if(map.m_cMap->theScreenMap[checkPosition_Y][checkPosition_X] == 11)
-	{
-		enemy->ChangeStrategy(NULL);
+			go->SetDestination(hero.gettheHeroPositionx() + map.mapFineOffset_x, hero.gettheHeroPositiony());
+			go->Update();
+		}
 	}
-
-	enemy->SetDestination(hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-	enemy->Update(map.m_cMap);
 	
 	// =================================== MAIN UPDATES ===================================
 
@@ -391,6 +382,8 @@ void SceneText::Update(double dt)
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
 	CHAR_HEROKEY = NULL;
+
+	std::cout << increase << std::endl;
 }
 
 void SceneText::UpdateCameraStatus(const unsigned char key, const bool status)
@@ -780,10 +773,16 @@ void SceneText::RenderHero()
 
 void SceneText::RenderEnemies()
 {
-	int theEnemy_x = enemy->GetPos_x() - map.m_cMap->mapFineOffset_x;
-	int theEnemy_y = enemy->GetPos_y();
-
-	Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1.0f, enemy->GetPos_x(), enemy->GetPos_y(), false);
+	for(vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	{
+		CEnemy *go = (CEnemy *)*it;
+		if(go->active)	
+		{
+			int theEnemy_x = go->GetPos_x() - map.mapOffset_x;
+			int theEnemy_y = go->GetPos_y();
+			Render2DMesh(meshList[GEO_TILEENEMY_FRAME0],false,1.0f,theEnemy_x,theEnemy_y);	
+		}
+	}
 }
 
 void SceneText::RenderScrollingMap()
@@ -833,7 +832,7 @@ void SceneText::RenderScreenMap()
 				break;
 			}
 
-			if(map.m_cScreenMap->theScreenMap[i][m] == 0)
+			if(map.m_cScreenMap->theScreenMap[i][m] == 0  || map.m_cScreenMap->theScreenMap[i][m] == 50)
 			{
 				Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * map.m_cScreenMap->GetTileSize() - map.m_cScreenMap->mapFineOffset_x, 768 - i * map.m_cScreenMap->GetTileSize());
 			}

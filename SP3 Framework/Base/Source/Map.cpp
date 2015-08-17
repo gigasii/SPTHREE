@@ -16,12 +16,6 @@ CMap::CMap(void)
 , tileOffset_y(0)
 , mapFineOffset_x(0)
 , mapFineOffset_y(0)
-, rearWallOffset_x(0)
-, rearWallOffset_y(0)
-, rearWallTileOffset_x(0)
-, rearWallTileOffset_y(0)
-, rearWallFineOffset_x(0)
-, rearWallFineOffset_y(0)
 , m_cMap(NULL)
 , m_cScreenMap(NULL)
 {
@@ -70,11 +64,37 @@ void CMap::InitMap()
 	m_cMap->LoadMap("Image//MapDesign_Scrolling.csv");
 }
 
-void CMap::InitScreenMap()
+
+void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList)
 {
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
 	m_cScreenMap->LoadMap("Image//MapDesign_Screen.csv");
+
+	int tempType;
+	CEnemy* tempEnemy;
+
+	for (int i = 0; i < m_cScreenMap->getNumOfTiles_MapHeight(); ++i)
+	{
+		for (int j = 0; j < m_cScreenMap->getNumOfTiles_MapWidth(); ++j)
+		{
+			tempType = m_cScreenMap->theScreenMap[i][j];
+
+			switch (tempType)
+			{
+			case 50:
+				tempEnemy = new CEnemy();
+				tempEnemy->ChangeStrategy(NULL,false);
+				tempEnemy->SetPos_x(j * m_cScreenMap->GetTileSize());
+				tempEnemy->SetPos_y(m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempEnemy->active = true;
+				enemyList.push_back(tempEnemy);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 bool CMap::LoadMap(const string mapName)
