@@ -133,7 +133,8 @@ private:
 	Light lights[2];
 	Hero hero;
 	CMap map;
-	CEnemy *enemy;
+	
+	std::vector<CEnemy *> enemyList;
 
 	//Goodies and Goodies Factory
 	CGoodiesFactory theGoodiesFactory;

@@ -1,6 +1,6 @@
 #pragma once
 #include <Vector2.h>
-#include "Map.h"
+//#include "Map.h"
 #include "Strategy_Kill.h"
 
 class CEnemy
@@ -19,6 +19,18 @@ private:
 public:
 	CEnemy();
 	~CEnemy();
+
+	enum STRATEGY_TYPE
+	{
+		STRAT_KILL,
+		STRAT_SAFE,
+		STRAT_NULL,
+		NUM_STRATEGY,
+	};
+
+	STRATEGY_TYPE currentStrat;
+
+	bool active;
 
 	//Initialise this class instance
 	void Init();
@@ -41,7 +53,7 @@ public:
 	int GetDestination_y();
 
 	//Enemy Update
-	void Update(CMap* m_cMap);
+	void Update();
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
