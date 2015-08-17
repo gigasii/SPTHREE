@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "Enemy.h"
 
 using namespace std;
 
@@ -24,17 +25,13 @@ public:
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
 	void InitMap();
-	void InitScreenMap();
+
+	void InitScreenMap(vector<CEnemy*> &enemyList);
 
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
 	int tileOffset_x, tileOffset_y;
 	int mapFineOffset_x, mapFineOffset_y;
-
-	//Codes for Parallax Scroling
-	int rearWallOffset_x, rearWallOffset_y;
-	int rearWallTileOffset_x, rearWallTileOffset_y;
-	int rearWallFineOffset_x, rearWallFineOffset_y;
 
 	//Number of ties in the map's width
 	int theNumOfTiles_MapWidth;

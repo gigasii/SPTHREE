@@ -6,6 +6,7 @@ CEnemy::CEnemy()
 	, enemyAnimationCounter(0)
 	, enemyAnimationInvert(false)
 	, theStrategy(NULL)
+	, active (false)
 {
 }
 
@@ -98,7 +99,7 @@ int CEnemy::GetAnimationCounter()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap *m_cMap)
+void CEnemy::Update()
 {
 	if(theStrategy != NULL)
 	{
