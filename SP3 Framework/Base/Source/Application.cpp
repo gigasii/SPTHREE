@@ -194,7 +194,7 @@ void Application::Run()
 		m_dElapsedTime = m_timer.getElapsedTime();
 		m_dAccumulatedTime_ThreadOne += m_dElapsedTime;
 		m_dAccumulatedTime_ThreadTwo += m_dElapsedTime;
-		if (m_dAccumulatedTime_ThreadOne > 0.03)
+		if (m_dAccumulatedTime_ThreadOne > 0.01)
 		{
 			GetMouseUpdate();
 			GetKeyboardUpdate();
