@@ -91,11 +91,14 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool checkdown, bool checkup)
 {
 	int tileTopLeft_x = (int) ((mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize());
+
 	int tileTopLeft_y = mapType->GetNumOfTiles_Height() - (int)ceil( (float)(theHeroPositiony + mapType->GetTileSize() + jumpspeed) / mapType->GetTileSize());
+
+	int Y2 = mapType->GetNumOfTiles_Height() - (int)ceil( (float)(theHeroPositiony + jumpspeed) / mapType->GetTileSize());
 
 	if(checkleft)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == 1)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == 1 || mapType->theScreenMap[Y2][tileTopLeft_x] == 1)
 		{
 			return true;
 		}
@@ -103,7 +106,7 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkright)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == 1)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == 1 || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == 1)
 		{
 			return true;
 		}
@@ -248,12 +251,12 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (5.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony + (int) (3.0f * timeDiff); 
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (5.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony - (int) (3.0f * timeDiff); 
 	}
 
 	/*heroAnimationCounter++;
@@ -267,13 +270,13 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositionx = theHeroPositionx - (int) (5.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx - (int) (3.0f * timeDiff);
 		heroAnimationInvert = true;
 	}
 
 	else 
 	{ 
-		theHeroPositionx = theHeroPositionx + (int) (5.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx + (int) (3.0f * timeDiff);
 		heroAnimationInvert = false;
 	}
 
