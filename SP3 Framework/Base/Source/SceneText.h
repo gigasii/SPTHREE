@@ -9,7 +9,6 @@
 #include "Light.h"
 #include "Hero.h"
 #include "Enemy.h"
-#include "GoodiesFactory.h"
 
 class SceneText : public Scene
 {
@@ -65,19 +64,17 @@ class SceneText : public Scene
 		GEO_TILEBACKGROUND,
 
 		//Hero sprite Animation
-		GEO_TILEHERO_FRAME0,
+		GEO_TILEHEROSHEET,
+		GEO_TILEHEROSHEET2,
 
 		//Enemy sprite Animation
 		GEO_TILEENEMY_FRAME0,
-		
-		//Trigger zones
-		GEO_TILE_KILLZONE,
-		GEO_TILE_SAFEZONE,
 
-		//collectibles sprite
+		//Goodies
 		GEO_DIAMOND,
 		GEO_KEY,
 		GEO_CHEST,
+		
 		NUM_GEOMETRY,
 	};
 
@@ -104,16 +101,14 @@ public:
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size = 1.0f, const float x = 0.0f, const float y = 0.0f, const bool rotate = false);
 	void RenderQuadOnScreen(Mesh* mesh, float sizeX, float sizeY, float x, float y, bool enableLight);
-	void RenderSprites(Mesh* mesh, const float size, const float x, const float y);
+	void RenderSprites(Mesh* mesh, int id, const float size, const float x, const float y);
 	void RenderTilesMap(Mesh* mesh, int ID, const float size, const float x, const float y);
 	void RenderInit();
 	void RenderText();
 	void RenderHero();
 	void RenderEnemies();
 
-	
-
-	//general tilemap renderer
+	//General tilemap renderer
 	void RenderTileMap();
 
 	//Render Goodies
@@ -141,14 +136,11 @@ private:
 	Hero hero;
 	CMap map;
 	
-	//vectors of all game objects
+	//Vector list of enemies
 	std::vector<CEnemy *> enemyList;
 
+	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
-
-	//Goodies and Goodies Factory
-	CGoodiesFactory theGoodiesFactory;
-	CGoodies** theArrayOfGoodies;
 
 	//General variables
 	float fps;
@@ -157,11 +149,12 @@ private:
 
 	//Project variables
 	int level;
+	float attackSpeed;
 
 	//Sound effects
 
 	//Sprites Variable
-	int increase;
+	int heroTileID;
 
 	//current map/map handler
 	CMap * CurrentMap;

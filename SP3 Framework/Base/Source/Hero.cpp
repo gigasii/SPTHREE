@@ -10,6 +10,9 @@ Hero::Hero()
 	, hero_inMidAir_Down(false)
 	, heroAnimationCounter(0)
 	, heroAnimationInvert(false)
+	, heroAnimationFlip(false)
+	, pickUpWeapon(true)
+	, attackStatus(false)
 	, keyAcquired(false)
 {
 }
@@ -38,6 +41,11 @@ void Hero::SetAnimationCounter(int heroAnimationCounter_)
 	heroAnimationCounter = heroAnimationCounter_;
 }
 
+void Hero::SetAttackStatus(bool attackStatus_)
+{
+	attackStatus = attackStatus_;
+}
+
 int Hero::gettheHeroPositionx()
 {
 	return theHeroPositionx;
@@ -56,6 +64,21 @@ bool Hero::GetAnimationInvert()
 int Hero::GetAnimationCounter()
 {
 	return heroAnimationCounter;
+}
+
+bool Hero::GetAnimationFlip()
+{
+	return heroAnimationFlip;
+}
+
+bool Hero::GetPickUpWeapon()
+{
+	return pickUpWeapon;
+}
+
+bool Hero::GetAttackStatus()
+{
+	return attackStatus;
 }
 
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
