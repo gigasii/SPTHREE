@@ -182,11 +182,7 @@ void SceneText::Init()
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//Enemy//tile20_enemy.tga");
 
-	// === Initialise and load the tilemap ===
-	map.InitMap();
-
-	// === Initialise and Load the Screenmap ===
-	map.InitScreenMap(enemyList, GoodiesList);
+	
 
 	// === Set hero's position ===
 	hero.settheHeroPositionx(920);
@@ -238,12 +234,19 @@ void SceneText::Init()
 	// Sprites Variable
 	increase = 0;
 
+
+
+	
 	if(level == 1)
 	{
+		// === Initialise and Load the Screenmap ===
+		map.InitScreenMap(enemyList, GoodiesList);
 		CurrentMap = map.m_cScreenMap;
 	}
 	else if(level == 2)
 	{
+		// === Initialise and load the tilemap ===
+		map.InitMap(enemyList, GoodiesList);
 		CurrentMap = map.m_cMap;
 	}
 }
@@ -427,16 +430,24 @@ void SceneText::Update(double dt)
 			if(level == 1)
 			{
 				level = 2;
-				hero.settheHeroPositionx(160);
+				hero.settheHeroPositionx(0);
 				//hero.settheHeroPositiony(400);
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+				map.InitMap(enemyList, GoodiesList);
 				CurrentMap = map.m_cMap;
+				
 			}
 			else if (level == 2)
 			{
 				level = 1;
-				hero.settheHeroPositionx(160);
+				hero.settheHeroPositionx(1024 - 32);
 				//hero.settheHeroPositiony(400);
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+				map.InitScreenMap(enemyList, GoodiesList);
 				CurrentMap = map.m_cScreenMap;
+				
 			}
 		}
 	}
@@ -854,12 +865,12 @@ void SceneText::RenderText()
 
 	std::ostringstream ss2;
 	ss2.precision(5);
-	ss2 << "MapOffset_x: " << map.m_cMap->mapOffset_x;
+	ss2 << "MapOffset_x: " << CurrentMap->mapOffset_x;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 2, 53);
 
 	std::ostringstream ss3;
 	ss3.precision(5);
-	ss3 << "TileOffset_x:" << map.m_cMap->tileOffset_x;	
+	ss3 << "TileOffset_x:" <<CurrentMap->tileOffset_x;	
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 1, 0), 2.3, 2, 49);
 }
 
