@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include <iostream>
+#include "Map.h"
 
 CEnemy::CEnemy()
 	: theENEMYPosition(0, 0)
@@ -7,6 +8,7 @@ CEnemy::CEnemy()
 	, enemyAnimationInvert(false)
 	, theStrategy(NULL)
 	, active (false)
+	, ID (50)
 {
 }
 
@@ -125,5 +127,16 @@ void CEnemy::ChangeStrategy(CStrategy* theNewStrategy, bool bDelete)
 	{
 		theStrategy->SetDestination(theDestination.x, theDestination.y);
 		theStrategy->SetEnemyPosition(theENEMYPosition.x, theENEMYPosition.y);
+		theStrategy->theEnemyPath = path;
+	}
+}
+
+void CEnemy::setWayPoints(CMap* map)
+{
+	switch (ID)
+	{
+	case CMap::ENEMY_1:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
+		break;
 	}
 }

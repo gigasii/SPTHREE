@@ -1,7 +1,7 @@
 #pragma once
 #include <Vector2.h>
-//#include "Map.h"
 #include "Strategy_Kill.h"
+#include "Pathing.h"
 
 class CEnemy
 {
@@ -31,6 +31,7 @@ public:
 	STRATEGY_TYPE currentStrat;
 
 	bool active;
+	int ID;
 
 	//Initialise this class instance
 	void Init();
@@ -67,5 +68,8 @@ public:
 	void SetAnimationCounter(int ENEMYAnimationCounter);
 	//Get Animation Counter of the player
 	int GetAnimationCounter();
+
+	CPathing path;
+	void setWayPoints(CMap* map);
 };
 

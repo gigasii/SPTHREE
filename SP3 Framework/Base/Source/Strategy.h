@@ -1,5 +1,6 @@
 #pragma once
 #include <Vector2.h>
+#include "Pathing.h"
 
 class CStrategy
 {
@@ -20,5 +21,8 @@ public:
 
 	//The position of the enemy
 	Vector2 theEnemyPosition;
+
+	//The path of the enemy
+	CPathing theEnemyPath;
 };
 

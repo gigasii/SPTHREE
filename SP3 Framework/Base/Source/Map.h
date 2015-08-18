@@ -4,7 +4,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "Enemy.h"
+
+class CEnemy;
 
 using namespace std;
 
@@ -22,6 +23,7 @@ public:
 		JEWEL,
 		DOOR = 10,
 		ENEMY_1 = 50,
+		WAYPOINT_1 = -1, WAYPOINT_2 = -2, WAYPOINT_3 = -3, WAYPOINT_4 = -4,
 		TILE_TOTAL
 	};
 
