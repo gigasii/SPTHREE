@@ -28,6 +28,9 @@ void CStrategy_Kill::Update()
 
 	else
 	{
+		if (CurrentState != PATROL)
+			theEnemyPath.location = 0;
+
 		CurrentState = PATROL;
 	}
 
@@ -35,14 +38,17 @@ void CStrategy_Kill::Update()
 	switch(CurrentState)
 	{
 		case ATTACK:
-			theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x > 0 ? 1 : - 1);
+			theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x > 0 ? 2 : - 2);
+			theEnemyPosition.y = theEnemyPosition.y + (theDestination.y - theEnemyPosition.y > 0 ? 2 : - 2);
 			break;
 		
 		case REPEL:
-			theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x <= 0 ? 1 : - 1);
+			theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x <= 0 ? 2 : - 2);
+			theEnemyPosition.y = theEnemyPosition.y + (theDestination.y - theEnemyPosition.y <= 0 ? 2 : - 2);
 			break;
 		
 		case PATROL:
+			theEnemyPath.executePath(theEnemyPosition.x,theEnemyPosition.y,2);
 			break;
 	}
 }
