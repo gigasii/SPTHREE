@@ -387,7 +387,7 @@ void SceneText::Update(double dt)
 	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) /CurrentMap->GetTileSize());
 	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 	
-	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == 10)
+	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
 	{
 		if(level == 1)
 		{
@@ -867,7 +867,7 @@ void SceneText::RenderTileMap()
 			}
 			if(level == 1)
 			{
-				if(CurrentMap->theScreenMap[i][m] == 0  || CurrentMap->theScreenMap[i][m] == 50 || CurrentMap->theScreenMap[i][m] == 10  || CurrentMap->theScreenMap[i][m] == 2)
+				if(CurrentMap->theScreenMap[i][m] == CMap::GROUND  || CurrentMap->theScreenMap[i][m] >= CMap::ENEMY_1 || CurrentMap->theScreenMap[i][m] == CMap::DOOR  || CurrentMap->theScreenMap[i][m] == CMap::JEWEL)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -880,7 +880,7 @@ void SceneText::RenderTileMap()
 			}
 			else if(level == 2)
 			{
-				if(CurrentMap->theScreenMap[i][m] == 0  || CurrentMap->theScreenMap[i][m] == 50 || CurrentMap->theScreenMap[i][m] == 10)
+				if(CurrentMap->theScreenMap[i][m] == CMap::GROUND  || CurrentMap->theScreenMap[i][m] == CMap::ENEMY_1 || CurrentMap->theScreenMap[i][m] == CMap::DOOR)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}

@@ -104,7 +104,7 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	if(checkleft)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == 1 || mapType->theScreenMap[Y2][tileTopLeft_x] == 1)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::WALL || mapType->theScreenMap[Y2][tileTopLeft_x] == CMap::WALL)
 		{
 			return true;
 		}
@@ -112,7 +112,7 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkright)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == 1 || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == 1)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::WALL || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == CMap::WALL)
 		{
 			return true;
 		}
@@ -120,7 +120,7 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkup)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == 1 || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == 1)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::WALL || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::WALL)
 		{
 			return true;
 		}
@@ -128,7 +128,7 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkdown)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == 1 || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x + 1] == 1)
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::WALL || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x + 1] == CMap::WALL)
 		{
 			return true;
 		}
@@ -217,12 +217,12 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 
 	if(level == 1)
 	{
-		ConstrainHero(mapType, 0, 960, 25, 740, 1.0f);
+		ConstrainHero(mapType, 0, 992, 25, 740, 1.0f);
 	}
 
 	else
 	{
-		ConstrainHero(mapType, 25, 750, 25, 740, 1.0f);
+		ConstrainHero(mapType, 300, 700, 25, 740, 1.0f);
 	}
 } 
 

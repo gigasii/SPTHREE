@@ -15,6 +15,16 @@ public:
 	CMap(void);
 	~CMap(void);
 
+	enum tileList
+	{
+		GROUND,
+		WALL,
+		JEWEL,
+		DOOR = 10,
+		ENEMY_1 = 50,
+		TILE_TOTAL
+	};
+
 	void Init(const int theScreen_Height, const int theScreen_Width, const int theNumOfTiles_Height, const int theNumOfTiles_Width, const int theMap_Height, const int theMap_Width, const int theTileSize = 32);
 	bool LoadMap(const string mapName);
 	int GetNumOfTiles_Height(void);			//Get the number of tiles for the height of the screen

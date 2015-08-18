@@ -84,7 +84,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList)
 
 			switch (tempType)
 			{
-			case 50:
+			case CMap::ENEMY_1:
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
 				tempEnemy->SetPos_x(j * m_cScreenMap->GetTileSize());
