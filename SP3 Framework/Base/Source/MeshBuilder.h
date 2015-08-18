@@ -29,6 +29,7 @@ public:
 
 	static Mesh* Generate2DMesh(const std::string &meshName, Color color, int pos_x, int pos_y, int width, int height); 
 	static Mesh* GenerateSprites(const std::string &meshName, unsigned numRow, unsigned numCol);
+	static Mesh* GenerateTileMap(const std::string &meshName, unsigned row, unsigned col);
 };
 
 #endif
