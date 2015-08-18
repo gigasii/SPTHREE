@@ -227,6 +227,15 @@ void SceneText::Init()
 
 	// Sprites Variable
 	increase = 0;
+
+	if(level == 1)
+	{
+		CurrentMap = map.m_cScreenMap;
+	}
+	else if(level == 2)
+	{
+		CurrentMap = map.m_cMap;
+	}
 }
 
 void SceneText::Update(double dt)
@@ -360,22 +369,44 @@ void SceneText::Update(double dt)
 				go->currentStrat = CEnemy::STRAT_KILL;
 			}
 
-			go->SetDestination(hero.gettheHeroPositionx() + map.mapFineOffset_x, hero.gettheHeroPositiony());
+			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapFineOffset_x, hero.gettheHeroPositiony());
 			go->Update();
 		}
 	}
 	
 	// =================================== MAIN UPDATES ===================================
 
-	if(level == 1)
-	{
-		hero.HeroUpdate(map.m_cScreenMap, CHAR_HEROKEY, BOOL_HEROJUMP, level);
-	}
+	
+		hero.HeroUpdate(CurrentMap, CHAR_HEROKEY, BOOL_HEROJUMP, level);
+	
 
-	else
+	
+
+
+	//map traversing aka character can move from 1 map to another 
+	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) /CurrentMap->GetTileSize());
+	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+	
+	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == 10)
 	{
-		hero.HeroUpdate(map.m_cMap, CHAR_HEROKEY, BOOL_HEROJUMP, level);
+		if(level == 1)
+		{
+			level = 2;
+			hero.settheHeroPositionx(160);
+			//hero.settheHeroPositiony(400);
+			CurrentMap = map.m_cMap;
+		}
+		else if (level == 2)
+		{
+			level = 1;
+			hero.settheHeroPositionx(160);
+			//hero.settheHeroPositiony(400);
+			CurrentMap = map.m_cScreenMap;
+		}
 	}
+	
+	
+
 
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -816,61 +847,48 @@ void SceneText::RenderEnemies()
 	}
 }
 
-void SceneText::RenderScrollingMap()
+
+
+void SceneText::RenderTileMap()
 {
 	int m = 0;
-	map.m_cMap->mapFineOffset_x = map.m_cMap->mapOffset_x % map.m_cMap->GetTileSize();
+	CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
 	
-	for(int i = 0; i < map.m_cMap->GetNumOfTiles_Height(); i++)
+	for(int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
 	{
-		for(int k = 0; k < map.m_cMap->GetNumOfTiles_Width() + 1; k++)
+		for(int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
 		{
-			m = map.m_cMap->tileOffset_x + k;
+			m = CurrentMap->tileOffset_x + k;
 
 			//If we have reached the right side of the map, then do not display the extra column of tiles
-			if(m >= map.m_cMap->getNumOfTiles_MapWidth())
+			if(m >= CurrentMap->getNumOfTiles_MapWidth())
 			{
 				break;
 			}
-
-			if(map.m_cMap->theScreenMap[i][m] == 0  || map.m_cMap->theScreenMap[i][m] == 50)
+			if(level == 1)
 			{
-				Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * map.m_cMap->GetTileSize() - map.m_cMap->mapFineOffset_x, 768 - i * map.m_cMap->GetTileSize());
+				if(CurrentMap->theScreenMap[i][m] == 0  || CurrentMap->theScreenMap[i][m] == 50 || CurrentMap->theScreenMap[i][m] == 10  || CurrentMap->theScreenMap[i][m] == 2)
+				{
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+				else if(CurrentMap->theScreenMap[i][m] >= 1)
+				{
+					RenderTilesMap(meshList[GEO_SCREENTILESHEET], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				
+				}
 			}
-
-			else if(map.m_cMap->theScreenMap[i][m] >= 1)
+			else if(level == 2)
 			{
-				RenderTilesMap(meshList[GEO_SCREENTILESHEET], map.m_cMap->theScreenMap[i][m], 32.0f, k * map.m_cMap->GetTileSize() - map.m_cMap->mapFineOffset_x, 768 - i * map.m_cMap->GetTileSize());
-			}
-		}
-	}
-}
+				if(CurrentMap->theScreenMap[i][m] == 0  || CurrentMap->theScreenMap[i][m] == 50 || CurrentMap->theScreenMap[i][m] == 10)
+				{
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
 
-void SceneText::RenderScreenMap()
-{
-	int m = 0;
-	map.m_cScreenMap->mapFineOffset_x = map.m_cScreenMap->mapOffset_x % map.m_cScreenMap->GetTileSize();
-	
-	for(int i = 0; i < map.m_cScreenMap->GetNumOfTiles_Height(); i++)
-	{
-		for(int k = 0; k < map.m_cScreenMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = map.m_cScreenMap->tileOffset_x + k;
-
-			//If we have reached the right side of the map, then do not display the extra column of tiles
-			if(m >= map.m_cScreenMap->getNumOfTiles_MapWidth())
-			{
-				break;
-			}
-
-			if(map.m_cScreenMap->theScreenMap[i][m] == 0  || map.m_cScreenMap->theScreenMap[i][m] == 50)
-			{
-				Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * map.m_cScreenMap->GetTileSize() - map.m_cScreenMap->mapFineOffset_x, 768 - i * map.m_cScreenMap->GetTileSize());
-			}
-
-			else if(map.m_cScreenMap->theScreenMap[i][m] >= 1)
-			{
-				RenderTilesMap(meshList[GEO_SCREENTILESHEET], map.m_cScreenMap->theScreenMap[i][m], 32.0f, k * map.m_cScreenMap->GetTileSize() - map.m_cScreenMap->mapFineOffset_x, 768 - i * map.m_cScreenMap->GetTileSize());
+				else if(CurrentMap->theScreenMap[i][m] >= 1)
+				{
+					RenderTilesMap(meshList[GEO_SCREENTILESHEET],CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
 			}
 		}
 	}
@@ -889,7 +907,7 @@ void SceneText::Render()
 {
 	RenderInit();
 
-	if(level == 1)
+	/*if(level == 1)
 	{
 		RenderScreenMap();
 	}
@@ -897,10 +915,10 @@ void SceneText::Render()
 	else
 	{
 		RenderScrollingMap();
-	}
-
+	}*/
+	RenderTileMap();
 	RenderEnemies();
-	//RenderGoodies();
+	RenderGoodies();
 	RenderHero();
 	RenderText();
 }

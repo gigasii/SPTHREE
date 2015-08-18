@@ -44,6 +44,7 @@ public:
 	CMap *m_cScreenMap;
 
 	vector<vector<int> > theScreenMap;
+	bool scroll;
 
 private:
 	int theScreen_Width;				//Width of the screen

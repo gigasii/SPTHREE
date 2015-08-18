@@ -107,9 +107,10 @@ public:
 	void RenderHero();
 	void RenderEnemies();
 
-	//Render tilemaps
-	void RenderScrollingMap();
-	void RenderScreenMap();
+	
+
+	//general tilemap renderer
+	void RenderTileMap();
 
 	//Render Goodies
 	void RenderGoodies();
@@ -154,6 +155,9 @@ private:
 
 	//Sprites Variable
 	int increase;
+
+	//current map/map handler
+	CMap * CurrentMap;
 };
 
 #endif
