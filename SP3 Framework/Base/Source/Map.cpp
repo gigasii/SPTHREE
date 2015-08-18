@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "Enemy.h"
 
 CMap::CMap(void)
 : theScreen_Height(0)
@@ -82,18 +83,16 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList)
 		{
 			tempType = m_cScreenMap->theScreenMap[i][j];
 
-			switch (tempType)
+			if (tempType >= 50)
 			{
-			case CMap::ENEMY_1:
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
 				tempEnemy->SetPos_x(j * m_cScreenMap->GetTileSize());
 				tempEnemy->SetPos_y(m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
 				tempEnemy->active = true;
+				tempEnemy->ID = tempType;
+				tempEnemy->setWayPoints(m_cScreenMap);
 				enemyList.push_back(tempEnemy);
-				break;
-			default:
-				break;
 			}
 		}
 	}

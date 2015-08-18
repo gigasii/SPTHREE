@@ -371,6 +371,8 @@ void SceneText::Update(double dt)
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapFineOffset_x, hero.gettheHeroPositiony());
 			go->Update();
+
+			//go->path.executePath(go->theENEMYPosition.x,go->theENEMYPosition.y,5);
 		}
 	}
 	
@@ -867,7 +869,7 @@ void SceneText::RenderTileMap()
 			}
 			if(level == 1)
 			{
-				if(CurrentMap->theScreenMap[i][m] == CMap::GROUND  || CurrentMap->theScreenMap[i][m] >= CMap::ENEMY_1 || CurrentMap->theScreenMap[i][m] == CMap::DOOR  || CurrentMap->theScreenMap[i][m] == CMap::JEWEL)
+				if(CurrentMap->theScreenMap[i][m] != CMap::WALL)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -880,7 +882,7 @@ void SceneText::RenderTileMap()
 			}
 			else if(level == 2)
 			{
-				if(CurrentMap->theScreenMap[i][m] == CMap::GROUND  || CurrentMap->theScreenMap[i][m] == CMap::ENEMY_1 || CurrentMap->theScreenMap[i][m] == CMap::DOOR)
+				if(CurrentMap->theScreenMap[i][m] != CMap::WALL)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
