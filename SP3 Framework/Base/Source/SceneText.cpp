@@ -338,6 +338,11 @@ void SceneText::Update(double dt)
 		}
 	}
 
+	if(hero.GetPickUpWeapon() == true && Application::IsKeyPressed(VK_SPACE))
+	{
+		hero.SetDaggerAcquired(true);
+	}
+
 	// =================================== UPDATE THE ENEMY ===================================
 	
 	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
@@ -354,7 +359,7 @@ void SceneText::Update(double dt)
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapFineOffset_x, hero.gettheHeroPositiony());
 			go->Update();
 
-			//go->path.executePath(go->theENEMYPosition.x,go->theENEMYPosition.y,5);
+			//go->path.executePath(go->theENEMYPosition.x, go->theENEMYPosition.y,5);
 		}
 	}
 	
@@ -370,7 +375,7 @@ void SceneText::Update(double dt)
 				go->active = false;
 				if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 				{
-					hero.keyAcquired = true;
+					hero.SetKeyAcquired(true);
 				}
 			}
 		}
@@ -386,7 +391,7 @@ void SceneText::Update(double dt)
 	
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
 	{
-		if(hero.keyAcquired == true)
+		if(hero.GetKeyAcquired() == true)
 		{
 			if(level == 1)
 			{
@@ -424,7 +429,7 @@ void SceneText::UpdateCameraStatus(const unsigned char key, const bool status)
 
 void SceneText::UpdateAttackStatus(const unsigned char key)
 {
-	if(key == CA_ATTACK  && hero.GetPickUpWeapon() == true)
+	if(key == CA_ATTACK && hero.GetDaggerAcquired() == true)
 	{
 		hero.SetAttackStatus(true);
 	}

@@ -21,6 +21,8 @@ private:
 	bool heroAnimationFlip;
 	bool pickUpWeapon;
 	bool attackStatus;
+	bool keyAcquired;
+	bool daggerAcquired;
 
 public:
 	Hero();
@@ -57,6 +59,16 @@ public:
 	//Get attack status of player
 	bool GetAttackStatus();
 
+	//Set whether key has been taken
+	void SetKeyAcquired(bool keyAcquired_);
+	//Check whether key has been taken
+	bool GetKeyAcquired();
+
+	//Set whether dagger has been taken
+	void SetDaggerAcquired(bool daggerAcquired_);
+	//Check whether dagger has been taken
+	bool GetDaggerAcquired();
+
 	//Constrain the position of the Hero to within the border
 	void ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff);
 
@@ -70,8 +82,6 @@ public:
 	void UpdateFallDOWN();
 	void HeroMoveUpDown(const bool mode, const float timeDiff);
 	void HeroMoveLeftRight(const bool mode, const float timeDiff);
-
-	bool keyAcquired;
 };
 
 #endif

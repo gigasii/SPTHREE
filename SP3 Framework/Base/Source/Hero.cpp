@@ -11,9 +11,10 @@ Hero::Hero()
 	, heroAnimationCounter(0)
 	, heroAnimationInvert(false)
 	, heroAnimationFlip(false)
-	, pickUpWeapon(true)
+	, pickUpWeapon(false)
 	, attackStatus(false)
 	, keyAcquired(false)
+	, daggerAcquired(false)
 {
 }
 
@@ -44,6 +45,16 @@ void Hero::SetAnimationCounter(int heroAnimationCounter_)
 void Hero::SetAttackStatus(bool attackStatus_)
 {
 	attackStatus = attackStatus_;
+}
+
+void Hero::SetKeyAcquired(bool keyAcquired_)
+{
+	keyAcquired = keyAcquired_;
+}
+
+void Hero::SetDaggerAcquired(bool daggerAcquired_)
+{
+	daggerAcquired = daggerAcquired_;
 }
 
 int Hero::gettheHeroPositionx()
@@ -79,6 +90,16 @@ bool Hero::GetPickUpWeapon()
 bool Hero::GetAttackStatus()
 {
 	return attackStatus;
+}
+
+bool Hero::GetKeyAcquired()
+{
+	return keyAcquired;
+}
+
+bool Hero::GetDaggerAcquired()
+{
+	return daggerAcquired;
 }
 
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
@@ -133,9 +154,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::CHEST || mapType->theScreenMap[Y2][tileTopLeft_x] ==  CMap::CHEST)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::CHEST || mapType->theScreenMap[Y2][tileTopLeft_x] ==  CMap::CHEST)
 		{
+			pickUpWeapon = true;
 			return true;
+		}
+
+		else
+		{
+			pickUpWeapon = false;
 		}
 	}
 
@@ -146,9 +173,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST  || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == CMap::CHEST )
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST  || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == CMap::CHEST )
 		{
+			pickUpWeapon = true;
 			return true;
+		}
+
+		else
+		{
+			pickUpWeapon = false;
 		}
 	}
 
@@ -159,9 +192,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::CHEST  || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST )
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::CHEST  || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST )
 		{
+			pickUpWeapon = true;
 			return true;
+		}
+
+		else
+		{
+			pickUpWeapon = false;
 		}
 	}
 
@@ -172,9 +211,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		else if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x + 1] == CMap::CHEST )
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x + 1] == CMap::CHEST )
 		{
+			pickUpWeapon = true;
 			return true;
+		}
+
+		else
+		{
+			pickUpWeapon = false;
 		}
 	}
 
