@@ -159,15 +159,13 @@ void SceneText::Init()
 
 	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
 
-	// ============================== Load Map Screen tiles =============================
+	// ============================== Load Map tiles (Screen & scrolling) =============================
+
+	meshList[GEO_SCREENTILESHEET] = MeshBuilder::GenerateTileMap("GEO_S_TILEGROUND", 2, 2);
+	meshList[GEO_SCREENTILESHEET]->textureID = LoadTGA("Image//tilesheet.tga");
 
 	meshList[GEO_TILEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_S_TILEGROUND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEBACKGROUND]->textureID = LoadTGA("Image//tile0_blank.tga");
-
-	meshList[GEO_TILEWALL] = MeshBuilder::Generate2DMesh("GEO_S_TILEWALL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_TILEWALL]->textureID = LoadTGA("Image//tile1_wall.tga");
-
-	// ================================= Load Map tiles =================================
 
 	meshList[GEO_TILE_KILLZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_KILLZONE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
@@ -382,8 +380,6 @@ void SceneText::Update(double dt)
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
 	CHAR_HEROKEY = NULL;
-
-	std::cout << increase << std::endl;
 }
 
 void SceneText::UpdateCameraStatus(const unsigned char key, const bool status)
@@ -722,6 +718,41 @@ void SceneText::RenderSprites(Mesh* mesh, const float size, const float x, const
 	glEnable(GL_DEPTH_TEST);
 }
 
+void SceneText::RenderTilesMap(Mesh* mesh, int ID, const float size, const float x, const float y)
+{
+	Mtx44 ortho;
+	ortho.SetToOrtho(0, 1024, 0, 800, -10, 10);
+	projectionStack.PushMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, size);
+
+	//if (!mesh || mesh->textureID <= 0)
+	//	return;
+
+	glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+
+	Mtx44 characterSpacing;
+	characterSpacing.SetToTranslation(0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
+	Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
+	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+
+	mesh->Render((unsigned)ID * 6, 6);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
+	projectionStack.PopMatrix();
+}
+
 void SceneText::RenderInit()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -797,19 +828,19 @@ void SceneText::RenderScrollingMap()
 			m = map.m_cMap->tileOffset_x + k;
 
 			//If we have reached the right side of the map, then do not display the extra column of tiles
-			if(m >=map.m_cMap->getNumOfTiles_MapWidth())
+			if(m >= map.m_cMap->getNumOfTiles_MapWidth())
 			{
 				break;
 			}
 
-			if(map.m_cMap->theScreenMap[i][m] == 0)
+			if(map.m_cMap->theScreenMap[i][m] == 0  || map.m_cMap->theScreenMap[i][m] == 50)
 			{
 				Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * map.m_cMap->GetTileSize() - map.m_cMap->mapFineOffset_x, 768 - i * map.m_cMap->GetTileSize());
 			}
 
-			else if(map.m_cMap->theScreenMap[i][m] == 1)
+			else if(map.m_cMap->theScreenMap[i][m] >= 1)
 			{
-				Render2DMesh(meshList[GEO_TILEWALL], false, 1.0f, k * map.m_cMap->GetTileSize() - map.m_cMap->mapFineOffset_x, 768 - i *map.m_cMap->GetTileSize());
+				RenderTilesMap(meshList[GEO_SCREENTILESHEET], map.m_cMap->theScreenMap[i][m], 32.0f, k * map.m_cMap->GetTileSize() - map.m_cMap->mapFineOffset_x, 768 - i * map.m_cMap->GetTileSize());
 			}
 		}
 	}
@@ -837,9 +868,9 @@ void SceneText::RenderScreenMap()
 				Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * map.m_cScreenMap->GetTileSize() - map.m_cScreenMap->mapFineOffset_x, 768 - i * map.m_cScreenMap->GetTileSize());
 			}
 
-			else if(map.m_cScreenMap->theScreenMap[i][m] == 1)
+			else if(map.m_cScreenMap->theScreenMap[i][m] >= 1)
 			{
-				Render2DMesh(meshList[GEO_TILEWALL], false, 1.0f, k * map.m_cScreenMap->GetTileSize() - map.m_cScreenMap->mapFineOffset_x, 768 - i * map.m_cScreenMap->GetTileSize());
+				RenderTilesMap(meshList[GEO_SCREENTILESHEET], map.m_cScreenMap->theScreenMap[i][m], 32.0f, k * map.m_cScreenMap->GetTileSize() - map.m_cScreenMap->mapFineOffset_x, 768 - i * map.m_cScreenMap->GetTileSize());
 			}
 		}
 	}

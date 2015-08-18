@@ -60,8 +60,9 @@ class SceneText : public Scene
 		GEO_QUAD,
 		GEO_TEXT,
 
+		//Tilesheet
+		GEO_SCREENTILESHEET,
 		GEO_TILEBACKGROUND,
-		GEO_TILEWALL,
 
 		//Hero sprite Animation
 		GEO_TILEHERO_FRAME0,
@@ -100,6 +101,7 @@ public:
 	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size = 1.0f, const float x = 0.0f, const float y = 0.0f, const bool rotate = false);
 	void RenderQuadOnScreen(Mesh* mesh, float sizeX, float sizeY, float x, float y, bool enableLight);
 	void RenderSprites(Mesh* mesh, const float size, const float x, const float y);
+	void RenderTilesMap(Mesh* mesh, int ID, const float size, const float x, const float y);
 	void RenderInit();
 	void RenderText();
 	void RenderHero();
