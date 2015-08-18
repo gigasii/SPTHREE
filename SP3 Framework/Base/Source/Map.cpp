@@ -18,6 +18,7 @@ CMap::CMap(void)
 , mapFineOffset_y(0)
 , m_cMap(NULL)
 , m_cScreenMap(NULL)
+, scroll(false)
 {
 	theScreenMap.clear();
 }
@@ -62,6 +63,7 @@ void CMap::InitMap()
 	m_cMap = new CMap();
 	m_cMap->Init(800, 1024, 25, 32, 800, 2048, 32);
 	m_cMap->LoadMap("Image//MapDesign_Scrolling.csv");
+	m_cMap->scroll = true;
 }
 
 
@@ -70,7 +72,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList)
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
 	m_cScreenMap->LoadMap("Image//MapDesign_Screen.csv");
-
+	m_cScreenMap->scroll = false;
 	int tempType;
 	CEnemy* tempEnemy;
 
