@@ -4,6 +4,8 @@ CGoodies::CGoodies()
 	: pos_x(0) 
 	, pos_y(0) 
 	, theMesh(NULL) 
+	, active(true)
+	, GoodiesType(Goodies_Type::JEWEL)
 { 
 } 
  
@@ -55,3 +57,15 @@ void CGoodies::SetTextureID(const int TextureID)
  	 	this->theMesh->textureID = TextureID; 
  	} 
 } 
+
+bool CGoodies::CalculateDistance(int pos_x, int pos_y)
+{
+	int distance = ((pos_x - this->pos_x) * (pos_x - this->pos_x) +
+					(pos_y - this->pos_y) * (pos_y - this->pos_y));
+
+	if(distance < 625)
+	{
+		return true;
+	}
+	 return false; 
+}

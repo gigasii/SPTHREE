@@ -186,14 +186,24 @@ void SceneText::Init()
 	map.InitMap();
 
 	// === Initialise and Load the Screenmap ===
-	map.InitScreenMap(enemyList);
+	map.InitScreenMap(enemyList, GoodiesList);
 
 	// === Set hero's position ===
 	hero.settheHeroPositionx(920);
 	hero.settheHeroPositiony(655);
 
 
-	// === Set the array of goodies ===
+	// === goodies ===
+
+	meshList[GEO_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_DIAMOND]->textureID = LoadTGA("Image//diamond.tga");
+
+	meshList[GEO_KEY] = MeshBuilder::Generate2DMesh("GEO_KEY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_KEY]->textureID = LoadTGA("Image//key.tga");
+
+	meshList[GEO_CHEST] = MeshBuilder::Generate2DMesh("GEO_CHEST", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_CHEST]->textureID = LoadTGA("Image//chest.tga");
+	
 	theArrayOfGoodies = new CGoodies*[10];
 	
 	for(int i = 0; i < 5; i++)
@@ -376,6 +386,27 @@ void SceneText::Update(double dt)
 		}
 	}
 	
+	// =================================== UPDATE THE GOODIES ===================================
+	
+	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+	{
+		CGoodies *go = (CGoodies *)*it;
+		if(go->active)	
+		{
+			if(go->CalculateDistance(hero.gettheHeroPositionx(), hero.gettheHeroPositiony()) == true)
+			{
+				go->active = false;
+				if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+				{
+					hero.keyAcquired = true;
+				}
+
+				//***************************************************** ENTER YOUR STUFF HERE GIGGS *****************************************************//
+
+			}
+		}
+	}
+
 	// =================================== MAIN UPDATES ===================================
 
 	
@@ -391,19 +422,22 @@ void SceneText::Update(double dt)
 	
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
 	{
-		if(level == 1)
+		if(hero.keyAcquired == true)
 		{
-			level = 2;
-			hero.settheHeroPositionx(160);
-			//hero.settheHeroPositiony(400);
-			CurrentMap = map.m_cMap;
-		}
-		else if (level == 2)
-		{
-			level = 1;
-			hero.settheHeroPositionx(160);
-			//hero.settheHeroPositiony(400);
-			CurrentMap = map.m_cScreenMap;
+			if(level == 1)
+			{
+				level = 2;
+				hero.settheHeroPositionx(160);
+				//hero.settheHeroPositiony(400);
+				CurrentMap = map.m_cMap;
+			}
+			else if (level == 2)
+			{
+				level = 1;
+				hero.settheHeroPositionx(160);
+				//hero.settheHeroPositiony(400);
+				CurrentMap = map.m_cScreenMap;
+			}
 		}
 	}
 	
@@ -899,9 +933,27 @@ void SceneText::RenderTileMap()
 void SceneText::RenderGoodies()
 {
 	//Render the goodies
-	for(int i = 0; i < 10; i++)
+	//Render the goodies
+	for(vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
-		Render2DMesh(theArrayOfGoodies[i]->GetMesh(), false, 1.0f, theArrayOfGoodies[i]->GetPos_x(), theArrayOfGoodies[i]->GetPos_y());
+		CGoodies *go = (CGoodies *)*it;
+		if(go->active)	
+		{
+			int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
+			int theGoodies_y = go->GetPos_y();
+			if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+			{
+				Render2DMesh(meshList[GEO_DIAMOND],false,1.0f,theGoodies_x,theGoodies_y);	
+			}
+			else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+			{
+				Render2DMesh(meshList[GEO_KEY],false,1.0f,theGoodies_x,theGoodies_y);	
+			}
+			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+			{
+				Render2DMesh(meshList[GEO_CHEST],false,1.0f,theGoodies_x,theGoodies_y);	
+			}
+		}
 	}
 }
 

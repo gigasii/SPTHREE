@@ -67,13 +67,17 @@ class SceneText : public Scene
 		//Hero sprite Animation
 		GEO_TILEHERO_FRAME0,
 
-		//Enemy spirte Animation
+		//Enemy sprite Animation
 		GEO_TILEENEMY_FRAME0,
 		
 		//Trigger zones
 		GEO_TILE_KILLZONE,
 		GEO_TILE_SAFEZONE,
 
+		//collectibles sprite
+		GEO_DIAMOND,
+		GEO_KEY,
+		GEO_CHEST,
 		NUM_GEOMETRY,
 	};
 
@@ -137,7 +141,10 @@ private:
 	Hero hero;
 	CMap map;
 	
+	//vectors of all game objects
 	std::vector<CEnemy *> enemyList;
+
+	std::vector<CGoodies *> GoodiesList;
 
 	//Goodies and Goodies Factory
 	CGoodiesFactory theGoodiesFactory;
