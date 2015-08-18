@@ -4,12 +4,13 @@
  
 class CGoodies 
 { 
+
 protected: 
 	// Position x of this goodies  	
 	int pos_x; 
- 	
 	// Position y of this goodies  	
-	int pos_y; 
+	int pos_y;
+
 public: 
  	CGoodies();  	
 	~CGoodies(); 
@@ -22,7 +23,6 @@ public:
 		GOODIES_TOTAL
 	};
 
- 
  	// Stores the texture for this goodies 
  	Mesh* theMesh; 
  
