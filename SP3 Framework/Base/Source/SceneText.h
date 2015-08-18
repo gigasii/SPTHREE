@@ -136,6 +136,9 @@ private:
 	Hero hero;
 	CMap map;
 	
+	//current map/map handler
+	CMap * CurrentMap;
+
 	//Vector list of enemies
 	std::vector<CEnemy *> enemyList;
 
@@ -155,9 +158,6 @@ private:
 
 	//Sprites Variable
 	int heroTileID;
-
-	//current map/map handler
-	CMap * CurrentMap;
 };
 
 #endif
