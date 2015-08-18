@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "Goodies.h"
 
 class CEnemy;
 
@@ -21,6 +22,8 @@ public:
 		GROUND,
 		WALL,
 		JEWEL,
+		KEY,
+		CHEST,
 		DOOR = 10,
 		ENEMY_1 = 50,
 		WAYPOINT_1 = -1, WAYPOINT_2 = -2, WAYPOINT_3 = -3, WAYPOINT_4 = -4,
@@ -38,7 +41,7 @@ public:
 
 	void InitMap();
 
-	void InitScreenMap(vector<CEnemy*> &enemyList);
+	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
 
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;

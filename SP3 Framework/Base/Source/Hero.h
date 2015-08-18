@@ -56,6 +56,8 @@ public:
 	void UpdateFallDOWN();
 	void HeroMoveUpDown(const bool mode, const float timeDiff);
 	void HeroMoveLeftRight(const bool mode, const float timeDiff);
+
+	bool keyAcquired;
 };
 
 #endif

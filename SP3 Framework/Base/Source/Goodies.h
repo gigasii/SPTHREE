@@ -4,19 +4,25 @@
  
 class CGoodies 
 { 
-
-public: 
- 	CGoodies();  	
-	~CGoodies(); 
-
 protected: 
 	// Position x of this goodies  	
 	int pos_x; 
  	
 	// Position y of this goodies  	
 	int pos_y; 
-
 public: 
+ 	CGoodies();  	
+	~CGoodies(); 
+
+	enum Goodies_Type
+	{
+		JEWEL = 0,
+		KEY,
+		CHEST,
+		GOODIES_TOTAL
+	};
+
+ 
  	// Stores the texture for this goodies 
  	Mesh* theMesh; 
  
@@ -37,6 +43,13 @@ public:
 	
 	// Set the Texture ID 
  	void SetTextureID(const int TextureID); 
+
+	//check whether is active
+	bool active;
+	//calculate distance from player to see if can be pick up
+	bool CalculateDistance(int pos_x, int pos_y);
+
+	Goodies_Type GoodiesType;
 }; 
 
 
