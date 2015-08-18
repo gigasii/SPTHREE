@@ -39,7 +39,7 @@ public:
 	int getNumOfTiles_MapHeight(void);		//Get the number of tiles for the height of the map
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
-	void InitMap();
+	void InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList);
 
 	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
 
