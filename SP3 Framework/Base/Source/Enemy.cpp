@@ -101,11 +101,11 @@ int CEnemy::GetAnimationCounter()
 }
 
 //Enemy Update
-void CEnemy::Update()
+void CEnemy::Update(CMap* map)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update();
+		theStrategy->Update(map);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <Vector2.h>
 #include "Strategy.h"
+#include "Node.h"
+#include "Pathfinding.h"
 
 class CStrategy_Kill
 	: public CStrategy
@@ -10,7 +12,7 @@ public:
 	CStrategy_Kill();
 	~CStrategy_Kill();
 
-	void Update();
+	void Update(CMap* map);
 	void SetDestination(const float x, const float y);
 	void SetEnemyPosition(const float x, const float y);
 	void GetEnemyPosition(float& x, float& y);
@@ -27,8 +29,13 @@ public:
 	void SetState(CStrategy_Kill::CURRENT_STATE);
 	CStrategy_Kill::CURRENT_STATE GetState();
 	
+	string pathFind (const int& xStart, const int& yStart, const int& xFinish, const int& yFinish);
 private:
 	//Enemy AI State
 	CStrategy_Kill::CURRENT_STATE CurrentState;
+
+	int DesPosX, DesPosY;
+	string route;
+	int routeCounter;
 };
 

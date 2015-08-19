@@ -106,25 +106,28 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 {
 	if(theHeroPositionx < leftBorder)
 	{
-		theHeroPositionx = leftBorder;
+		mapType->mapOffset_x = mapType->mapOffset_x - (int)(5.0f * timeDiff);
+
+		
 		if(mapType->scroll == true)
 		{
-			mapType->mapOffset_x = mapType->mapOffset_x - (int)(5.0f * timeDiff);
-		
 			if(mapType->mapOffset_x < 0)
 				mapType->mapOffset_x = 0;
+			else
+				theHeroPositionx = leftBorder;
 		}
 	}
 
 	else if(theHeroPositionx > rightBorder)
 	{
-		theHeroPositionx = rightBorder;
+		mapType->mapOffset_x = mapType->mapOffset_x + (int)(5.0f * timeDiff);
+
 		if(mapType->scroll == true)
 		{
-			mapType->mapOffset_x = mapType->mapOffset_x + (int)(5.0f * timeDiff);
-		
 			if(mapType->mapOffset_x > Max_mapOffset_x)
 				mapType->mapOffset_x = Max_mapOffset_x;
+			else
+				theHeroPositionx = rightBorder;
 		}
 	}
 
@@ -298,12 +301,6 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 		}
 	}*/
 
-	mapType->tileOffset_x = (int)(mapType->mapOffset_x / mapType->GetTileSize());
-	if(mapType->tileOffset_x + mapType->GetNumOfTiles_Width() > mapType->getNumOfTiles_MapWidth())
-	{
-		mapType->tileOffset_x = mapType->getNumOfTiles_MapWidth() -mapType->GetNumOfTiles_Width();
-	}
-
 	if(level == 1)
 	{
 		ConstrainHero(mapType, 0, 992, 25, 740, 1.0f);
@@ -319,6 +316,12 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 		{
 			ConstrainHero(mapType, 0, 700, 25, 740, 1.0f);
 		}
+	}
+
+	mapType->tileOffset_x = (int)(mapType->mapOffset_x / mapType->GetTileSize());
+	if(mapType->tileOffset_x + mapType->GetNumOfTiles_Width() > mapType->getNumOfTiles_MapWidth())
+	{
+		mapType->tileOffset_x = mapType->getNumOfTiles_MapWidth() -mapType->GetNumOfTiles_Width();
 	}
 } 
 
