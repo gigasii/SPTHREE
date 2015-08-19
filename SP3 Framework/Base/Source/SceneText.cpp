@@ -155,7 +155,7 @@ void SceneText::Init()
 
 	// ============================== Load Map tiles (Screen & scrolling) =============================
 
-	meshList[GEO_SCREENTILESHEET] = MeshBuilder::GenerateTileMap("GEO_S_TILEGROUND", 2, 2);
+	meshList[GEO_SCREENTILESHEET] = MeshBuilder::GenerateTileMap("GEO_S_TILEGROUND", 5, 5);
 	meshList[GEO_SCREENTILESHEET]->textureID = LoadTGA("Image//tilesheet.tga");
 
 	meshList[GEO_TILEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_S_TILEGROUND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -355,7 +355,7 @@ void SceneText::Update(double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
-			if (go->currentStrat != CEnemy::STRAT_KILL)
+			if(go->currentStrat != CEnemy::STRAT_KILL)
 			{
 				go->ChangeStrategy(new CStrategy_Kill());
 				go->currentStrat = CEnemy::STRAT_KILL;
@@ -407,6 +407,7 @@ void SceneText::Update(double dt)
 				CurrentMap = map.m_cMap;
 				
 			}
+			
 			else if (level == 2)
 			{
 				level = 1;
@@ -903,9 +904,10 @@ void SceneText::RenderTileMap()
 			{
 				break;
 			}
+			
 			if(level == 1)
 			{
-				if(CurrentMap->theScreenMap[i][m] != CMap::WALL)
+				if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -916,9 +918,10 @@ void SceneText::RenderTileMap()
 				
 				}
 			}
+			
 			else if(level == 2)
 			{
-				if(CurrentMap->theScreenMap[i][m] != CMap::WALL)
+				if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
