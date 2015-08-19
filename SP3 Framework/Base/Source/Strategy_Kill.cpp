@@ -21,7 +21,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 		}
 	}
 
-	if(distanceHeroToEnemy < 100000.0f)
+	if(distanceHeroToEnemy < 10000.0f)
 	{
 		if(distanceHeroToEnemy < 625.0f)
 		{
