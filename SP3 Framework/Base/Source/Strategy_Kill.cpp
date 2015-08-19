@@ -59,10 +59,10 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 			{
 				if (routeCounter == 0)
 				{	
-					/*cout << "Hero tile: " << heroTile << endl;
-					cout << "Enemy tile: " << enemyTile << endl << endl;*/
+					//cout << "Hero tile: " << heroTile << endl;
+					//cout << "Enemy tile: " << enemyTile << endl << endl;
 
-					cout << routeCounter << endl;
+					//cout << routeCounter << endl;
 					route = pathFind(enemyTile.x, enemyTile.y, heroTile.x, heroTile.y);
 					checkMoved = false;
 				}

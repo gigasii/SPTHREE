@@ -7,7 +7,6 @@
 #include "Goodies.h"
 
 class CEnemy;
-
 using namespace std;
 
 class CMap
@@ -24,7 +23,7 @@ public:
 		JEWEL,
 		KEY,
 		CHEST,
-		DOOR = 10,
+		DOOR,
 		ENEMY_1 = 50,
 		WAYPOINT_1 = -1, WAYPOINT_2 = -2, WAYPOINT_3 = -3, WAYPOINT_4 = -4,
 		TILE_TOTAL
