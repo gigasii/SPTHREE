@@ -54,7 +54,7 @@ public:
 	int GetDestination_y();
 
 	//Enemy Update
-	void Update();
+	void Update(CMap* map);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
