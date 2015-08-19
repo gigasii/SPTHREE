@@ -20,6 +20,7 @@ public:
 		JEWEL = 0,
 		KEY,
 		CHEST,
+		DOOR,
 		GOODIES_TOTAL
 	};
 
