@@ -18,6 +18,11 @@ private:
 	bool hero_inMidAir_Down;
 	int  heroAnimationCounter;
 	bool heroAnimationInvert;
+	bool heroAnimationFlip;
+	bool pickUpWeapon;
+	bool attackStatus;
+	bool keyAcquired;
+	bool daggerAcquired;
 
 public:
 	Hero();
@@ -42,6 +47,27 @@ public:
 	void SetAnimationCounter(int heroAnimationCounter_);
 	//Get Animation counter of the player
 	int GetAnimationCounter();
+
+	//Get Animation flip of the player
+	bool GetAnimationFlip();
+
+	//Check whether a weapon has been picked up
+	bool GetPickUpWeapon();
+
+	//Set attack status of player
+	void SetAttackStatus(bool attackStatus_);
+	//Get attack status of player
+	bool GetAttackStatus();
+
+	//Set whether key has been taken
+	void SetKeyAcquired(bool keyAcquired_);
+	//Check whether key has been taken
+	bool GetKeyAcquired();
+
+	//Set whether dagger has been taken
+	void SetDaggerAcquired(bool daggerAcquired_);
+	//Check whether dagger has been taken
+	bool GetDaggerAcquired();
 
 	//Constrain the position of the Hero to within the border
 	void ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff);

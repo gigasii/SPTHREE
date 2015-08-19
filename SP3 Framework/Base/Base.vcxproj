@@ -16,8 +16,6 @@
     <ClCompile Include="Source\Camera3.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\Goodies.cpp" />
-    <ClCompile Include="Source\GoodiesFactory.cpp" />
-    <ClCompile Include="Source\HealthPack.cpp" />
     <ClCompile Include="Source\Hero.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />
@@ -30,7 +28,6 @@
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\Strategy.cpp" />
     <ClCompile Include="Source\Strategy_Kill.cpp" />
-    <ClCompile Include="Source\TreasureChest.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,8 +37,6 @@
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Goodies.h" />
-    <ClInclude Include="Source\GoodiesFactory.h" />
-    <ClInclude Include="Source\HealthPack.h" />
     <ClInclude Include="Source\Hero.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\LoadOBJ.h" />
@@ -56,7 +51,6 @@
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\Strategy.h" />
     <ClInclude Include="Source\Strategy_Kill.h" />
-    <ClInclude Include="Source\TreasureChest.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
   </ItemGroup>
