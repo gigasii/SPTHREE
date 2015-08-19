@@ -2,6 +2,7 @@
 #include <Vector2.h>
 #include "Strategy_Kill.h"
 #include "Pathing.h"
+#include <Vector3.h>
 
 class CEnemy
 {
@@ -54,7 +55,7 @@ public:
 	int GetDestination_y();
 
 	//Enemy Update
-	void Update(CMap* map);
+	void Update(CMap* map, Vector3& heroTile);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
@@ -71,5 +72,7 @@ public:
 
 	CPathing path;
 	void setWayPoints(CMap* map);
+
+	Vector3 eneCurrTile;
 };
 

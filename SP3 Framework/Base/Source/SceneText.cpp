@@ -190,7 +190,12 @@ void SceneText::Init()
 
 	// === Set hero's position ===
 	hero.settheHeroPositionx(920);
-	hero.settheHeroPositiony(655);
+	hero.settheHeroPositiony(640);
+
+	int tempHeroPosX = (int) ceil ((float)(920) / 32);
+	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
+	
+	hero.heroCurrTile = Vector3(tempHeroPosX,tempHeroPosY,0);
 
 	//Variables
 	rotateAngle = 0;
@@ -357,7 +362,7 @@ void SceneText::Update(double dt)
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapFineOffset_x, hero.gettheHeroPositiony());
-			go->Update(CurrentMap);
+			go->Update(CurrentMap, hero.heroCurrTile);
 		}
 	}
 	
@@ -875,7 +880,7 @@ void SceneText::RenderEnemies()
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
-			int theEnemy_x = go->GetPos_x() - map.mapOffset_x;
+			int theEnemy_x = go->GetPos_x() - CurrentMap->mapOffset_x;
 			int theEnemy_y = go->GetPos_y();
 			Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1.0f,theEnemy_x, theEnemy_y);	
 		}
