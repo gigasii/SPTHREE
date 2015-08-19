@@ -112,7 +112,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 {
 	if(theHeroPositionx < leftBorder)
 	{
-		mapType->mapOffset_x = mapType->mapOffset_x - (int)(5.0f * timeDiff);
+		mapType->mapOffset_x = mapType->mapOffset_x - (int)(2.0f * timeDiff);
 
 		
 		if(mapType->scroll == true)
@@ -126,7 +126,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 
 	else if(theHeroPositionx > rightBorder)
 	{
-		mapType->mapOffset_x = mapType->mapOffset_x + (int)(5.0f * timeDiff);
+		mapType->mapOffset_x = mapType->mapOffset_x + (int)(2.0f * timeDiff);
 
 		if(mapType->scroll == true)
 		{
@@ -154,16 +154,16 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	int tileTopLeft_y = mapType->GetNumOfTiles_Height() - (int)ceil( (float)(theHeroPositiony + mapType->GetTileSize() + jumpspeed) / mapType->GetTileSize());
 
-	int Y2 = mapType->GetNumOfTiles_Height() - (int)ceil( (float)(theHeroPositiony + jumpspeed) / mapType->GetTileSize());
+	
 
 	if(checkleft)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::WALL || mapType->theScreenMap[Y2][tileTopLeft_x] == CMap::WALL)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::WALL)
 		{
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::CHEST || mapType->theScreenMap[Y2][tileTopLeft_x] ==  CMap::CHEST)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::CHEST)
 		{
 			pickUpWeapon = true;
 			return true;
@@ -177,12 +177,12 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkright)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::WALL || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == CMap::WALL)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::WALL)
 		{
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST  || mapType->theScreenMap[Y2][tileTopLeft_x + 1] == CMap::CHEST )
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST)
 		{
 			pickUpWeapon = true;
 			return true;
@@ -196,12 +196,12 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkup)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::WALL || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::WALL)
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::WALL)
 		{
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x] == CMap::CHEST  || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST )
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
 		{
 			pickUpWeapon = true;
 			return true;
@@ -215,12 +215,12 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 	else if(checkdown)
 	{
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::WALL || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x + 1] == CMap::WALL)
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::WALL)
 		{
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x + 1] == CMap::CHEST )
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
 		{
 			pickUpWeapon = true;
 			return true;
@@ -388,11 +388,11 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 	{
 		if(mapType->mapOffset_x > 0)
 		{
-			ConstrainHero(mapType, 300, 700, 25, 740, 1.0f);
+			ConstrainHero(mapType, 480, 544, 25, 740, 1.0f);
 		}
 		else 
 		{
-			ConstrainHero(mapType, 0, 700, 25, 740, 1.0f);
+			ConstrainHero(mapType, 0, 544, 25, 740, 1.0f);
 		}
 	}
 
@@ -434,12 +434,12 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (4.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony + (int) (2.0f * timeDiff); 
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (4.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony - (int) (2.0f * timeDiff); 
 	}
 
 	/*heroAnimationCounter++;
@@ -453,13 +453,13 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositionx = theHeroPositionx - (int) (4.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx - (int) (2.0f * timeDiff);
 		heroAnimationInvert = true;
 	}
 
 	else 
 	{ 
-		theHeroPositionx = theHeroPositionx + (int) (4.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx + (int) (2.0f * timeDiff);
 		heroAnimationInvert = false;
 	}
 
