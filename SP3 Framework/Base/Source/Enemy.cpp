@@ -9,6 +9,7 @@ CEnemy::CEnemy()
 	, theStrategy(NULL)
 	, active (false)
 	, ID (50)
+	, eneCurrTile(0,0,0)
 {
 }
 
@@ -101,11 +102,11 @@ int CEnemy::GetAnimationCounter()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap* map)
+void CEnemy::Update(CMap* map, Vector3& heroTile)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map);
+		theStrategy->Update(map, eneCurrTile, heroTile);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 }

@@ -110,6 +110,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
 				tempEnemy->setWayPoints(m_cMap);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);
 				enemyList.push_back(tempEnemy);
 			}
 		}
@@ -168,6 +169,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
 				tempEnemy->setWayPoints(m_cScreenMap);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);
 				enemyList.push_back(tempEnemy);
 			}
 		}
