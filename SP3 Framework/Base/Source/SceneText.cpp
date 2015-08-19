@@ -357,9 +357,7 @@ void SceneText::Update(double dt)
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapFineOffset_x, hero.gettheHeroPositiony());
-			go->Update();
-
-			//go->path.executePath(go->theENEMYPosition.x, go->theENEMYPosition.y,5);
+			go->Update(CurrentMap);
 		}
 	}
 	
@@ -886,7 +884,7 @@ void SceneText::RenderEnemies()
 
 void SceneText::RenderTileMap()
 {
-	int m = 0;
+	int m = 0;	
 	CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
 	
 	for(int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
@@ -942,17 +940,17 @@ void SceneText::RenderGoodies()
 			
 			if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
 			{
-				Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x, theGoodies_y);	
+				Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x -  CurrentMap->mapOffset_x, theGoodies_y);	
 			}
 			
 			else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 			{
-				Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x, theGoodies_y);	
+				Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
 			}
 			
 			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
 			{
-				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x, theGoodies_y);	
+				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
 			}
 		}
 	}
