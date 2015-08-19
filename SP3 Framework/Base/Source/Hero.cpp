@@ -30,12 +30,12 @@ Hero::~Hero()
 
 void Hero::settheHeroPositionx(int theHeroPositionx_)
 {
-	 theHeroPositionx = theHeroPositionx_;
+	theHeroPositionx = theHeroPositionx_;
 }
 
 void Hero::settheHeroPositiony(int theHeroPositiony_)
 {
-	 theHeroPositiony = theHeroPositiony_;
+	theHeroPositiony = theHeroPositiony_;
 }
 
 void Hero::SetAnimationInvert(bool heroAnimationInvert_)
@@ -61,6 +61,11 @@ void Hero::SetKeyAcquired(bool keyAcquired_)
 void Hero::SetDaggerAcquired(bool daggerAcquired_)
 {
 	daggerAcquired = daggerAcquired_;
+}
+
+void Hero::SetAttackEnemy(bool attackEnemy_)
+{
+	attackEnemy = attackEnemy_;
 }
 
 int Hero::gettheHeroPositionx()
@@ -108,17 +113,23 @@ bool Hero::GetDaggerAcquired()
 	return daggerAcquired;
 }
 
+bool Hero::GetAttackEnemy()
+{
+	return attackEnemy;
+}
+
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
 {
 	if(theHeroPositionx < leftBorder)
 	{
-		mapType->mapOffset_x = mapType->mapOffset_x - (int)(2.0f * timeDiff);
-
-		
+		theHeroPositionx = leftBorder;
 		if(mapType->scroll == true)
 		{
+			mapType->mapOffset_x = mapType->mapOffset_x - (int)(2.0f * timeDiff);
+			
 			if(mapType->mapOffset_x < 0)
 				mapType->mapOffset_x = 0;
+			
 			else
 				theHeroPositionx = leftBorder;
 		}
@@ -126,12 +137,14 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 
 	else if(theHeroPositionx > rightBorder)
 	{
-		mapType->mapOffset_x = mapType->mapOffset_x + (int)(2.0f * timeDiff);
-
+		theHeroPositionx = rightBorder;
 		if(mapType->scroll == true)
 		{
+			mapType->mapOffset_x = mapType->mapOffset_x + (int)(2.0f * timeDiff);
+			
 			if(mapType->mapOffset_x > Max_mapOffset_x)
 				mapType->mapOffset_x = Max_mapOffset_x;
+			
 			else
 				theHeroPositionx = rightBorder;
 		}
@@ -141,7 +154,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 	{
 		theHeroPositiony = topBorder;
 	}
-	
+
 	else if(theHeroPositiony > bottomBorder)
 	{
 		theHeroPositiony = bottomBorder;
@@ -151,14 +164,16 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool checkdown, bool checkup)
 {
 	int tileTopLeft_x = (int) ((mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize());
-
 	int tileTopLeft_y = mapType->GetNumOfTiles_Height() - (int)ceil( (float)(theHeroPositiony + mapType->GetTileSize() + jumpspeed) / mapType->GetTileSize());
-
-	
 
 	if(checkleft)
 	{
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::WALL)
+		{
+			return true;
+		}
+
+		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::DOOR)
 		{
 			return true;
 		}
@@ -178,6 +193,11 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 	else if(checkright)
 	{
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::WALL)
+		{
+			return true;
+		}
+
+		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::DOOR)
 		{
 			return true;
 		}
@@ -220,15 +240,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
 		{
-			pickUpWeapon = true;
+			attackEnemy = true;
 			return true;
 		}
 
 		else
 		{
-			pickUpWeapon = false;
+			attackEnemy = false;
 		}
 	}
 
@@ -241,20 +261,18 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 	if(key == 'a' && !CheckCollision(mapType, true, false, false, false) && moveToRight == false && moveToUp == false && moveToDown == false)
 	{
 		HeroMoveLeftRight(true, 1.0f);
-		
 		float tempCheckLeft = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
-		if (moveToLeft == false)
+		if(moveToLeft == false)
 			heroCurrTile.x -= 1;
 
-		if (tempCheckLeft != (int)tempCheckLeft)
+		if(tempCheckLeft != (int)tempCheckLeft)
 			moveToLeft = true;
 	}
-	
+
 	else if(key == 'd' && !CheckCollision(mapType, false, true, false, false) && moveToLeft == false && moveToUp == false && moveToDown == false)
 	{
 		HeroMoveLeftRight(false, 1.0f);
-
 		float tempCheckRight = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
 		if (moveToRight == false)
@@ -263,37 +281,34 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 		if (tempCheckRight != (int)tempCheckRight)
 			moveToRight = true;
 	}
-	
+
 	if(key == 'w' && !CheckCollision(mapType, false, false, false, true) && moveToRight == false && moveToLeft == false && moveToDown == false)
 	{
 		HeroMoveUpDown(true, 1.0f);
-
 		float tempCheckUp = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-		if (moveToUp== false)
+		if(moveToUp== false)
 			heroCurrTile.y -= 1;
 
-		if (tempCheckUp != (int)tempCheckUp)
+		if(tempCheckUp != (int)tempCheckUp)
 			moveToUp = true;
 	}
 
 	else if(key == 's' && !CheckCollision(mapType, false, false, true, false) && moveToRight == false && moveToLeft == false && moveToUp == false)
 	{
 		HeroMoveUpDown(false, 1.0f);
-
 		float tempCheckDown = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-		if (moveToDown== false)
+		if(moveToDown== false)
 			heroCurrTile.y += 1;
 
-		if (tempCheckDown != (int)tempCheckDown)
+		if(tempCheckDown != (int)tempCheckDown)
 			moveToDown= true;
 	}
 
-	if (moveToLeft == true)
+	if(moveToLeft == true)
 	{
 		HeroMoveLeftRight(true, 1.0f);
-
 		float tempCheckLeft2 = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
 		if (tempCheckLeft2 == (int)tempCheckLeft2)
@@ -303,80 +318,77 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 	if (moveToRight == true)
 	{
 		HeroMoveLeftRight(false, 1.0f);
-
 		float tempCheckRight2 = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
-		if (tempCheckRight2 == (int)tempCheckRight2)
+		if(tempCheckRight2 == (int)tempCheckRight2)
 			moveToRight = false;
 	}
 
-	if (moveToUp == true)
+	if(moveToUp == true)
 	{
 		HeroMoveUpDown(true, 1.0f);
-
 		float tempCheckUp2 = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-		if (tempCheckUp2 == (int)tempCheckUp2)
+		if(tempCheckUp2 == (int)tempCheckUp2)
 			moveToUp = false;
 	}
 
-	if (moveToDown == true)
+	if(moveToDown == true)
 	{
 		HeroMoveUpDown(false, 1.0f);
-
 		float tempCheckDown2 = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-		if (tempCheckDown2 == (int)tempCheckDown2)
+		if(tempCheckDown2 == (int)tempCheckDown2)
 			moveToDown = false;
 	}
 
 	/*if(level == 2)
 	{
-		//Update jumping
-		if(jump)
-		{
-			HeroJump();
-		}
+	//Update jumping
+	if(jump)
+	{
+	HeroJump();
+	}
 
-		//Update Hero's info
-		if(hero_inMidAir_Up == false && hero_inMidAir_Down == false)
-		{
-			//Don't jump, standing on ground - Make player fall if not standing on tile
-			hero_inMidAir_Down = true;
-		}
+	//Update Hero's info
+	if(hero_inMidAir_Up == false && hero_inMidAir_Down == false)
+	{
+	//Don't jump, standing on ground - Make player fall if not standing on tile
+	hero_inMidAir_Down = true;
+	}
 
-		else if(hero_inMidAir_Up == true && hero_inMidAir_Down == false)
-		{
-			if(CheckCollision(false, false, false, true))
-			{
-				//Since the new position does not allow the hero to move into, then go back to the old position
-				theHeroPositiony = ((int) (theHeroPositiony / m_cMap->GetTileSize())) * m_cMap->GetTileSize();
-				hero_inMidAir_Up = false;
-				hero_inMidAir_Down = true;
-				jumpspeed = 0;
-			}
+	else if(hero_inMidAir_Up == true && hero_inMidAir_Down == false)
+	{
+	if(CheckCollision(false, false, false, true))
+	{
+	//Since the new position does not allow the hero to move into, then go back to the old position
+	theHeroPositiony = ((int) (theHeroPositiony / m_cMap->GetTileSize())) * m_cMap->GetTileSize();
+	hero_inMidAir_Up = false;
+	hero_inMidAir_Down = true;
+	jumpspeed = 0;
+	}
 
-			else
-			{
-				UpdateJumpUP();
-			}
-		}
+	else
+	{
+	UpdateJumpUP();
+	}
+	}
 
-		else if(hero_inMidAir_Up == false && hero_inMidAir_Down == true)
-		{
-			if(CheckCollision(false, false, true, false))
-			{
-				//Since the new position does not allow the hero to move into, then go back to the old position
-				theHeroPositiony = ((int) (theHeroPositiony / m_cMap->GetTileSize())) * m_cMap->GetTileSize();
-				hero_inMidAir_Down = false;
-				jumpspeed = 0;
-			}
+	else if(hero_inMidAir_Up == false && hero_inMidAir_Down == true)
+	{
+	if(CheckCollision(false, false, true, false))
+	{
+	//Since the new position does not allow the hero to move into, then go back to the old position
+	theHeroPositiony = ((int) (theHeroPositiony / m_cMap->GetTileSize())) * m_cMap->GetTileSize();
+	hero_inMidAir_Down = false;
+	jumpspeed = 0;
+	}
 
-			else
-			{
-				UpdateFallDOWN();
-			}
-		}
+	else
+	{
+	UpdateFallDOWN();
+	}
+	}
 	}*/
 
 	if(level == 1)
@@ -390,6 +402,7 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 		{
 			ConstrainHero(mapType, 480, 544, 25, 740, 1.0f);
 		}
+		
 		else 
 		{
 			ConstrainHero(mapType, 0, 544, 25, 740, 1.0f);
@@ -416,7 +429,7 @@ void Hero::UpdateJumpUP()
 {
 	theHeroPositiony += jumpspeed;
 	jumpspeed -= 1;
-	
+
 	if(jumpspeed == 0)
 	{
 		hero_inMidAir_Up = false;
@@ -445,7 +458,7 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 	/*heroAnimationCounter++;
 	if(heroAnimationCounter > 4)
 	{
-		heroAnimationCounter = 0;
+	heroAnimationCounter = 0;
 	}*/
 } 
 
@@ -466,6 +479,6 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 	/*heroAnimationCounter++;
 	if(heroAnimationCounter > 4)
 	{
-		heroAnimationCounter = 0;
+	heroAnimationCounter = 0;
 	}*/
 }

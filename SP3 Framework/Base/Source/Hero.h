@@ -24,10 +24,13 @@ private:
 	bool keyAcquired;
 	bool daggerAcquired;
 	bool moveToLeft, moveToRight, moveToUp, moveToDown;
+	bool attackEnemy;
 
 public:
 	Hero();
 	~Hero();
+
+	Vector3 heroCurrTile;
 
 	//Set the position x of the player
 	void settheHeroPositionx(int theHeroPositionx_);
@@ -70,6 +73,11 @@ public:
 	//Check whether dagger has been taken
 	bool GetDaggerAcquired();
 
+	//Set whether enemy is in range to attack
+	void SetAttackEnemy(bool attackEnemy_);
+	//Check whether enemy is in range to attack
+	bool GetAttackEnemy();
+
 	//Constrain the position of the Hero to within the border
 	void ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff);
 
@@ -83,7 +91,6 @@ public:
 	void UpdateFallDOWN();
 	void HeroMoveUpDown(const bool mode, const float timeDiff);
 	void HeroMoveLeftRight(const bool mode, const float timeDiff);
-	Vector3 heroCurrTile;
 };
 
 #endif
