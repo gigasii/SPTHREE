@@ -23,6 +23,7 @@ private:
 	bool attackStatus;
 	bool keyAcquired;
 	bool daggerAcquired;
+	bool moveToLeft, moveToRight, moveToUp, moveToDown;
 
 public:
 	Hero();
@@ -82,6 +83,7 @@ public:
 	void UpdateFallDOWN();
 	void HeroMoveUpDown(const bool mode, const float timeDiff);
 	void HeroMoveLeftRight(const bool mode, const float timeDiff);
+	Vector3 heroCurrTile;
 };
 
 #endif

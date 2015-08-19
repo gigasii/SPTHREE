@@ -1,6 +1,6 @@
 #include "Strategy_Kill.h"
 
-CStrategy_Kill::CStrategy_Kill() : routeCounter(0)
+CStrategy_Kill::CStrategy_Kill() : routeCounter(0), oldTile(0,0,0), currTile(0,0,0), checkMoved(true)
 {
 }
 
@@ -8,7 +8,7 @@ CStrategy_Kill::~CStrategy_Kill()
 {
 }
 
-void CStrategy_Kill::Update(CMap* map)
+void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 {
 	//Decide which state to change to
 	int distanceHeroToEnemy = CalculateDistance();
@@ -25,7 +25,7 @@ void CStrategy_Kill::Update(CMap* map)
 	{
 		if(distanceHeroToEnemy < 625.0f)
 		{
-			//CurrentState = REPEL;
+			CurrentState = REPEL;
 		}
 
 		else
@@ -36,10 +36,10 @@ void CStrategy_Kill::Update(CMap* map)
 
 	else
 	{
-		if (CurrentState != PATROL)
-			theEnemyPath.location = 0;
+		//if (CurrentState != PATROL)
+		//	theEnemyPath.location = 0;
 
-		CurrentState = PATROL;
+		//CurrentState = PATROL;
 	}
 
 	//Based on the current state, move the enemy
@@ -47,27 +47,25 @@ void CStrategy_Kill::Update(CMap* map)
 	{
 	case ATTACK:
 		{
-			int EnePosX = (int) ceil((float)(map->mapOffset_x + theEnemyPosition.x) / map->GetTileSize());
-			int EnePosY = map->GetNumOfTiles_Height() - (int)ceil((float)(theEnemyPosition.y + map->GetTileSize()) / map->GetTileSize());
+			oldTile = currTile;
+			currTile = heroTile;
 
-			int oldDesX = DesPosX;
-			int oldDesY = DesPosY;
-
-			DesPosX = (int) ceil ((float)(map->mapOffset_x + theDestination.x) / map->GetTileSize());
-			DesPosY = map->GetNumOfTiles_Height() - (int) ceil ((float)(theDestination.y + map->GetTileSize()) / map->GetTileSize());
-
-
-			if (DesPosX == oldDesX && DesPosY == oldDesY)
+			if (currTile != oldTile)
 			{
+				checkMoved = true;
 			}
-			else
-			{	
-				route = pathFind(EnePosX, EnePosY, DesPosX, DesPosY);
-				routeCounter = 0;
-				cout << route;
-				cout << " Enemy posY " << EnePosY;
-				cout << " Hero posY " << DesPosY;
-				cout << endl;
+
+			if (checkMoved == true)
+			{
+				if (routeCounter == 0)
+				{	
+					/*cout << "Hero tile: " << heroTile << endl;
+					cout << "Enemy tile: " << enemyTile << endl << endl;*/
+
+					cout << routeCounter << endl;
+					route = pathFind(enemyTile.x, enemyTile.y, heroTile.x, heroTile.y);
+					checkMoved = false;
+				}
 			}
 
 			for (int i = 0; i < route.length(); ++i)
@@ -84,6 +82,10 @@ void CStrategy_Kill::Update(CMap* map)
 						break;
 					case '1':
 						theEnemyPosition.y -= 1;
+
+						if (routeCounter == 0)
+							enemyTile.y += 1;
+
 						break;
 					case '6':
 						theEnemyPosition.x -= 1;
@@ -91,6 +93,10 @@ void CStrategy_Kill::Update(CMap* map)
 						break;
 					case '2':
 						theEnemyPosition.x -= 1;
+
+						if (routeCounter == 0)
+							enemyTile.x -= 1; 
+
 						break;
 					case '5':
 						theEnemyPosition.x -= 1;
@@ -98,6 +104,10 @@ void CStrategy_Kill::Update(CMap* map)
 						break;
 					case '3':
 						theEnemyPosition.y += 1;
+
+						if (routeCounter == 0)
+							enemyTile.y -= 1;
+
 						break;
 					case '7':
 						theEnemyPosition.x += 1;
@@ -105,6 +115,10 @@ void CStrategy_Kill::Update(CMap* map)
 						break;
 					case '0':
 						theEnemyPosition.x += 1;
+
+						if (routeCounter == 0)
+							enemyTile.x += 1;  
+
 						break;
 					}
 
@@ -124,8 +138,8 @@ void CStrategy_Kill::Update(CMap* map)
 		break;
 		
 		case REPEL:
-			theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x <= 0 ? 1 : - 1);
-			theEnemyPosition.y = theEnemyPosition.y + (theDestination.y - theEnemyPosition.y <= 0 ? 1 : - 1);
+			/*theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x <= 0 ? 1 : - 1);
+			theEnemyPosition.y = theEnemyPosition.y + (theDestination.y - theEnemyPosition.y <= 0 ? 1 : - 1);*/
 			break;
 		
 		case PATROL:

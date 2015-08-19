@@ -1,4 +1,5 @@
 #include "Hero.h"
+#include <math.h>
 
 static const float Max_mapOffset_x = 1024;
 
@@ -15,6 +16,11 @@ Hero::Hero()
 	, attackStatus(false)
 	, keyAcquired(false)
 	, daggerAcquired(false)
+	, moveToLeft(false)
+	, moveToRight(false)
+	, moveToDown(false)
+	, moveToUp(false)
+	, heroCurrTile(0,0,0)
 {
 }
 
@@ -232,24 +238,96 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level) 
 {	
 	//Update walking
-	if(key == 'a' && !CheckCollision(mapType, true, false, false, false))
+	if(key == 'a' && !CheckCollision(mapType, true, false, false, false) && moveToRight == false && moveToUp == false && moveToDown == false)
 	{
 		HeroMoveLeftRight(true, 1.0f);
+		
+		float tempCheckLeft = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
+
+		if (moveToLeft == false)
+			heroCurrTile.x -= 1;
+
+		if (tempCheckLeft != (int)tempCheckLeft)
+			moveToLeft = true;
 	}
 	
-	else if(key == 'd' && !CheckCollision(mapType, false, true, false, false))
+	else if(key == 'd' && !CheckCollision(mapType, false, true, false, false) && moveToLeft == false && moveToUp == false && moveToDown == false)
 	{
 		HeroMoveLeftRight(false, 1.0f);
+
+		float tempCheckRight = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
+
+		if (moveToRight == false)
+			heroCurrTile.x += 1;
+
+		if (tempCheckRight != (int)tempCheckRight)
+			moveToRight = true;
 	}
 	
-	if(key == 'w' && !CheckCollision(mapType, false, false, false, true))
+	if(key == 'w' && !CheckCollision(mapType, false, false, false, true) && moveToRight == false && moveToLeft == false && moveToDown == false)
 	{
 		HeroMoveUpDown(true, 1.0f);
+
+		float tempCheckUp = ((float)(theHeroPositiony) / mapType->GetTileSize());
+
+		if (moveToUp== false)
+			heroCurrTile.y -= 1;
+
+		if (tempCheckUp != (int)tempCheckUp)
+			moveToUp = true;
 	}
 
-	else if(key == 's' && !CheckCollision(mapType, false, false, true, false))
+	else if(key == 's' && !CheckCollision(mapType, false, false, true, false) && moveToRight == false && moveToLeft == false && moveToUp == false)
 	{
 		HeroMoveUpDown(false, 1.0f);
+
+		float tempCheckDown = ((float)(theHeroPositiony) / mapType->GetTileSize());
+
+		if (moveToDown== false)
+			heroCurrTile.y += 1;
+
+		if (tempCheckDown != (int)tempCheckDown)
+			moveToDown= true;
+	}
+
+	if (moveToLeft == true)
+	{
+		HeroMoveLeftRight(true, 1.0f);
+
+		float tempCheckLeft2 = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
+
+		if (tempCheckLeft2 == (int)tempCheckLeft2)
+			moveToLeft = false;
+	}
+
+	if (moveToRight == true)
+	{
+		HeroMoveLeftRight(false, 1.0f);
+
+		float tempCheckRight2 = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
+
+		if (tempCheckRight2 == (int)tempCheckRight2)
+			moveToRight = false;
+	}
+
+	if (moveToUp == true)
+	{
+		HeroMoveUpDown(true, 1.0f);
+
+		float tempCheckUp2 = ((float)(theHeroPositiony) / mapType->GetTileSize());
+
+		if (tempCheckUp2 == (int)tempCheckUp2)
+			moveToUp = false;
+	}
+
+	if (moveToDown == true)
+	{
+		HeroMoveUpDown(false, 1.0f);
+
+		float tempCheckDown2 = ((float)(theHeroPositiony) / mapType->GetTileSize());
+
+		if (tempCheckDown2 == (int)tempCheckDown2)
+			moveToDown = false;
 	}
 
 	/*if(level == 2)
@@ -356,12 +434,12 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (3.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony + (int) (4.0f * timeDiff); 
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (3.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony - (int) (4.0f * timeDiff); 
 	}
 
 	/*heroAnimationCounter++;
@@ -375,13 +453,13 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositionx = theHeroPositionx - (int) (3.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx - (int) (4.0f * timeDiff);
 		heroAnimationInvert = true;
 	}
 
 	else 
 	{ 
-		theHeroPositionx = theHeroPositionx + (int) (3.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx + (int) (4.0f * timeDiff);
 		heroAnimationInvert = false;
 	}
 

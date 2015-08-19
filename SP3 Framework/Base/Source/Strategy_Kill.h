@@ -12,7 +12,7 @@ public:
 	CStrategy_Kill();
 	~CStrategy_Kill();
 
-	void Update(CMap* map);
+	void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile);
 	void SetDestination(const float x, const float y);
 	void SetEnemyPosition(const float x, const float y);
 	void GetEnemyPosition(float& x, float& y);
@@ -34,8 +34,11 @@ private:
 	//Enemy AI State
 	CStrategy_Kill::CURRENT_STATE CurrentState;
 
-	int DesPosX, DesPosY;
 	string route;
 	int routeCounter;
+
+	Vector3 oldTile, currTile;
+	
+	bool checkMoved;
 };
 
