@@ -69,11 +69,6 @@ void Hero::SetDaggerAcquired(bool daggerAcquired_)
 	daggerAcquired = daggerAcquired_;
 }
 
-void Hero::SetAttackEnemy(bool attackEnemy_)
-{
-	attackEnemy = attackEnemy_;
-}
-
 int Hero::gettheHeroPositionx()
 {
 	return theHeroPositionx;
@@ -122,11 +117,6 @@ bool Hero::GetdoorOpened()
 bool Hero::GetDaggerAcquired()
 {
 	return daggerAcquired;
-}
-
-bool Hero::GetAttackEnemy()
-{
-	return attackEnemy;
 }
 
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
@@ -466,19 +456,15 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (2.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony + (int) (2.0f * timeDiff);
+		heroAnimationFlip = true;
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (2.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony - (int) (2.0f * timeDiff);
+		heroAnimationFlip = false;
 	}
-
-	/*heroAnimationCounter++;
-	if(heroAnimationCounter > 4)
-	{
-	heroAnimationCounter = 0;
-	}*/
 } 
 
 void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff) 
@@ -494,10 +480,4 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 		theHeroPositionx = theHeroPositionx + (int) (2.0f * timeDiff);
 		heroAnimationInvert = false;
 	}
-
-	/*heroAnimationCounter++;
-	if(heroAnimationCounter > 4)
-	{
-	heroAnimationCounter = 0;
-	}*/
 }

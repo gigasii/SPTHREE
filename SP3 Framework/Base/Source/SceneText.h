@@ -69,6 +69,7 @@ class SceneText : public Scene
 
 		//Enemy sprite Animation
 		GEO_TILEENEMY_FRAME0,
+		GEO_TILEENEMY_FRAME1,
 
 		//Goodies
 		GEO_DIAMOND,
@@ -93,6 +94,9 @@ public:
 	
 	//Update Attack status
 	virtual void UpdateAttackStatus(const unsigned char key);
+
+	//Check whether hero is in range to attack enemies
+	void CheckEnemiesInRange(CEnemy *go);
 
 	//General functions to run the program
 	void RenderText(Mesh* mesh, std::string text, Color color);
@@ -153,11 +157,13 @@ private:
 	//Project variables
 	int level;
 	float attackSpeed;
+	int DistanceFromEnemyX;
+	int DistanceFromEnemyY;
 
 	//Sound effects
 
 	//Sprites Variable
-	int heroTileID;
+	float heroTileID;
 };
 
 #endif

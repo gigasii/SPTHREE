@@ -36,7 +36,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 
 	else
 	{
-		//if (CurrentState != PATROL)
+		//if(CurrentState != PATROL)
 		//	theEnemyPath.location = 0;
 
 		//CurrentState = PATROL;
@@ -45,19 +45,19 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 	//Based on the current state, move the enemy
 	switch(CurrentState)
 	{
-	case ATTACK:
+		case ATTACK:
 		{
 			oldTile = currTile;
 			currTile = heroTile;
 
-			if (currTile != oldTile)
+			if(currTile != oldTile)
 			{
 				checkMoved = true;
 			}
 
-			if (checkMoved == true)
+			if(checkMoved == true)
 			{
-				if (routeCounter == 0)
+				if(routeCounter == 0)
 				{	
 					//cout << "Hero tile: " << heroTile << endl;
 					//cout << "Enemy tile: " << enemyTile << endl << endl;
@@ -68,11 +68,11 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 				}
 			}
 
-			for (int i = 0; i < route.length(); ++i)
+			for(int i = 0; i < route.length(); ++i)
 			{
 				char temp = route[i];
 
-				if (temp != '9')
+				if(temp != '9')
 				{
 					switch (temp)
 					{
@@ -124,7 +124,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 
 					routeCounter++;
 
-					if (routeCounter >= 32)
+					if(routeCounter >= 32)
 					{
 						route[i] = '9';
 						routeCounter = 0;
@@ -132,7 +132,6 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 
 					break;
 				}
-
 			}
 		}
 		break;
@@ -143,7 +142,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 			break;
 		
 		case PATROL:
-			theEnemyPath.executePath(theEnemyPosition.x,theEnemyPosition.y,1);
+			theEnemyPath.executePath(theEnemyPosition.x, theEnemyPosition.y, 1);
 			break;
 	}
 }
