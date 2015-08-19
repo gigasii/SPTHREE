@@ -15,6 +15,7 @@ Hero::Hero()
 	, pickUpWeapon(false)
 	, attackStatus(false)
 	, keyAcquired(false)
+	, doorOpened(false)
 	, daggerAcquired(false)
 	, moveToLeft(false)
 	, moveToRight(false)
@@ -56,6 +57,11 @@ void Hero::SetAttackStatus(bool attackStatus_)
 void Hero::SetKeyAcquired(bool keyAcquired_)
 {
 	keyAcquired = keyAcquired_;
+}
+
+void Hero::SetdoorOpened(bool doorOpened_)
+{
+	this->doorOpened = doorOpened_;
 }
 
 void Hero::SetDaggerAcquired(bool daggerAcquired_)
@@ -106,6 +112,11 @@ bool Hero::GetAttackStatus()
 bool Hero::GetKeyAcquired()
 {
 	return keyAcquired;
+}
+
+bool Hero::GetdoorOpened()
+{
+	return doorOpened;
 }
 
 bool Hero::GetDaggerAcquired()
@@ -175,7 +186,12 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::DOOR)
 		{
-			return true;
+			if(this->doorOpened == false)
+			{
+				return true;
+			}
+			
+
 		}
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::CHEST)
@@ -199,7 +215,10 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::DOOR)
 		{
-			return true;
+			if(this->doorOpened == false)
+			{
+				return true;
+			}
 		}
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST)
@@ -240,15 +259,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
 		{
-			attackEnemy = true;
+			pickUpWeapon = true;
 			return true;
 		}
 
 		else
 		{
-			attackEnemy = false;
+			pickUpWeapon = false;
 		}
 	}
 

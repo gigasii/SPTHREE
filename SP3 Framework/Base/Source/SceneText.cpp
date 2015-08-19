@@ -375,10 +375,14 @@ void SceneText::Update(double dt)
 		{
 			if(go->CalculateDistance(hero.gettheHeroPositionx(), hero.gettheHeroPositiony()) == true)
 			{
-				go->active = false;
-				if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+				if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
 				{
-					hero.SetKeyAcquired(true);
+					go->active = false;
+					if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+					{
+						hero.SetKeyAcquired(true);
+					
+					}
 				}
 			}
 		}
@@ -392,36 +396,64 @@ void SceneText::Update(double dt)
 	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) /CurrentMap->GetTileSize());
 	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 	
-	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
+	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
 	{
+		
 		if(hero.GetKeyAcquired() == true)
 		{
-			if(level == 1)
+			if(hero.GetdoorOpened() == false)
 			{
-				level = 2;
-				hero.settheHeroPositionx(32);
-				//hero.settheHeroPositiony(400);
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitMap(enemyList, GoodiesList);
-				CurrentMap = map.m_cMap;
-				
-			}
-			
-			else if (level == 2)
-			{
-				level = 1;
-				hero.settheHeroPositionx(1024 - 32);
-				//hero.settheHeroPositiony(400);
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitScreenMap(enemyList, GoodiesList);
-				CurrentMap = map.m_cScreenMap;
-				
+				if(Application::IsKeyPressed(VK_SPACE))
+				{
+					hero.SetdoorOpened(true);
+					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+					{
+						CGoodies *go = (CGoodies *)*it;
+						if(go->active)	
+						{	
+							if(go->GoodiesType == CGoodies::Goodies_Type::DOOR)
+							{
+								go->active = false;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 	
+	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
+	{
+		if(hero.GetdoorOpened() == true)
+			{
+				if(level == 1)
+				{
+					hero.SetKeyAcquired(false);	
+					hero.SetdoorOpened(false);
+					level = 2;
+					hero.settheHeroPositionx(32);
+					//hero.settheHeroPositiony(400);
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+					map.InitMap(enemyList, GoodiesList);
+					CurrentMap = map.m_cMap;
+				
+				}
+			
+				else if (level == 2)
+				{
+					level = 1;
+					hero.settheHeroPositionx(1024 - 32);
+					//hero.settheHeroPositiony(400);
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+					map.InitScreenMap(enemyList, GoodiesList);
+					CurrentMap = map.m_cScreenMap;
+				
+				}
+		}
+	}
+
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
 	CHAR_HEROKEY = NULL;
@@ -914,8 +946,25 @@ void SceneText::RenderTileMap()
 
 				else if(CurrentMap->theScreenMap[i][m] >= 1)
 				{
-					RenderTilesMap(meshList[GEO_SCREENTILESHEET], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
-				
+					if(CurrentMap->theScreenMap[i][m] != CMap::DOOR)
+					{
+						RenderTilesMap(meshList[GEO_SCREENTILESHEET], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					}
+					else
+					{
+						if(hero.GetdoorOpened() == false)
+						{
+							RenderTilesMap(meshList[GEO_SCREENTILESHEET], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+						}
+						else
+						{
+							Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+						}
+						
+
+					}
+												
+					
 				}
 			}
 			

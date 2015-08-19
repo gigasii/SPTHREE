@@ -5,6 +5,7 @@
 #include <Vector2.h>
 #include "Map.h"
 #include "Enemy.h"
+#include "Goodies.h"
 
 class Hero
 {
@@ -21,7 +22,10 @@ private:
 	bool heroAnimationFlip;
 	bool pickUpWeapon;
 	bool attackStatus;
+	//opening door stuff
 	bool keyAcquired;
+	bool doorOpened;
+	//weapon stuff
 	bool daggerAcquired;
 	bool moveToLeft, moveToRight, moveToUp, moveToDown;
 	bool attackEnemy;
@@ -67,6 +71,11 @@ public:
 	void SetKeyAcquired(bool keyAcquired_);
 	//Check whether key has been taken
 	bool GetKeyAcquired();
+
+	//Set whether key has been taken
+	void SetdoorOpened(bool doorOpened_);
+	//Check whether key has been taken
+	bool GetdoorOpened();
 
 	//Set whether dagger has been taken
 	void SetDaggerAcquired(bool daggerAcquired_);
