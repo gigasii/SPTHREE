@@ -15,6 +15,7 @@ Hero::Hero()
 	, pickUpWeapon(false)
 	, attackStatus(false)
 	, keyAcquired(false)
+	, doorOpened(false)
 	, daggerAcquired(false)
 	, moveToLeft(false)
 	, moveToRight(false)
@@ -58,14 +59,14 @@ void Hero::SetKeyAcquired(bool keyAcquired_)
 	keyAcquired = keyAcquired_;
 }
 
+void Hero::SetdoorOpened(bool doorOpened_)
+{
+	this->doorOpened = doorOpened_;
+}
+
 void Hero::SetDaggerAcquired(bool daggerAcquired_)
 {
 	daggerAcquired = daggerAcquired_;
-}
-
-void Hero::SetAttackEnemy(bool attackEnemy_)
-{
-	attackEnemy = attackEnemy_;
 }
 
 int Hero::gettheHeroPositionx()
@@ -108,14 +109,14 @@ bool Hero::GetKeyAcquired()
 	return keyAcquired;
 }
 
+bool Hero::GetdoorOpened()
+{
+	return doorOpened;
+}
+
 bool Hero::GetDaggerAcquired()
 {
 	return daggerAcquired;
-}
-
-bool Hero::GetAttackEnemy()
-{
-	return attackEnemy;
 }
 
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
@@ -175,7 +176,12 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::DOOR)
 		{
-			return true;
+			if(this->doorOpened == false)
+			{
+				return true;
+			}
+			
+
 		}
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::CHEST)
@@ -199,7 +205,10 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::DOOR)
 		{
-			return true;
+			if(this->doorOpened == false)
+			{
+				return true;
+			}
 		}
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::CHEST)
@@ -240,15 +249,15 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 			return true;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
 		{
-			attackEnemy = true;
+			pickUpWeapon = true;
 			return true;
 		}
 
 		else
 		{
-			attackEnemy = false;
+			pickUpWeapon = false;
 		}
 	}
 
@@ -447,19 +456,15 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (2.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony + (int) (2.0f * timeDiff);
+		heroAnimationFlip = true;
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (2.0f * timeDiff); 
+		theHeroPositiony = theHeroPositiony - (int) (2.0f * timeDiff);
+		heroAnimationFlip = false;
 	}
-
-	/*heroAnimationCounter++;
-	if(heroAnimationCounter > 4)
-	{
-	heroAnimationCounter = 0;
-	}*/
 } 
 
 void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff) 
@@ -475,10 +480,4 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 		theHeroPositionx = theHeroPositionx + (int) (2.0f * timeDiff);
 		heroAnimationInvert = false;
 	}
-
-	/*heroAnimationCounter++;
-	if(heroAnimationCounter > 4)
-	{
-	heroAnimationCounter = 0;
-	}*/
 }

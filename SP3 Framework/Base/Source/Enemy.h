@@ -31,8 +31,10 @@ public:
 
 	STRATEGY_TYPE currentStrat;
 
-	bool active;
 	int ID;
+	bool active;
+	CPathing path;
+	Vector3 eneCurrTile;
 
 	//Initialise this class instance
 	void Init();
@@ -70,9 +72,6 @@ public:
 	//Get Animation Counter of the player
 	int GetAnimationCounter();
 
-	CPathing path;
 	void setWayPoints(CMap* map);
-
-	Vector3 eneCurrTile;
 };
 
