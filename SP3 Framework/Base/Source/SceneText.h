@@ -78,6 +78,11 @@ class SceneText : public Scene
 		// Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
 
+		// HUD Geometry Mesh
+		GEO_HUD_HEART,
+		GEO_HUD_KEY,
+		GEO_HUD_DIAMOND,
+
 		//Goodies
 		GEO_DIAMOND,
 		GEO_KEY,
@@ -118,6 +123,7 @@ public:
 	void RenderText();
 	void RenderHero();
 	void RenderEnemies();
+	void RenderHUD();
 
 	//General tilemap renderer
 	void RenderTileMap();
@@ -174,6 +180,11 @@ private:
 	float heroTileID;
 	float bossCounter;
 	float BossTileID;
+
+	// HUD Variable
+	int diamondCount;
+	int keyCount;
+	int PointSystem;
 
 	// Boss Variables
 	bool IsTurn;
