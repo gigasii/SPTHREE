@@ -198,6 +198,16 @@ void SceneText::Init()
 	meshList[GEO_TILEBOSS_FRAME0]->textureID = LoadTGA("Image//Enemy//boss.tga");
 
 
+	// ==================================== Load HUD ====================================
+	meshList[GEO_HUD_HEART] = MeshBuilder::Generate2DMesh("GEO_HUD_HEART", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HUD_HEART]->textureID = LoadTGA("Image//HUD//heart.tga");
+
+	meshList[GEO_HUD_KEY] = MeshBuilder::Generate2DMesh("GEO_HUD_KEY", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HUD_KEY]->textureID = LoadTGA("Image//HUD//key.tga");
+
+	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
+
 	//Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -214,6 +224,11 @@ void SceneText::Init()
 
 	//Variables
 	rotateAngle = 0;
+
+	// HUD Variables
+	diamondCount = 0;
+	keyCount = 0;
+	PointSystem = 0;
 
 	//Game variables
 	level = 1;
@@ -425,6 +440,19 @@ void SceneText::Update(double dt)
 						hero.SetKeyAcquired(true);
 					
 					}
+				}
+
+				if (go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+				{
+					go->active = false;
+					diamondCount++;
+					PointSystem += 10;
+				}
+
+				if (go->GoodiesType == CGoodies::Goodies_Type::KEY)
+				{
+					go->active = false;
+					keyCount++;
 				}
 			}
 		}
@@ -989,26 +1017,29 @@ void SceneText::RenderInit()
 
 void SceneText::RenderText()
 {
+	if (Application::IsKeyPressed(VK_INSERT))
+	{
+		std::ostringstream ss1;
+		ss1.precision(5);
+		ss1 << "Position: " << hero.gettheHeroPositionx() << "," << hero.gettheHeroPositiony();
+		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(1, 1, 0), 2.3, 2, 57);
+
+		std::ostringstream ss2;
+		ss2.precision(5);
+		ss2 << "MapOffset_x: " << CurrentMap->mapOffset_x;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 2, 53);
+
+		std::ostringstream ss3;
+		ss3.precision(5);
+		ss3 << "TileOffset_x:" << CurrentMap->tileOffset_x;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 1, 0), 2.3, 2, 49);
+	}
+
 	//On screen text
 	std::ostringstream ss;
 	ss.precision(4);
 	ss << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 2.3, 2, 1);
-	
-	std::ostringstream ss1;
-	ss1.precision(5);
-	ss1 << "Position: " << hero.gettheHeroPositionx() << "," << hero.gettheHeroPositiony();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(1, 1, 0), 2.3, 2, 57);
-
-	std::ostringstream ss2;
-	ss2.precision(5);
-	ss2 << "MapOffset_x: " << CurrentMap->mapOffset_x;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 2, 53);
-
-	std::ostringstream ss3;
-	ss3.precision(5);
-	ss3 << "TileOffset_x:" <<CurrentMap->tileOffset_x;	
-	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 1, 0), 2.3, 2, 49);
 }
 
 void SceneText::RenderHero()
@@ -1194,6 +1225,36 @@ void SceneText::RenderGoodies()
 	}
 }
 
+void SceneText::RenderHUD()
+{
+	// For Rendering of Player Lives
+	RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 1, 0.2, false);
+	RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 5, 0.2, false);
+	RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 9, 0.2, false);
+
+	// For Indicating how many diamonds collected
+	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56, false);
+
+	std::ostringstream ss1;
+	ss1.precision(5);
+	ss1 << "x " << diamondCount;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 56);
+
+	// For Indicating how many keys collected
+	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56, false);
+
+	std::ostringstream ss2;
+	ss2.precision(5);
+	ss2 << "x " << keyCount;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 16, 56);
+
+	// For Point System
+	std::ostringstream ss3;
+	ss3.precision(5);
+	ss3 << "Points: " << PointSystem;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 56);
+}
+
 void SceneText::Render()
 {
 	RenderInit();
@@ -1202,6 +1263,7 @@ void SceneText::Render()
 	RenderGoodies();
 	RenderHero();
 	RenderText();
+	RenderHUD();
 }
 
 void SceneText::Exit()
