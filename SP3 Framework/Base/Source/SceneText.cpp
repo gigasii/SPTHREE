@@ -150,7 +150,7 @@ void SceneText::Init()
 	meshList[GEO_QUAD]->textureID = LoadTGA("Image//calibri.tga");
 	
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
-	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//c.tga");
 
 	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
 
@@ -197,6 +197,9 @@ void SceneText::Init()
 	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
 	meshList[GEO_TILEBOSS_FRAME0]->textureID = LoadTGA("Image//Enemy//boss.tga");
 
+	// ================================= Load Menu =================================
+	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
+	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
 
 	// ==================================== Load HUD ====================================
 	meshList[GEO_HUD_HEART] = MeshBuilder::Generate2DMesh("GEO_HUD_HEART", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
@@ -269,6 +272,17 @@ void SceneText::Init()
 	bossCounter = 0.0f;
 	IsTurn = false;
 	EnemiesRendered = false;
+
+	// === Menu Variables ===
+	menu = true;
+	InteractHighLight = 0;
+	delay = 0;
+
+	Text[0] = "Start Game";
+	Text[1] = "How To Play?";
+
+	m_worldHeight = 100.f;
+	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 }
 
 void SceneText::Update(double dt)
@@ -1255,15 +1269,76 @@ void SceneText::RenderHUD()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 56);
 }
 
+void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
+{
+	if (Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max)
+	{
+		InteractHighLight += 1;
+		delay = 15;
+	}
+	if (Application::IsKeyPressed(VK_UP) && delay == 0 && InteractHighLight > min)
+	{
+		InteractHighLight -= 1;
+		delay = 15;
+	}
+
+	if (delay > 0)
+	{
+		--delay;
+	}
+
+	if (InteractHighLight == 0 && Application::IsKeyPressed(VK_RETURN))
+	{
+		menu = false;
+	}
+
+	if (InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN))
+	{
+		menu = false;
+	}
+
+	int a = 0;
+	//menu
+	if (menu == true)
+	{
+		for (int text = 0; text < 2; text++)
+		{
+			float TextSize = 5;
+			int y = 60 / TextSize / 2 - 5 - (text * TextSize);
+
+			if (InteractHighLight == text)
+			{
+				a = 1;
+			}
+
+			RenderTextOnScreen(meshList[GEO_TEXT], Text[text], Color(1, a, a), TextSize, 40, y + 30);
+
+			if (InteractHighLight == text)
+			{
+				a = 0;
+			}
+		}
+	}
+}
+
 void SceneText::Render()
 {
-	RenderInit();
-	RenderTileMap();
-	RenderEnemies();
-	RenderGoodies();
-	RenderHero();
-	RenderText();
-	RenderHUD();
+	/*if (menu == true)
+	{
+		RenderQuadOnScreen(meshList[GEO_MENU], 82, 62, 40, 30, false);
+		RenderMenu(InteractHighLight, 1, 0);
+	}
+
+	if (menu == false)
+	{*/
+		RenderInit();
+		RenderTileMap();
+		RenderEnemies();
+		RenderGoodies();
+		RenderHero();
+		RenderText();
+		RenderHUD();
+	//}
 }
 
 void SceneText::Exit()

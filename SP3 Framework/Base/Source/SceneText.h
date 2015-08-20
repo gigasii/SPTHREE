@@ -83,6 +83,9 @@ class SceneText : public Scene
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
 
+		// Menu
+		GEO_MENU,
+
 		//Goodies
 		GEO_DIAMOND,
 		GEO_KEY,
@@ -124,6 +127,7 @@ public:
 	void RenderHero();
 	void RenderEnemies();
 	void RenderHUD();
+	void RenderMenu(int &InteractHighLight, int max, int min);
 
 	//General tilemap renderer
 	void RenderTileMap();
@@ -189,6 +193,18 @@ private:
 	// Boss Variables
 	bool IsTurn;
 	bool EnemiesRendered;
+
+	// Menu Variables
+	int delay;
+	int InteractHighLight;
+
+	bool menu;
+
+	string Text[2];
+
+protected:
+	float m_worldWidth;
+	float m_worldHeight;
 };
 
 #endif
