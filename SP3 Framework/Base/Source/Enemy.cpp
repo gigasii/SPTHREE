@@ -140,5 +140,11 @@ void CEnemy::setWayPoints(CMap* map)
 	case CMap::ENEMY_1:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
+	case CMap::ENEMY_2:
+		path.setWayPoints(map, 3, CMap::WAYPOINT_5, CMap::WAYPOINT_6, CMap::WAYPOINT_7);
+		break;
+	case CMap::ENEMY_3:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_8, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11);
+		break;
 	}
 }
