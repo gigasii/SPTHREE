@@ -118,8 +118,6 @@ public:
 	void RenderText();
 	void RenderHero();
 	void RenderEnemies();
-	void RenderBoss();
-	void RenderTiles();
 
 	//General tilemap renderer
 	void RenderTileMap();

@@ -540,6 +540,15 @@ void SceneText::Update(double dt)
 				map.InitScreenMap(enemyList, GoodiesList);
 				CurrentMap = map.m_cScreenMap;	
 			}
+
+			else if (level == 7)
+			{
+				hero.settheHeroPositionx(32);
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+				map.InitMap(enemyList, GoodiesList);
+				CurrentMap = map.m_cBossMap;
+			}
 		}
 	}
 
@@ -1060,52 +1069,6 @@ void SceneText::RenderEnemies()
 	}
 }
 
-void SceneText::RenderBoss()
-{
-	if (level == 7)
-	{
-		int m = 0;
-		CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
-
-		for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
-		{
-			for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
-			{
-				m = CurrentMap->tileOffset_x + k;
-
-				//If we have reached the right side of the map, then do not display the extra column of tiles
-				if (m >= CurrentMap->getNumOfTiles_MapWidth())
-				{
-					break;
-				}
-
-				if (level == 7)
-				{
-					if (CurrentMap->theScreenMap[i][m] >= 0)
-					{
-						RenderTilesMap(meshList[GEO_TILE], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
-					}
-
-					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 && IsTurn == true || EnemiesRendered == true)
-					{
-						BossPointer->BossState = CBoss::B_SPAWN;
-
-						if (BossPointer->BossState == CBoss::B_SPAWN)
-						{
-							if (CurrentMap->theScreenMap[i][m] == 6)
-							{
-								Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x - 32, 768 - i * CurrentMap->GetTileSize());
-							}
-						}
-					}
-				}
-			}
-		}
-
-		RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 32, 45, 400);
-	}
-}
-
 void SceneText::RenderTileMap()
 {
 	int m = 0;	
@@ -1171,6 +1134,39 @@ void SceneText::RenderTileMap()
 					RenderTilesMap(meshList[GEO_SCREENTILESHEET],CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 			}
+
+			else if (level == 7)
+			{
+				int m = 0;
+				CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
+
+				m = CurrentMap->tileOffset_x + k;
+
+				//If we have reached the right side of the map, then do not display the extra column of tiles
+				if (m >= CurrentMap->getNumOfTiles_MapWidth())
+				{
+					break;
+				}
+				if (CurrentMap->theScreenMap[i][m] >= 0)
+				{
+					RenderTilesMap(meshList[GEO_TILE], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 && IsTurn == true || EnemiesRendered == true)
+				{
+					BossPointer->BossState = CBoss::B_SPAWN;
+
+					if (BossPointer->BossState == CBoss::B_SPAWN)
+					{
+						if (CurrentMap->theScreenMap[i][m] == 6)
+						{
+							Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x - 32, 768 - i * CurrentMap->GetTileSize());
+						}
+					}
+				}
+
+				RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 32, 45, 400);
+			}
 		}
 	}
 }
@@ -1208,7 +1204,6 @@ void SceneText::Render()
 {
 	RenderInit();
 	RenderTileMap();
-	RenderBoss();
 	RenderEnemies();
 	RenderGoodies();
 	RenderHero();
