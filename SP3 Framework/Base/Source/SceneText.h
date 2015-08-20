@@ -67,6 +67,8 @@ class SceneText : public Scene
 		GEO_TILEHEROSHEET,
 		GEO_TILEHEROSHEET2,
 
+		GEO_TILE_WAYPOINT,
+
 		//Enemy sprite Animation
 		GEO_TILEENEMY_FRAME0,
 		GEO_TILEENEMY_FRAME1,

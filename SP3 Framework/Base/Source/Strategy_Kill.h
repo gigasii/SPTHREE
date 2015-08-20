@@ -34,8 +34,8 @@ private:
 	//Enemy AI State
 	CStrategy_Kill::CURRENT_STATE CurrentState;
 
-	string route;
-	int routeCounter;
+	string route, route2;
+	int routeCounter, routeCounter2;
 
 	Vector3 oldTile, currTile;
 	
