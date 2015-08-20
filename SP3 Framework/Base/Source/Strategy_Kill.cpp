@@ -1,6 +1,6 @@
 #include "Strategy_Kill.h"
 
-CStrategy_Kill::CStrategy_Kill() : routeCounter(0), oldTile(0,0,0), currTile(0,0,0), checkMoved(true)
+CStrategy_Kill::CStrategy_Kill() : routeCounter(0), routeCounter2(0), oldTile(0,0,0), currTile(0,0,0), checkMoved(true)
 {
 }
 
@@ -21,58 +21,61 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 		}
 	}
 
-	if(distanceHeroToEnemy < 10000.0f)
+	if(distanceHeroToEnemy < 30000.0f)
 	{
 		if(distanceHeroToEnemy < 625.0f)
 		{
 			CurrentState = REPEL;
 		}
 
-		else
+		else if (routeCounter2 == 0)
 		{
 			CurrentState = ATTACK;
 		}
 	}
 
-	else
+	else if (routeCounter == 0)
 	{
-		//if(CurrentState != PATROL)
-		//	theEnemyPath.location = 0;
+		if (CurrentState != PATROL)
+		{
+			theEnemyPath.location = 0;
 
-		//CurrentState = PATROL;
+			route2 = pathFind(enemyTile.x, enemyTile.y, 
+					theEnemyPath.WayPointTileList[theEnemyPath.location].x, 
+					theEnemyPath.WayPointTileList[theEnemyPath.location].y);
+
+		}
+
+		CurrentState = PATROL;
 	}
 
 	//Based on the current state, move the enemy
 	switch(CurrentState)
 	{
-		case ATTACK:
+	case ATTACK:
 		{
 			oldTile = currTile;
 			currTile = heroTile;
 
-			if(currTile != oldTile)
+			if (currTile != oldTile)
 			{
 				checkMoved = true;
 			}
 
-			if(checkMoved == true)
+			if (checkMoved == true)
 			{
-				if(routeCounter == 0)
+				if (routeCounter == 0)
 				{	
-					//cout << "Hero tile: " << heroTile << endl;
-					//cout << "Enemy tile: " << enemyTile << endl << endl;
-
-					//cout << routeCounter << endl;
 					route = pathFind(enemyTile.x, enemyTile.y, heroTile.x, heroTile.y);
 					checkMoved = false;
 				}
 			}
 
-			for(int i = 0; i < route.length(); ++i)
+			for (int i = 0; i < route.length(); ++i)
 			{
 				char temp = route[i];
 
-				if(temp != '9')
+				if (temp != '9')
 				{
 					switch (temp)
 					{
@@ -81,7 +84,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 						theEnemyPosition.y -= 1;
 						break;
 					case '1':
-						theEnemyPosition.y -= 1;
+						theEnemyPosition.y -= 3.2;
 
 						if (routeCounter == 0)
 							enemyTile.y += 1;
@@ -92,7 +95,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 						theEnemyPosition.y -= 1;
 						break;
 					case '2':
-						theEnemyPosition.x -= 1;
+						theEnemyPosition.x -= 3.2;
 
 						if (routeCounter == 0)
 							enemyTile.x -= 1; 
@@ -103,7 +106,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 						theEnemyPosition.y += 1;
 						break;
 					case '3':
-						theEnemyPosition.y += 1;
+						theEnemyPosition.y += 3.2;
 
 						if (routeCounter == 0)
 							enemyTile.y -= 1;
@@ -114,7 +117,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 						theEnemyPosition.y += 1;
 						break;
 					case '0':
-						theEnemyPosition.x += 1;
+						theEnemyPosition.x += 3.2;
 
 						if (routeCounter == 0)
 							enemyTile.x += 1;  
@@ -124,7 +127,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 
 					routeCounter++;
 
-					if(routeCounter >= 32)
+					if (routeCounter >= 10)
 					{
 						route[i] = '9';
 						routeCounter = 0;
@@ -132,18 +135,88 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 
 					break;
 				}
+
 			}
 		}
 		break;
-		
-		case REPEL:
-			/*theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x <= 0 ? 1 : - 1);
-			theEnemyPosition.y = theEnemyPosition.y + (theDestination.y - theEnemyPosition.y <= 0 ? 1 : - 1);*/
-			break;
-		
-		case PATROL:
-			theEnemyPath.executePath(theEnemyPosition.x, theEnemyPosition.y, 1);
-			break;
+
+	case REPEL:
+		/*theEnemyPosition.x = theEnemyPosition.x + (theDestination.x - theEnemyPosition.x <= 0 ? 1 : - 1);
+		theEnemyPosition.y = theEnemyPosition.y + (theDestination.y - theEnemyPosition.y <= 0 ? 1 : - 1);*/
+		break;
+
+	case PATROL:
+		/*theEnemyPath.executePath(theEnemyPosition.x,theEnemyPosition.y,2);*/
+		{
+			if (enemyTile.x == theEnemyPath.WayPointTileList[theEnemyPath.location].x &&
+				enemyTile.y == theEnemyPath.WayPointTileList[theEnemyPath.location].y && 
+				routeCounter2 == 0)
+			{
+				theEnemyPath.location++;
+
+				if (theEnemyPath.location > (short)(theEnemyPath.WayPointTileList.size()-1))
+						theEnemyPath.location = 0;
+
+				route2 = pathFind(enemyTile.x, enemyTile.y, 
+					theEnemyPath.WayPointTileList[theEnemyPath.location].x, 
+					theEnemyPath.WayPointTileList[theEnemyPath.location].y);
+			}
+
+			for (int i = 0; i < route2.length(); ++i)
+			{
+				char temp2 = route2[i];
+
+				if (temp2 != '9')
+				{
+					switch (temp2)
+					{
+					case '1':
+						theEnemyPosition.y -= 2;
+
+						if (routeCounter2 == 0)
+							enemyTile.y += 1;
+
+						break;
+					
+					case '2':
+						theEnemyPosition.x -= 2;
+
+						if (routeCounter2 == 0)
+							enemyTile.x -= 1; 
+
+						break;
+					case '3':
+						theEnemyPosition.y += 2;
+
+						if (routeCounter2 == 0)
+							enemyTile.y -= 1;
+
+						break;
+				
+					case '0':
+						theEnemyPosition.x += 2;
+
+						if (routeCounter2 == 0)
+							enemyTile.x += 1;  
+
+						break;
+					}
+
+					routeCounter2++;
+
+					if (routeCounter2 >= 16)
+					{
+						route2[i] = '9';
+						routeCounter2 = 0;
+					}
+
+					break;
+				}
+
+			}
+		}
+
+		break;
 	}
 }
 

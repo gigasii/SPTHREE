@@ -186,6 +186,9 @@ void SceneText::Init()
 	meshList[GEO_CHEST] = MeshBuilder::Generate2DMesh("GEO_CHEST", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_CHEST]->textureID = LoadTGA("Image//Goodies//chest.tga");
 
+	meshList[GEO_TILE_WAYPOINT] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_TILE_WAYPOINT]->textureID = LoadTGA("Image//tile0_blank_red.tga");
+
 	//Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -1005,7 +1008,12 @@ void SceneText::RenderTileMap()
 			
 			if(level == 1)
 			{
-				if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
+				if (CurrentMap->theScreenMap[i][m] < 0)
+				{
+					Render2DMesh(meshList[GEO_TILE_WAYPOINT], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+				else if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
