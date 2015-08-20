@@ -37,6 +37,7 @@ void CPathing::setWayPoints(CMap* map, int amount, ...)
 						             map->GetTileSize() * (map->GetNumOfTiles_Height() - i) - map->GetTileSize(),0);
 
 					WayPointList.push_back(temp);
+					WayPointTileList.push_back(Vector3(j,i,0));
 				}
 			}
 		} //End of for loop

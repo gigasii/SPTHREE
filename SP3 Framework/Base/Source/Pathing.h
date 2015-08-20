@@ -25,6 +25,7 @@ public:
 
 	//Vector List to store Way Points
 	std::vector<Vector3> WayPointList;
+	std::vector<Vector3> WayPointTileList;
 	short location;
 
 	//Get Direction
