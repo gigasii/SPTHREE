@@ -8,7 +8,7 @@ CStrategy_Kill::~CStrategy_Kill()
 {
 }
 
-void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
+void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir)
 {
 	//Decide which state to change to
 	int distanceHeroToEnemy = CalculateDistance();
@@ -21,7 +21,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 		}
 	}
 
-	if(distanceHeroToEnemy < 30000.0f)
+	if(distanceHeroToEnemy < 49729.0f)
 	{
 		if(distanceHeroToEnemy < 625.0f)
 		{
@@ -86,6 +86,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 					case '1':
 						theEnemyPosition.y -= 3.2;
 
+						enemyDir = Vector3(0,-1,0);
+
 						if (routeCounter == 0)
 							enemyTile.y += 1;
 
@@ -96,6 +98,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 						break;
 					case '2':
 						theEnemyPosition.x -= 3.2;
+
+						enemyDir = Vector3(-1,0,0);
 
 						if (routeCounter == 0)
 							enemyTile.x -= 1; 
@@ -108,6 +112,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 					case '3':
 						theEnemyPosition.y += 3.2;
 
+						enemyDir = Vector3(0,1,0);
+
 						if (routeCounter == 0)
 							enemyTile.y -= 1;
 
@@ -118,6 +124,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 						break;
 					case '0':
 						theEnemyPosition.x += 3.2;
+
+						enemyDir = Vector3(1,0,0);
 
 						if (routeCounter == 0)
 							enemyTile.x += 1;  
@@ -173,6 +181,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 					case '1':
 						theEnemyPosition.y -= 2;
 
+						enemyDir = Vector3(0,-1,0);
+
 						if (routeCounter2 == 0)
 							enemyTile.y += 1;
 
@@ -181,12 +191,16 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 					case '2':
 						theEnemyPosition.x -= 2;
 
+						enemyDir = Vector3(-1,0,0);
+
 						if (routeCounter2 == 0)
 							enemyTile.x -= 1; 
 
 						break;
 					case '3':
 						theEnemyPosition.y += 2;
+
+						enemyDir = Vector3(0,1,0);
 
 						if (routeCounter2 == 0)
 							enemyTile.y -= 1;
@@ -195,6 +209,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile)
 				
 					case '0':
 						theEnemyPosition.x += 2;
+
+						enemyDir = Vector3(1,0,0);
 
 						if (routeCounter2 == 0)
 							enemyTile.x += 1;  

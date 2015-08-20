@@ -12,7 +12,7 @@ public:
 	CStrategy_Kill();
 	~CStrategy_Kill();
 
-	void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile);
+	void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir);
 	void SetDestination(const float x, const float y);
 	void SetEnemyPosition(const float x, const float y);
 	void GetEnemyPosition(float& x, float& y);

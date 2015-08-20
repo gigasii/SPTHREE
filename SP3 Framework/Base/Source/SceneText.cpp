@@ -216,7 +216,7 @@ void SceneText::Init()
 	rotateAngle = 0;
 
 	//Game variables
-	level = 7;
+	level = 1;
 	attackSpeed = 0;
 	DistanceFromEnemyX = 0;
 	DistanceFromEnemyY = 0;
@@ -398,7 +398,7 @@ void SceneText::Update(double dt)
 				go->currentStrat = CEnemy::STRAT_KILL;
 			}
 
-			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapFineOffset_x, hero.gettheHeroPositiony());
+			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
 			go->Update(CurrentMap, hero.heroCurrTile);
 
 			if(go->ID == 50)
@@ -525,6 +525,7 @@ void SceneText::Update(double dt)
 				hero.SetdoorOpened(false);
 				level = 2;
 				hero.settheHeroPositionx(32);
+				hero.heroCurrTile.x = 1;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 				map.InitMap(enemyList, GoodiesList);
