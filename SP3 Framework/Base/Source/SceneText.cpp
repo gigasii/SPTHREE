@@ -386,7 +386,7 @@ void SceneText::Update(double dt)
 	}
 
 	// =================================== UPDATE THE ENEMY ===================================
-	
+
 	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		CEnemy *go = (CEnemy *)*it;
@@ -401,15 +401,11 @@ void SceneText::Update(double dt)
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
 			go->Update(CurrentMap, hero.heroCurrTile);
 
-			if(go->ID == 50)
-			{
-				DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x();
-				DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
-				std::cout << "DISTANCE:" << DistanceFromEnemyX << std::endl;
-			}
+			DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() +  CurrentMap->mapOffset_x;
+			DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
+			CheckEnemiesInRange(go);
 		}
 
-		CheckEnemiesInRange(go);
 	}
 	
 	// =================================== UPDATE THE GOODIES ===================================
@@ -473,9 +469,6 @@ void SceneText::Update(double dt)
 	{
 		bossCounter = 0;
 	}
-
-	std::cout << "Boss Increase: " << BossTileID << std::endl;
-	std::cout << "Boss Counter: " << bossCounter << std::endl;
 
 
 	BossPointer->Set_SpawnGuards(IsTurn);
