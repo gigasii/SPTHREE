@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Hero.h"
 #include "Enemy.h"
+#include "Boss.h"
 
 class SceneText : public Scene
 {
@@ -62,6 +63,7 @@ class SceneText : public Scene
 		//Tilesheet
 		GEO_SCREENTILESHEET,
 		GEO_TILEBACKGROUND,
+		GEO_TILE,
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
@@ -72,6 +74,9 @@ class SceneText : public Scene
 		//Enemy sprite Animation
 		GEO_TILEENEMY_FRAME0,
 		GEO_TILEENEMY_FRAME1,
+
+		// Boss Sprite Animation
+		GEO_TILEBOSS_FRAME0,
 
 		//Goodies
 		GEO_DIAMOND,
@@ -144,6 +149,7 @@ private:
 	
 	//current map/map handler
 	CMap * CurrentMap;
+	CBoss* BossPointer;
 
 	//Vector list of enemies
 	std::vector<CEnemy *> enemyList;
@@ -166,6 +172,12 @@ private:
 
 	//Sprites Variable
 	float heroTileID;
+	float bossCounter;
+	float BossTileID;
+
+	// Boss Variables
+	bool IsTurn;
+	bool EnemiesRendered;
 };
 
 #endif

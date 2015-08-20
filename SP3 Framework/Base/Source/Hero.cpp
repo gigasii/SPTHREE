@@ -126,7 +126,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 		theHeroPositionx = leftBorder;
 		if(mapType->scroll == true)
 		{
-			mapType->mapOffset_x = mapType->mapOffset_x - (int)(2.0f * timeDiff);
+			mapType->mapOffset_x = mapType->mapOffset_x - (int)(4.0f * timeDiff);
 			
 			if(mapType->mapOffset_x < 0)
 				mapType->mapOffset_x = 0;
@@ -141,7 +141,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 		theHeroPositionx = rightBorder;
 		if(mapType->scroll == true)
 		{
-			mapType->mapOffset_x = mapType->mapOffset_x + (int)(2.0f * timeDiff);
+			mapType->mapOffset_x = mapType->mapOffset_x + (int)(4.0f * timeDiff);
 			
 			if(mapType->mapOffset_x > Max_mapOffset_x)
 				mapType->mapOffset_x = Max_mapOffset_x;
@@ -266,53 +266,55 @@ bool Hero::CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool c
 
 void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level) 
 {	
-	//Update walking
-	if(key == 'a' && !CheckCollision(mapType, true, false, false, false) && moveToRight == false && moveToUp == false && moveToDown == false)
+	if (moveToRight == false && moveToLeft == false && moveToDown == false && moveToUp == false)
 	{
-		HeroMoveLeftRight(true, 1.0f);
-		float tempCheckLeft = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
+		if(key == 'a' && !CheckCollision(mapType, true, false, false, false))
+		{
+			HeroMoveLeftRight(true, 1.0f);
+			float tempCheckLeft = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
-		if(moveToLeft == false)
-			heroCurrTile.x -= 1;
+			if(moveToLeft == false)
+				heroCurrTile.x -= 1;
 
-		if(tempCheckLeft != (int)tempCheckLeft)
-			moveToLeft = true;
-	}
+			if(tempCheckLeft != (int)tempCheckLeft)
+				moveToLeft = true;
+		}
 
-	else if(key == 'd' && !CheckCollision(mapType, false, true, false, false) && moveToLeft == false && moveToUp == false && moveToDown == false)
-	{
-		HeroMoveLeftRight(false, 1.0f);
-		float tempCheckRight = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
+		else if(key == 'd' && !CheckCollision(mapType, false, true, false, false))
+		{
+			HeroMoveLeftRight(false, 1.0f);
+			float tempCheckRight = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
-		if (moveToRight == false)
-			heroCurrTile.x += 1;
+			if (moveToRight == false)
+				heroCurrTile.x += 1;
 
-		if (tempCheckRight != (int)tempCheckRight)
-			moveToRight = true;
-	}
+			if (tempCheckRight != (int)tempCheckRight)
+				moveToRight = true;
+		}
 
-	if(key == 'w' && !CheckCollision(mapType, false, false, false, true) && moveToRight == false && moveToLeft == false && moveToDown == false)
-	{
-		HeroMoveUpDown(true, 1.0f);
-		float tempCheckUp = ((float)(theHeroPositiony) / mapType->GetTileSize());
+		if(key == 'w' && !CheckCollision(mapType, false, false, false, true))
+		{
+			HeroMoveUpDown(true, 1.0f);
+			float tempCheckUp = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-		if(moveToUp== false)
-			heroCurrTile.y -= 1;
+			if(moveToUp== false)
+				heroCurrTile.y -= 1;
 
-		if(tempCheckUp != (int)tempCheckUp)
-			moveToUp = true;
-	}
+			if(tempCheckUp != (int)tempCheckUp)
+				moveToUp = true;
+		}
 
-	else if(key == 's' && !CheckCollision(mapType, false, false, true, false) && moveToRight == false && moveToLeft == false && moveToUp == false)
-	{
-		HeroMoveUpDown(false, 1.0f);
-		float tempCheckDown = ((float)(theHeroPositiony) / mapType->GetTileSize());
+		else if(key == 's' && !CheckCollision(mapType, false, false, true, false))
+		{
+			HeroMoveUpDown(false, 1.0f);
+			float tempCheckDown = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-		if(moveToDown== false)
-			heroCurrTile.y += 1;
+			if(moveToDown== false)
+				heroCurrTile.y += 1;
 
-		if(tempCheckDown != (int)tempCheckDown)
-			moveToDown= true;
+			if(tempCheckDown != (int)tempCheckDown)
+				moveToDown= true;
+		}
 	}
 
 	if(moveToLeft == true)
@@ -400,7 +402,7 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 	}
 	}*/
 
-	if(level == 1)
+	if(level == 1 || level == 7)
 	{
 		ConstrainHero(mapType, 0, 992, 25, 740, 1.0f);
 	}
@@ -409,7 +411,10 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 	{
 		if(mapType->mapOffset_x > 0)
 		{
-			ConstrainHero(mapType, 480, 544, 25, 740, 1.0f);
+			if (mapType->mapOffset_x >= 1024)
+				ConstrainHero(mapType, 480, 992, 25, 740, 1.0f);
+			else
+				ConstrainHero(mapType, 480, 544, 25, 740, 1.0f);
 		}
 		
 		else 
@@ -456,13 +461,13 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (2.0f * timeDiff);
+		theHeroPositiony = theHeroPositiony + (int) (4.0f * timeDiff);
 		heroAnimationFlip = true;
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (2.0f * timeDiff);
+		theHeroPositiony = theHeroPositiony - (int) (4.0f * timeDiff);
 		heroAnimationFlip = false;
 	}
 } 
@@ -471,13 +476,13 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositionx = theHeroPositionx - (int) (2.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx - (int) (4.0f * timeDiff);
 		heroAnimationInvert = true;
 	}
 
 	else 
 	{ 
-		theHeroPositionx = theHeroPositionx + (int) (2.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx + (int) (4.0f * timeDiff);
 		heroAnimationInvert = false;
 	}
 }
