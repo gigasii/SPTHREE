@@ -10,6 +10,7 @@ CEnemy::CEnemy()
 	, active(true)
 	, ID(50)
 	, eneCurrTile(0,0,0)
+	, direction(1,0,0)
 {
 }
 
@@ -106,7 +107,7 @@ void CEnemy::Update(CMap* map, Vector3& heroTile)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map, eneCurrTile, heroTile);
+		theStrategy->Update(map, eneCurrTile, heroTile, direction);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 }
@@ -136,7 +137,7 @@ void CEnemy::setWayPoints(CMap* map)
 {
 	switch(ID)
 	{
-		case CMap::ENEMY_1:
+	case CMap::ENEMY_1:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
 	}

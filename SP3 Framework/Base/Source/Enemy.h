@@ -35,6 +35,7 @@ public:
 	bool active;
 	CPathing path;
 	Vector3 eneCurrTile;
+	Vector3 direction;
 
 	//Initialise this class instance
 	void Init();
