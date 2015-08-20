@@ -10,8 +10,9 @@ class CEnemy
 private:
 	//Enemy's information
 	Vector2 theENEMYPosition;
-	int  enemyAnimationCounter;
 	bool enemyAnimationInvert;
+	bool enemyAnimationFlip;
+	int health;
 
 	//The Destination is the position of the Hero
 	Vector2 theDestination;
@@ -57,22 +58,23 @@ public:
 	//Get destination of this enemy
 	int GetDestination_y();
 
+	//Get Animation Invert status of the enemy
+	bool GetAnimationInvert();
+
+	//Get Animation Flip Status of the enemy
+	bool GetAnimationFlip();
+
+	//Set Damage taken to Enemies
+	void SetHealth(int health_);
+	//Get Damage taken to Enemies
+	int GetHealth();
+
 	//Enemy Update
 	void Update(CMap* map, Vector3& heroTile);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
-
-	//Set Animation Invert status of the enemy
-	void SetAnimationInvert(bool ENEMYAnimationInvert);
-	//Get Animation Invert status of the enemy
-	bool GetAnimationInvert();
-
-	//Set Animation Counter of the enemy
-	void SetAnimationCounter(int ENEMYAnimationCounter);
-	//Get Animation Counter of the player
-	int GetAnimationCounter();
-
+	
 	void setWayPoints(CMap* map);
 };
 

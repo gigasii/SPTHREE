@@ -193,39 +193,13 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 	CEnemy* tempEnemy;
 	CGoodies* tempGoodies;
 
-	for (int i = 0; i < m_cBossMap->getNumOfTiles_MapHeight(); ++i)
+	for(int i = 0; i < m_cBossMap->getNumOfTiles_MapHeight(); ++i)
 	{
-		for (int j = 0; j < m_cBossMap->getNumOfTiles_MapWidth(); ++j)
+		for(int j = 0; j < m_cBossMap->getNumOfTiles_MapWidth(); ++j)
 		{
 			tempType = m_cBossMap->theScreenMap[i][j];
 
-			if (tempType == CMap::JEWEL)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
-				tempGoodies->active = true;
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if (tempType == CMap::KEY)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if (tempType == CMap::CHEST)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if (tempType >= CMap::ENEMY_1)
+			if(tempType >= CMap::ENEMY_1)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL, false);
