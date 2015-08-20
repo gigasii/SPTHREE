@@ -381,6 +381,7 @@ void SceneText::Update(double dt)
 			{
 				DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x();
 				DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
+				std::cout << "DISTANCE:" << DistanceFromEnemyX << std::endl;
 			}
 		}
 
@@ -394,7 +395,7 @@ void SceneText::Update(double dt)
 		CGoodies *go = (CGoodies *)*it;
 		if(go->active)	
 		{
-			if(go->CalculateDistance(hero.gettheHeroPositionx(), hero.gettheHeroPositiony()) == true)
+			if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
 			{
 				if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
 				{
@@ -495,7 +496,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go)
 		//Check enemies in x-order
 		if(DistanceFromEnemyY == 0)
 		{
-			if(DistanceFromEnemyX >= 20 && DistanceFromEnemyX <= 24)
+			if(DistanceFromEnemyX >= 15 && DistanceFromEnemyX <= 30)
 			{
 				if(hero.GetAnimationInvert() == true)
 				{
@@ -503,7 +504,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go)
 				}
 			}
 
-			else if(DistanceFromEnemyX <= -20 && DistanceFromEnemyX >= -24)
+			else if(DistanceFromEnemyX <= -15 && DistanceFromEnemyX >= -30)
 			{
 				if(hero.GetAnimationInvert() == false)
 				{
@@ -515,7 +516,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go)
 		//Check enemies in Y-order
 		else if(DistanceFromEnemyX == 0)
 		{
-			if(DistanceFromEnemyY >= 20 && DistanceFromEnemyY <= 24)
+			if(DistanceFromEnemyY >= 15 && DistanceFromEnemyY <= 30)
 			{
 				if(hero.GetAnimationFlip() == false)
 				{
@@ -523,7 +524,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go)
 				}
 			}
 
-			else if(DistanceFromEnemyY <= -20 && DistanceFromEnemyY >= -24)
+			else if(DistanceFromEnemyY <= -15 && DistanceFromEnemyY >= -30)
 			{
 				if(hero.GetAnimationFlip() == true)
 				{
