@@ -400,7 +400,7 @@ void Hero::HeroUpdate(CMap *mapType, const char key, const bool jump, int level)
 	}
 	}*/
 
-	if(level == 1)
+	if(level == 1 || level == 7)
 	{
 		ConstrainHero(mapType, 0, 992, 25, 740, 1.0f);
 	}

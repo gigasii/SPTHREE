@@ -39,8 +39,8 @@ public:
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
 	void InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList);
-
 	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
+	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
 
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
@@ -56,6 +56,7 @@ public:
 	//Map Inits
 	CMap *m_cMap;
 	CMap *m_cScreenMap;
+	CMap *m_cBossMap;
 
 	vector<vector<int> > theScreenMap;
 	bool scroll;

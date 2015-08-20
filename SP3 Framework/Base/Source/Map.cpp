@@ -19,6 +19,7 @@ CMap::CMap(void)
 , mapFineOffset_y(0)
 , m_cMap(NULL)
 , m_cScreenMap(NULL)
+, m_cBossMap(NULL)
 , scroll(false)
 {
 	theScreenMap.clear();
@@ -36,6 +37,12 @@ CMap::~CMap(void)
 	{
 		delete m_cScreenMap;
 		m_cScreenMap = NULL;
+	}
+
+	if (m_cBossMap)
+	{
+		delete m_cBossMap;
+		m_cBossMap = NULL;
 	}
 
 	theScreenMap.clear();
@@ -170,6 +177,63 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempEnemy->ID = tempType;
 				tempEnemy->setWayPoints(m_cScreenMap);
 				tempEnemy->eneCurrTile = Vector3(j,i,0);
+				enemyList.push_back(tempEnemy);
+			}
+		}
+	}
+}
+
+void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList)
+{
+	m_cBossMap = new CMap();
+	m_cBossMap->Init(800, 1024, 25, 32, 800, 1024, 32);
+	m_cBossMap->LoadMap("Image//MapDesign_Boss.csv");
+	m_cBossMap->scroll = false;
+	int tempType;
+	CEnemy* tempEnemy;
+	CGoodies* tempGoodies;
+
+	for (int i = 0; i < m_cBossMap->getNumOfTiles_MapHeight(); ++i)
+	{
+		for (int j = 0; j < m_cBossMap->getNumOfTiles_MapWidth(); ++j)
+		{
+			tempType = m_cBossMap->theScreenMap[i][j];
+
+			if (tempType == CMap::JEWEL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempGoodies->active = true;
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if (tempType == CMap::KEY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if (tempType == CMap::CHEST)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if (tempType >= CMap::ENEMY_1)
+			{
+				tempEnemy = new CEnemy();
+				tempEnemy->ChangeStrategy(NULL, false);
+				tempEnemy->SetPos_x(j * m_cBossMap->GetTileSize());
+				tempEnemy->SetPos_y(m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempEnemy->active = true;
+				tempEnemy->ID = tempType;
+				tempEnemy->setWayPoints(m_cBossMap);
 				enemyList.push_back(tempEnemy);
 			}
 		}
