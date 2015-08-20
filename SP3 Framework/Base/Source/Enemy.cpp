@@ -7,8 +7,8 @@ CEnemy::CEnemy()
 	, enemyAnimationCounter(0)
 	, enemyAnimationInvert(false)
 	, theStrategy(NULL)
-	, active (false)
-	, ID (50)
+	, active(true)
+	, ID(50)
 	, eneCurrTile(0,0,0)
 {
 }
@@ -134,9 +134,9 @@ void CEnemy::ChangeStrategy(CStrategy* theNewStrategy, bool bDelete)
 
 void CEnemy::setWayPoints(CMap* map)
 {
-	switch (ID)
+	switch(ID)
 	{
-	case CMap::ENEMY_1:
+		case CMap::ENEMY_1:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
 	}

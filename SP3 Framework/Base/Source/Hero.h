@@ -20,15 +20,16 @@ private:
 	int  heroAnimationCounter;
 	bool heroAnimationInvert;
 	bool heroAnimationFlip;
-	bool pickUpWeapon;
-	bool attackStatus;
-	//opening door stuff
+	bool moveToLeft, moveToRight, moveToUp, moveToDown;
+
+	//Character map interaction
 	bool keyAcquired;
 	bool doorOpened;
-	//weapon stuff
+	
+	//Weapon stuff
+	bool pickUpWeapon;
 	bool daggerAcquired;
-	bool moveToLeft, moveToRight, moveToUp, moveToDown;
-	bool attackEnemy;
+	bool attackStatus;
 
 public:
 	Hero();
@@ -81,11 +82,6 @@ public:
 	void SetDaggerAcquired(bool daggerAcquired_);
 	//Check whether dagger has been taken
 	bool GetDaggerAcquired();
-
-	//Set whether enemy is in range to attack
-	void SetAttackEnemy(bool attackEnemy_);
-	//Check whether enemy is in range to attack
-	bool GetAttackEnemy();
 
 	//Constrain the position of the Hero to within the border
 	void ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff);
