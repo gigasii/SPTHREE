@@ -23,6 +23,7 @@ public:
 		CHEST,
 		DOOR,
 		BARREL,
+		HAY,
 		GOODIES_TOTAL
 	};
 

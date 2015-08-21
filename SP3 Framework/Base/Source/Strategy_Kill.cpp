@@ -23,7 +23,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 
 	if(distanceHeroToEnemy < 49729.0f)
 	{
-		if(distanceHeroToEnemy < 625.0f)
+		if(distanceHeroToEnemy < 1024.f)
 		{
 			CurrentState = REPEL;
 		}
@@ -339,7 +339,7 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 		
 
 			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 ||  Map[xdx][ydy] == CMap::CHEST ||closed_nodes_map[xdx][ydy] == 1 ||
-				 !((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL)))
+				!((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL || Map[xdx][ydy] >= CMap::ENEMY_1)))
 			{
 				if (Map[xdx][ydy] == CMap::BARREL)
 				{
@@ -352,10 +352,7 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 							goto pathfind;
 						}
 
-						else
-						{
-							break;
-						}
+						
 					}
 				}
 
