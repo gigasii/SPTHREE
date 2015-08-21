@@ -162,7 +162,7 @@ void SceneText::Init()
 	meshList[GEO_TILEBACKGROUND]->textureID = LoadTGA("Image//ground.tga");
 
 	meshList[GEO_TILE] = MeshBuilder::GenerateTileMap("GEO_TILE", 6, 6);
-	meshList[GEO_TILE]->textureID = LoadTGA("Image//tile.tga");
+	meshList[GEO_TILE]->textureID = LoadTGA("Image//tile2.tga");
 
 	meshList[GEO_20] = MeshBuilder::Generate2DMesh("GEO_20", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_20]->textureID = LoadTGA("Image//Desert//tile20.tga");
@@ -304,7 +304,7 @@ void SceneText::Init()
 	meshList[GEO_HUD_HEART]->textureID = LoadTGA("Image//HUD//heart.tga");
 
 	meshList[GEO_HUD_KEY] = MeshBuilder::Generate2DMesh("GEO_HUD_KEY", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_HUD_KEY]->textureID = LoadTGA("Image//HUD//key.tga");
+	meshList[GEO_HUD_KEY]->textureID = LoadTGA("Image//Goodies//key.tga");
 
 	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
@@ -351,12 +351,16 @@ void SceneText::Init()
 	bossCounter = 0.0f;
 	IsTurn = false;
 	EnemiesRendered = false;
+	derenderDoor = false;
+	GetKey = false;
 
 	// === HUD Variables ===
 
 	diamondCount = 0;
 	keyCount = 0;
 	PointSystem = 0;
+	RenderHeartCounter = 0.f;
+	RenderEnemyHeartCounter = 0.0f;
 
 	// === Menu Variables ===
 
@@ -677,7 +681,10 @@ void SceneText::Update(double dt)
 		}
 	}
 
-	// =================================== BOSS UPDATES ===================================
+	// =================================== BOSS LEVEL UPDATES ===================================
+	//map traversing aka character can move from 1 map to another 
+	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
+	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
 	BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
 	bossCounter += 0.01f;
@@ -718,13 +725,54 @@ void SceneText::Update(double dt)
 		bossCounter = 0;
 	}
 
+	if (hero.GetdoorOpened() == true)
+	{
+		derenderDoor = true;
+	}
+
+	if (level == 7 && (CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS))
+	{
+		if (Application::IsKeyPressed(VK_SPACE))
+		{
+			if (GetKey == false)
+			{
+				keyCount++;
+			}
+
+			if (keyCount == 1)
+			{
+				hero.SetKeyAcquired(true);
+				GetKey = true;
+			}
+
+			for (std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+			{
+				CGoodies *go = (CGoodies *)*it;
+				if (go->active)
+				{
+					if (go->GoodiesType == CGoodies::Goodies_Type::DOOR)
+					{
+						go->active = false;
+					}
+				}
+			}
+		}
+	}
+
 	BossPointer->Set_SpawnGuards(IsTurn);
 
-	// =================================== MAIN UPDATES ===================================
+	// =================================== HUD UPDATES ===================================
+	RenderHeartCounter += 0.01f;
+	RenderEnemyHeartCounter += 0.01f;
 
-	//map traversing aka character can move from 1 map to another 
-	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) /CurrentMap->GetTileSize());
-	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+	if (RenderHeartCounter > 4)
+		RenderHeartCounter = 0;
+
+	if (RenderEnemyHeartCounter > 3)
+		RenderEnemyHeartCounter = 0;
+
+
+	// =================================== MAIN UPDATES ===================================
 
 	//Moving from screen stage to scrollnig stage conditions
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
@@ -777,15 +825,6 @@ void SceneText::Update(double dt)
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 				map.InitScreenMap(enemyList, GoodiesList, BarrelList);
 				CurrentMap = map.m_cScreenMap;	
-			}
-
-			else if(level == 7)
-			{
-				hero.settheHeroPositionx(32);
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitMap(enemyList, GoodiesList, BarrelList);
-				CurrentMap = map.m_cBossMap;
 			}
 		}
 	}
@@ -1309,7 +1348,7 @@ void SceneText::RenderText()
 	std::ostringstream ss;
 	ss.precision(4);
 	ss << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 2.3, 71, 0.5);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 71, 0.5);
 
 	if(Application::IsKeyPressed(VK_INSERT))
 	{
@@ -1454,7 +1493,7 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(level == 7)
+			else if (level == 7)
 			{
 				int m = 0;
 				CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
@@ -1463,22 +1502,27 @@ void SceneText::RenderTileMap()
 
 				//If we have reached the right side of the map, then do not display the extra column of tiles
 
-				if(m >= CurrentMap->getNumOfTiles_MapWidth())
+				if (m >= CurrentMap->getNumOfTiles_MapWidth())
 				{
 					break;
 				}
 
-				if(CurrentMap->theScreenMap[i][m] >= 0)
+				if (CurrentMap->theScreenMap[i][m] >= 0)
 				{
 					RenderTilesMap(meshList[GEO_TILE], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if(CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 && IsTurn == true || EnemiesRendered == true)
+				if (CurrentMap->theScreenMap[i][m] == 5 && derenderDoor == true)
+				{
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 && IsTurn == true || EnemiesRendered == true)
 				{
 					BossPointer->BossState = CBoss::B_SPAWN;
-					if(BossPointer->BossState == CBoss::B_SPAWN)
+					if (BossPointer->BossState == CBoss::B_SPAWN)
 					{
-						if(CurrentMap->theScreenMap[i][m] == 6)
+						if (CurrentMap->theScreenMap[i][m] == 6)
 						{
 							RenderSprites(meshList[GEO_TILEENEMYSHEET], 0, 32, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x - 32, 768 - i * CurrentMap->GetTileSize());
 						}
@@ -1531,18 +1575,16 @@ void SceneText::RenderGoodies()
 
 void SceneText::RenderHUD()
 {
-	//For Rendering of Player Lives
-	RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 1, 0.4, false);
-	RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 5, 0.4, false);
-	RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 9, 0.4, false);
+	if (level != 7)
+	{
+		//For Indicating number of diamonds collected
+		RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56, false);
 
-	//For Indicating number of diamonds collected
-	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56, false);
-
-	std::ostringstream ss1;
-	ss1.precision(5);
-	ss1 << "x " << diamondCount;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 56);
+		std::ostringstream ss1;
+		ss1.precision(5);
+		ss1 << "x " << diamondCount;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 56);
+	}
 
 	//For Indicating how number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56, false);
@@ -1550,7 +1592,43 @@ void SceneText::RenderHUD()
 	std::ostringstream ss2;
 	ss2.precision(5);
 	ss2 << "x " << keyCount;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 16, 56);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 56);
+
+	////For Rendering of Player Lives
+	//RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 1, 0.4, false);
+	//RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 5, 0.4, false);
+	//RenderQuadOnScreen(meshList[GEO_HUD_HEART], 3.4, 3, 9, 0.4, false);
+
+	// For Dislaying Hero's Health
+	if (RenderHeartCounter < 1)
+	{
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 35);
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 35);
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 35);
+	}
+	else if (RenderHeartCounter < 2)
+	{
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 35);
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 35);
+	}
+	else if (RenderHeartCounter < 3)
+	{
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 35);
+	}
+
+	// For Displaying Enemy's Health
+	for (int i = 0; i < enemyList.size(); ++i)
+	{
+		if (RenderEnemyHeartCounter < 1)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, enemyList[i]->GetPos_x() - 5, enemyList[i]->GetPos_y() + 35);
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, enemyList[i]->GetPos_x() + 15, enemyList[i]->GetPos_y() + 35);
+		}
+		else if (RenderEnemyHeartCounter < 2)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, enemyList[i]->GetPos_x() - 5, enemyList[i]->GetPos_y() + 35);
+		}
+	}
 
 	//For Point System
 	std::ostringstream ss3;
