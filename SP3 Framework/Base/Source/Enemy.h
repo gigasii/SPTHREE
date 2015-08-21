@@ -12,7 +12,6 @@ private:
 	Vector2 theENEMYPosition;
 	bool enemyAnimationInvert;
 	bool enemyAnimationFlip;
-	int health;
 
 	//The Destination is the position of the Hero
 	Vector2 theDestination;
@@ -33,10 +32,12 @@ public:
 	STRATEGY_TYPE currentStrat;
 
 	int ID;
+	int health;
 	bool active;
 	CPathing path;
 	Vector3 eneCurrTile;
 	Vector3 direction;
+	float enemyTileID;
 
 	//Initialise this class instance
 	void Init();
@@ -63,11 +64,6 @@ public:
 
 	//Get Animation Flip Status of the enemy
 	bool GetAnimationFlip();
-
-	//Set Damage taken to Enemies
-	void SetHealth(int health_);
-	//Get Damage taken to Enemies
-	int GetHealth();
 
 	//Enemy Update
 	void Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList);

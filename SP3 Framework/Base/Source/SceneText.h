@@ -61,20 +61,19 @@ class SceneText : public Scene
 		GEO_TEXT,
 
 		//Tilesheet
-		GEO_SCREENTILESHEET,
 		GEO_TILEBACKGROUND,
+		GEO_TILEDOOR,
 		GEO_TILE,
+		GEO_TILE_WAYPOINT,
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
 		GEO_TILEHEROSHEET2,
 
-		GEO_TILE_WAYPOINT,
-
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
 
-		// Boss Sprite Animation
+		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
 
 		//Goodies
@@ -84,15 +83,15 @@ class SceneText : public Scene
 		GEO_BARREL,
 		GEO_HAY,
 
-		// HUD icons
+		//HUD icons
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
 
-		// Menu
+		//Menu
 		GEO_MENU,
 
-		//tiles
+		//Sahara desert
 		GEO_20,
 		GEO_21,
 		GEO_22,
@@ -144,7 +143,7 @@ public:
 	virtual void UpdateAttackStatus(const unsigned char key);
 
 	//Check whether hero is in range to attack enemies
-	void CheckEnemiesInRange(CEnemy *go);
+	void CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int DistanceFromEnemyY);
 
 	//General functions to run the program
 	void RenderText(Mesh* mesh, std::string text, Color color);
@@ -202,26 +201,22 @@ private:
 	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
 
-	//Vector of obstakles - barrels
+	//Vector of obstacles - barrels
 	std::vector<CGoodies *> BarrelList;
 
 	//General variables
 	float fps;
 	float rotateAngle;
-	bool  bLightEnabled;
+	bool bLightEnabled;
 
 	//Project variables
 	int level;
 	float attackSpeed;
-	int DistanceFromEnemyX;
-	int DistanceFromEnemyY;
-	float healthLeft;
 	bool stabOnce;
 
 	//Sprites Variable
 	float heroTileID;
 	float BossTileID;
-	float enemyTileID;
 
 	//Boss Variables
 	bool IsTurn;
@@ -234,8 +229,6 @@ private:
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
-	float RenderHeartCounter;
-	float RenderEnemyHeartCounter;
 
 	// Menu Variables
 	int delay;
