@@ -169,6 +169,11 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 				return false;
 	   }
 
+	   if (mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BOSS)
+	   {
+		   return true;
+	   }
+
 	   else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::HAY)
 	   {
 		   return false;
@@ -300,6 +305,11 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 		   return false;
 	    }
 
+		if (mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BOSS)
+		{
+			return true;
+		}
+
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL)
 		{
 			for(std::vector<CGoodies *>::iterator it = obstacles.begin(); it != obstacles.end(); ++it)
@@ -351,6 +361,11 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 	    {
 		   return false;
 	    }
+
+		if (mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BOSS)
+		{
+			return true;
+		}
 
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
 		{
