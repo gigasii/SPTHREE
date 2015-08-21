@@ -23,6 +23,7 @@ public:
 		JEWEL,
 		KEY,
 		CHEST,
+		BARREL,
 		DOOR,
 		ENEMY_1 = 50, WAYPOINT_1 = -1, WAYPOINT_2 = -2, WAYPOINT_3 = -3,
 		ENEMY_2 = 51, WAYPOINT_4 = -4, WAYPOINT_5 = -5, WAYPOINT_6 = -6, WAYPOINT_7 = -7,
@@ -39,8 +40,8 @@ public:
 	int getNumOfTiles_MapHeight(void);		//Get the number of tiles for the height of the map
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
-	void InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList);
-	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
+	void InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
+	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
 
 	//Codes for scrolling

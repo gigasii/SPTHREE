@@ -76,10 +76,10 @@ public:
 	void ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff);
 
 	//Check for collision of hero with obstacles in a certain direction
-	bool CheckCollision(CMap *mapType, bool checkleft, bool checkright, bool checkdown, bool checkup);
+	bool CheckCollision(CMap *mapType, vector<CGoodies*>, bool checkleft, bool checkright, bool checkdown, bool checkup);
 
 	//Methods for Hero
-	void HeroUpdate(CMap *mapType, const char key, int level);
+	void HeroUpdate(CMap *mapType, vector<CGoodies*>, const char key, int level);
 	void HeroMoveUpDown(const bool mode, const float timeDiff);
 	void HeroMoveLeftRight(const bool mode, const float timeDiff);
 };
