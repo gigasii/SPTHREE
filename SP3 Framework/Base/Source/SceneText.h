@@ -72,22 +72,25 @@ class SceneText : public Scene
 		GEO_TILE_WAYPOINT,
 
 		//Enemy sprite Animation
-		GEO_TILEENEMY_FRAME0,
-		GEO_TILEENEMY_FRAME1,
+		GEO_TILEENEMYSHEET,
 
 		// Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
-
-		// HUD Geometry Mesh
-		GEO_HUD_HEART,
-		GEO_HUD_KEY,
-		GEO_HUD_DIAMOND,
 
 		//Goodies
 		GEO_DIAMOND,
 		GEO_KEY,
 		GEO_CHEST,
-		
+		GEO_BARREL,
+
+		// HUD icons
+		GEO_HUD_HEART,
+		GEO_HUD_KEY,
+		GEO_HUD_DIAMOND,
+
+		// Menu
+		GEO_MENU,
+	
 		NUM_GEOMETRY,
 	};
 
@@ -124,6 +127,7 @@ public:
 	void RenderHero();
 	void RenderEnemies();
 	void RenderHUD();
+	void RenderMenu(int &InteractHighLight, int max, int min);
 
 	//General tilemap renderer
 	void RenderTileMap();
@@ -154,14 +158,19 @@ private:
 	CMap map;
 	
 	//current map/map handler
-	CMap * CurrentMap;
-	CBoss* BossPointer;
+	CMap *CurrentMap;
+	
+	//Boss handler
+	CBoss *BossPointer;
 
 	//Vector list of enemies
 	std::vector<CEnemy *> enemyList;
 
 	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
+
+	//Vector of obstakles - barrels
+	std::vector<CGoodies *> BarrelList;
 
 	//General variables
 	float fps;
@@ -173,22 +182,29 @@ private:
 	float attackSpeed;
 	int DistanceFromEnemyX;
 	int DistanceFromEnemyY;
-
-	//Sound effects
+	float healthLeft;
+	bool stabOnce;
 
 	//Sprites Variable
 	float heroTileID;
-	float bossCounter;
 	float BossTileID;
+	float enemyTileID;
+
+	//Boss Variables
+	bool IsTurn;
+	float bossCounter;
+	bool EnemiesRendered;
 
 	// HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
 
-	// Boss Variables
-	bool IsTurn;
-	bool EnemiesRendered;
+	// Menu Variables
+	int delay;
+	int InteractHighLight;
+	bool menu;
+	string Text[2];
 };
 
 #endif
