@@ -122,6 +122,17 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				GoodiesList.push_back(tempGoodies);
 			}
 
+			else if(tempType == CMap::HAY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;
+				tempGoodies->tilePos.Set(j,i,0);
+				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
 			else if (tempType >= CMap::ENEMY_1)
 			{
 				tempEnemy = new CEnemy();
@@ -181,6 +192,17 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
 				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::HAY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
+				tempGoodies->tilePos.Set(j,i,0);
+				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 

@@ -82,6 +82,7 @@ class SceneText : public Scene
 		GEO_KEY,
 		GEO_CHEST,
 		GEO_BARREL,
+		GEO_HAY,
 
 		// HUD icons
 		GEO_HUD_HEART,

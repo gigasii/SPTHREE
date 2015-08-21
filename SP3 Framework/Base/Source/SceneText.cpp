@@ -281,6 +281,10 @@ void SceneText::Init()
 	meshList[GEO_BARREL] = MeshBuilder::Generate2DMesh("GEO_BARREL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_BARREL]->textureID = LoadTGA("Image//Goodies//barrel.tga");
 
+	meshList[GEO_HAY] = MeshBuilder::Generate2DMesh("GEO_HAY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay.tga");
+
+
 	meshList[GEO_TILE_WAYPOINT] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILE_WAYPOINT]->textureID = LoadTGA("Image//tile0_blank_red.tga");
 
@@ -655,24 +659,19 @@ void SceneText::Update(double dt)
 				{
 					if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
 					{
-						go->active = false;
+						
 						if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 						{
-							hero.SetKeyAcquired(true);			
+							hero.SetKeyAcquired(true);
+							go->active = false;
+							keyCount++;
 						}
-					}
-
-					if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
-					{
-						go->active = false;
-						diamondCount++;
-						PointSystem += 10;
-					}
-
-					if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
-					{
-						go->active = false;
-						keyCount++;
+						if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+						{
+							go->active = false;
+							diamondCount++;
+							PointSystem += 10;
+						}
 					}
 				}
 			}
@@ -1444,14 +1443,15 @@ void SceneText::RenderTileMap()
 
 			else if(level == 2)
 			{
-				if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
+				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
-					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					int tempMesh = CurrentMap->theScreenMap[i][m] - 20;
+					Render2DMesh(meshList[GEO_20 + tempMesh], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				else if(CurrentMap->theScreenMap[i][m] >= 1)
+				else
 				{
-					RenderTilesMap(meshList[GEO_SCREENTILESHEET],CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 			}
 
@@ -1520,6 +1520,11 @@ void SceneText::RenderGoodies()
 			else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
 			{
 				Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+			}
+
+			else if(go->GoodiesType == CGoodies::Goodies_Type::HAY)
+			{
+				Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
 			}
 		}
 	}
@@ -1621,8 +1626,8 @@ void SceneText::Render()
 	RenderInit();
 	RenderTileMap();
 	RenderEnemies();
-	RenderGoodies();
 	RenderHero();
+	RenderGoodies();
 	RenderText();
 	RenderHUD();
 	//}
