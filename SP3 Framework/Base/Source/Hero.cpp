@@ -181,9 +181,9 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
-				if(tile_y == tileTopLeft_y || tile_y == tileTopLeft_y - 1 || tile_y == tileTopLeft_y + 1)
+				if(tile_y == tileTopLeft_y)
 				{
-					if(tile_x == tileTopLeft_x || tile_x == tileTopLeft_x - 1 || tile_x == tileTopLeft_x + 1)
+					if(tile_x == tileTopLeft_x - 1)
 					{
 						if(go->active)
 							return true;
@@ -231,9 +231,9 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
-				if(tile_y == tileTopLeft_y || tile_y == tileTopLeft_y - 1 || tile_y == tileTopLeft_y + 1)
+				if(tile_y == tileTopLeft_y)
 				{
-					if(tile_x == tileTopLeft_x || tile_x == tileTopLeft_x - 1 || tile_x == tileTopLeft_x + 1)
+					if(tile_x == tileTopLeft_x + 1)
 					{
 						if(go->active)
 							return true;
@@ -279,9 +279,9 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
-				if(tile_y == tileTopLeft_y || tile_y == tileTopLeft_y - 1 || tile_y == tileTopLeft_y + 1)
+				if(tile_y == tileTopLeft_y - 1)
 				{
-					if(tile_x == tileTopLeft_x || tile_x == tileTopLeft_x - 1 || tile_x == tileTopLeft_x + 1)
+					if(tile_x == tileTopLeft_x)
 					{
 						if(go->active)
 							return true;
@@ -313,9 +313,9 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
-				if(tile_y == tileTopLeft_y || tile_y == tileTopLeft_y - 1 || tile_y == tileTopLeft_y + 1)
+				if(tile_y == tileTopLeft_y + 1)
 				{
-					if(tile_x == tileTopLeft_x || tile_x == tileTopLeft_x - 1 || tile_x == tileTopLeft_x + 1)
+					if(tile_x == tileTopLeft_x)
 					{
 						if(go->active)
 							return true;

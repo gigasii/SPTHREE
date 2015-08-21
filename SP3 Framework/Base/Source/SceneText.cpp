@@ -29,14 +29,14 @@ void SceneText::Init()
 {
 	//Screen background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	
+
 	//Enable depth test
 	glEnable(GL_DEPTH_TEST);
-	
+
 	//Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS); 
 	glEnable(GL_CULL_FACE);
-	
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glEnable(GL_BLEND);
@@ -47,7 +47,7 @@ void SceneText::Init()
 
 	//Load shaders
 	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
-	
+
 	// Get a handle for our uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 	//m_parameters[U_MODEL] = glGetUniformLocation(m_programID, "M");
@@ -82,15 +82,15 @@ void SceneText::Init()
 	m_parameters[U_LIGHT1_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[1].cosCutoff");
 	m_parameters[U_LIGHT1_COSINNER] = glGetUniformLocation(m_programID, "lights[1].cosInner");
 	m_parameters[U_LIGHT1_EXPONENT] = glGetUniformLocation(m_programID, "lights[1].exponent");
-	
+
 	// Get a handle for our "colorTexture" uniform
 	m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID, "colorTextureEnabled");
 	m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID, "colorTexture");
-	
+
 	// Get a handle for our "textColor" uniform
 	m_parameters[U_TEXT_ENABLED] = glGetUniformLocation(m_programID, "textEnabled");
 	m_parameters[U_TEXT_COLOR] = glGetUniformLocation(m_programID, "textColor");
-	
+
 	// Use our shader
 	glUseProgram(m_programID);
 
@@ -110,7 +110,7 @@ void SceneText::Init()
 	lights[1].position.Set(1, 1, 0);
 	lights[1].color.Set(1, 1, 0.5f);
 	lights[1].power = 0.4f;
-	
+
 	glUniform1i(m_parameters[U_NUMLIGHTS], 1);
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
 
@@ -123,7 +123,7 @@ void SceneText::Init()
 	glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], lights[0].cosCutoff);
 	glUniform1f(m_parameters[U_LIGHT0_COSINNER], lights[0].cosInner);
 	glUniform1f(m_parameters[U_LIGHT0_EXPONENT], lights[0].exponent);
-	
+
 	glUniform1i(m_parameters[U_LIGHT1_TYPE], lights[1].type);
 	glUniform3fv(m_parameters[U_LIGHT1_COLOR], 1, &lights[1].color.r);
 	glUniform1f(m_parameters[U_LIGHT1_POWER], lights[1].power);
@@ -140,14 +140,14 @@ void SceneText::Init()
 	{
 		meshList[i] = NULL;
 	}
-	
+
 	// ================================= LOAD MESHES =================================
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference");//, 1000, 1000, 1000);
-	
+
 	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("quad", Color(1, 1, 1), 1.f);
 	meshList[GEO_QUAD]->textureID = LoadTGA("Image//calibri.tga");
-	
+
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//c.tga");
 
@@ -173,7 +173,7 @@ void SceneText::Init()
 	meshList[GEO_TILEHEROSHEET2]->textureID = LoadTGA("Image//Hero//hero2.tga");
 
 	// ================================= Load Enemies =================================
-	
+
 	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 5, 5);
 	meshList[GEO_TILEENEMYSHEET]->textureID = LoadTGA("Image//Enemy//enemy.tga");
 
@@ -200,12 +200,12 @@ void SceneText::Init()
 	meshList[GEO_TILEBOSS_FRAME0]->textureID = LoadTGA("Image//Enemy//boss.tga");
 
 	// ================================= Load Menu =================================
-	
+
 	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
 
 	// ==================================== Load HUD ====================================
-	
+
 	meshList[GEO_HUD_HEART] = MeshBuilder::Generate2DMesh("GEO_HUD_HEART", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_HEART]->textureID = LoadTGA("Image//HUD//heart.tga");
 
@@ -216,22 +216,22 @@ void SceneText::Init()
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
 
 	// ==================================================================================
-	
+
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	projectionStack.LoadMatrix(perspective);
 
 	// === Set hero's position ===
-	
+
 	hero.settheHeroPositionx(920);
 	hero.settheHeroPositiony(640);
 
 	// === Variables ===
-	
+
 	rotateAngle = 0;
 
 	// === Game variables ===
-	
+
 	level = 1;
 	attackSpeed = 0;
 	DistanceFromEnemyX = 0;
@@ -240,12 +240,12 @@ void SceneText::Init()
 	stabOnce = false;
 
 	// === Sprites Variable ===
-	
+
 	heroTileID = 0;
 	enemyTileID = 0;
 
 	// === Boss's Variables and Pointers ===
-	
+
 	BossPointer = new CBoss();
 	BossPointer->BossInit();
 	BossTileID = 0;
@@ -254,13 +254,13 @@ void SceneText::Init()
 	EnemiesRendered = false;
 
 	// === HUD Variables ===
-	
+
 	diamondCount = 0;
 	keyCount = 0;
 	PointSystem = 0;
 
 	// === Menu Variables ===
-	
+
 	menu = true;
 	InteractHighLight = 0;
 	delay = 0;
@@ -271,7 +271,7 @@ void SceneText::Init()
 
 	int tempHeroPosX = (int) ceil ((float)(920) / 32);
 	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
-	
+
 	hero.heroCurrTile = Vector3(tempHeroPosX,tempHeroPosY,0);
 
 	if(level == 1)
@@ -299,57 +299,57 @@ void SceneText::Update(double dt)
 {
 	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
-	
+
 	if(Application::IsKeyPressed('2'))
 		glDisable(GL_CULL_FACE);
-	
+
 	if(Application::IsKeyPressed('3'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	
+
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
+
 	if(Application::IsKeyPressed('5'))
 	{
 		lights[0].type = Light::LIGHT_POINT;
 		glUniform1i(m_parameters[U_LIGHT0_TYPE], lights[0].type);
 	}
-	
+
 	else if(Application::IsKeyPressed('6'))
 	{
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
 		glUniform1i(m_parameters[U_LIGHT0_TYPE], lights[0].type);
 	}
-	
+
 	else if(Application::IsKeyPressed('7'))
 	{
 		lights[0].type = Light::LIGHT_SPOT;
 		glUniform1i(m_parameters[U_LIGHT0_TYPE], lights[0].type);
 	}
-	
+
 	else if(Application::IsKeyPressed('8'))
 	{
 		bLightEnabled = true;
 	}
-	
+
 	else if(Application::IsKeyPressed('9'))
 	{
 		bLightEnabled = false;
 	}
 
 	// =================================== UPDATE THE HERO ===================================
-	
+
 	if(Application::IsKeyPressed('A'))
 	{
 		CHAR_HEROKEY = 'a';
-	
+
 		//Sprite Animation
 		heroTileID += 0.1;
 		if(heroTileID < 4)
 		{
 			heroTileID = 4;
 		}
-		
+
 		if(heroTileID > 6)
 		{
 			heroTileID = 4;
@@ -366,7 +366,7 @@ void SceneText::Update(double dt)
 		{
 			heroTileID = 8;
 		}
-		
+
 		if(heroTileID > 10)
 		{
 			heroTileID = 8;
@@ -376,14 +376,14 @@ void SceneText::Update(double dt)
 	else if(Application::IsKeyPressed('W'))
 	{
 		CHAR_HEROKEY = 'w';
-		
+
 		//Sprite Animation
 		heroTileID += 0.1;
 		if(heroTileID < 12)
 		{
 			heroTileID = 12;
 		}
-		
+
 		if(heroTileID > 14)
 		{
 			heroTileID = 12;
@@ -400,7 +400,7 @@ void SceneText::Update(double dt)
 		{
 			heroTileID = 0;
 		}
-		
+
 		if(heroTileID > 2)
 		{
 			heroTileID = 0;
@@ -447,129 +447,150 @@ void SceneText::Update(double dt)
 			DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 			CheckEnemiesInRange(go);
 
-		/*//Movement Sprite Animation
-		if(go->direction == Vector3(0, -1, 0))
-		{
-				//Sprite Animation
-				enemyTileID += 0.1;
-				if(enemyTileID < 0)
-				{
-					enemyTileID = 0;
-				}
+			/*//Movement Sprite Animation
+			if(go->direction == Vector3(0, -1, 0))
+			{
+			//Sprite Animation
+			enemyTileID += 0.1;
+			if(enemyTileID < 0)
+			{
+			enemyTileID = 0;
+			}
 
-				else if(enemyTileID > 2)
-				{
-					enemyTileID = 0;
-				}
-		}
+			else if(enemyTileID > 2)
+			{
+			enemyTileID = 0;
+			}
+			}
 
-		else if(go->direction == Vector3(-1, 0, 0))
-		{
+			else if(go->direction == Vector3(-1, 0, 0))
+			{
 			//Sprite Animation
 			enemyTileID += 0.1;
 			if(enemyTileID < 5)
 			{
-				enemyTileID = 5;
+			enemyTileID = 5;
 			}
 
 			else if(enemyTileID > 7)
 			{
-				enemyTileID = 5;
+			enemyTileID = 5;
 			}
-		}
+			}
 
-		else if(go->direction == Vector3(1, 0, 0))
-		{
+			else if(go->direction == Vector3(1, 0, 0))
+			{
 			//Sprite Animation
 			enemyTileID += 0.1;
 			if(enemyTileID < 10)
 			{
-				enemyTileID = 10;
+			enemyTileID = 10;
 			}
 
 			else if(enemyTileID > 12)
 			{
-				enemyTileID = 10;
+			enemyTileID = 10;
 			}
-		}
+			}
 
-		else if(go->direction == Vector3(0, 1, 0))
-		{
+			else if(go->direction == Vector3(0, 1, 0))
+			{
 			//Sprite Animation
 			enemyTileID += 0.1;
 			if(enemyTileID < 15)
 			{
-				enemyTileID = 15;
+			enemyTileID = 15;
 			}
 
 			else if(enemyTileID > 17)
 			{
-				enemyTileID = 15;
+			enemyTileID = 15;
 			}
-		}*/
-	}
+			}*/
+		}
 
 		//std::cout << "DISTANCE:" << DistanceFromEnemyX << "," <<  DistanceFromEnemyY << std::endl;
 		std::cout << go->GetHealth() << std::endl;
 	}
-	
+
 	// =================================== UPDATE THE GOODIES ===================================
-	
+
 	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
 		if(go->active)	
 		{
-			if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+			if(hero.GetAttackStatus())
 			{
-				int tileTopLeft_x = (int) ((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
-				int tileTopLeft_y = CurrentMap->GetNumOfTiles_Height() - (int)ceil( (float)(hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+				if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+				{
+					int tileTopLeft_x = (int) ((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
+					int tileTopLeft_y = CurrentMap->GetNumOfTiles_Height() - (int)ceil( (float)(hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
-				if(CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
-				{	
-					
-						if(hero.GetAttackStatus())
+					if(CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
+					{	
+
+						for(std::vector<CGoodies *>::iterator it = BarrelList.begin(); it != BarrelList.end(); ++it)
 						{
-							go->active = false;	
-							
+							CGoodies *go = (CGoodies *)*it;
+
+							if(go->active)
+							{
+								int tile_x = go->GetPos_x() / CurrentMap->GetTileSize();
+
+								int tile_y = CurrentMap->GetNumOfTiles_Height() - (go->GetPos_y() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize();
+
+								if(tile_y == tileTopLeft_y || tile_y == tileTopLeft_y - 1 || tile_y == tileTopLeft_y + 1)
+								{
+									if(tile_x == tileTopLeft_x || tile_x == tileTopLeft_x - 1 || tile_x == tileTopLeft_x + 1)
+									{
+										go->active = false;
+									}
+								}
+							}
+
 						}
-					
+
+
+						//go->active = false;	
+					}
+
 
 					//CheckBarrelsInRange(go);
 				}
 			}
 			else
 			{	
-			if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
-			{
-				if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
+				if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
 				{
-					go->active = false;
+					if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
+					{
+						go->active = false;
+						if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+						{
+							hero.SetKeyAcquired(true);			
+						}
+					}
+
+					if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+					{
+						go->active = false;
+						diamondCount++;
+						PointSystem += 10;
+					}
+
 					if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 					{
-						hero.SetKeyAcquired(true);			
+						go->active = false;
+						keyCount++;
 					}
 				}
-
-				if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
-				{
-					go->active = false;
-					diamondCount++;
-					PointSystem += 10;
-				}
-
-				if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
-				{
-					go->active = false;
-					keyCount++;
-				}
-			}
 			}
 		}
 	}
 
 	// =================================== BOSS UPDATES ===================================
-	
+
 	BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
 	bossCounter += 0.01f;
 
@@ -616,7 +637,7 @@ void SceneText::Update(double dt)
 	//map traversing aka character can move from 1 map to another 
 	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) /CurrentMap->GetTileSize());
 	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
-	
+
 	//Moving from screen stage to scrollnig stage conditions
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
 	{
@@ -642,7 +663,7 @@ void SceneText::Update(double dt)
 			}
 		}
 	}
-	
+
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
 	{
 		if(hero.GetdoorOpened() == true)
@@ -819,7 +840,7 @@ void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
 {
 	if(!mesh || mesh->textureID <= 0)
 		return;
-	
+
 	glDisable(GL_DEPTH_TEST);
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
 	glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
@@ -828,14 +849,14 @@ void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-	
+
 	for(unsigned i = 0; i < text.length(); ++i)
 	{
 		Mtx44 characterSpacing;
 		characterSpacing.SetToTranslation(i * 1.0f, 0, 0); //1.0f is the spacing of each character, you may change this value
 		Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	
+
 		mesh->Render((unsigned)text[i] * 6, 6);
 	}
 
@@ -848,40 +869,40 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 {
 	if(!mesh || mesh->textureID <= 0)
 		return;
-	
+
 	glDisable(GL_DEPTH_TEST);
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 80, 0, 60, -10, 10);
 	projectionStack.PushMatrix();
-		projectionStack.LoadMatrix(ortho);
-		viewStack.PushMatrix();
-			viewStack.LoadIdentity();
-			modelStack.PushMatrix();
-				modelStack.LoadIdentity();
-				modelStack.Translate(x, y, 0);
-				modelStack.Scale(size, size, size);
-				glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
-				glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
-				glUniform1i(m_parameters[U_LIGHTENABLED], 0);
-				glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
-				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				
-				for(unsigned i = 0; i < text.length(); ++i)
-				{
-					Mtx44 characterSpacing;
-					characterSpacing.SetToTranslation(i * 0.6f + 0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
-					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
-					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	
-					mesh->Render((unsigned)text[i] * 6, 6);
-				}
-				
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
-			modelStack.PopMatrix();
-		viewStack.PopMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, size);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+	glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+
+	for(unsigned i = 0; i < text.length(); ++i)
+	{
+		Mtx44 characterSpacing;
+		characterSpacing.SetToTranslation(i * 0.6f + 0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
+		Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
+		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+
+		mesh->Render((unsigned)text[i] * 6, 6);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
 	glEnable(GL_DEPTH_TEST);
 }
@@ -891,74 +912,22 @@ void SceneText::RenderMeshIn2D(Mesh *mesh, const bool enableLight, const float s
 	Mtx44 ortho;
 	ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
 	projectionStack.PushMatrix();
-		projectionStack.LoadMatrix(ortho);
-		viewStack.PushMatrix();
-			viewStack.LoadIdentity();
-			modelStack.PushMatrix();
-				modelStack.LoadIdentity();
-				modelStack.Translate(x, y, 0);
-				modelStack.Scale(size, size, size);
-				
-				if(rotate)
-					modelStack.Rotate(rotateAngle, 0, 0, 1);
-       
-				Mtx44 MVP, modelView, modelView_inverse_transpose;
-	
-				MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
-				glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-				
-				if(mesh->textureID > 0)
-				{
-					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, mesh->textureID);
-					glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				}
-				
-				else
-				{
-					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
-				}
-				
-				mesh->Render();
-				
-				if(mesh->textureID > 0)
-				{
-					glBindTexture(GL_TEXTURE_2D, 0);
-				}
-       
-			modelStack.PopMatrix();
-		viewStack.PopMatrix();
-	projectionStack.PopMatrix();
-}
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, size);
 
-void SceneText::RenderMesh(Mesh *mesh, bool enableLight)
-{
+	if(rotate)
+		modelStack.Rotate(rotateAngle, 0, 0, 1);
+
 	Mtx44 MVP, modelView, modelView_inverse_transpose;
-	
+
 	MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
 	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	
-	if(enableLight && bLightEnabled)
-	{
-		glUniform1i(m_parameters[U_LIGHTENABLED], 1);
-		modelView = viewStack.Top() * modelStack.Top();
-		glUniformMatrix4fv(m_parameters[U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
-		modelView_inverse_transpose = modelView.GetInverse().GetTranspose();
-		glUniformMatrix4fv(m_parameters[U_MODELVIEW_INVERSE_TRANSPOSE], 1, GL_FALSE, &modelView.a[0]);
-		
-		//load material
-		glUniform3fv(m_parameters[U_MATERIAL_AMBIENT], 1, &mesh->material.kAmbient.r);
-		glUniform3fv(m_parameters[U_MATERIAL_DIFFUSE], 1, &mesh->material.kDiffuse.r);
-		glUniform3fv(m_parameters[U_MATERIAL_SPECULAR], 1, &mesh->material.kSpecular.r);
-		glUniform1f(m_parameters[U_MATERIAL_SHININESS], mesh->material.kShininess);
-	}
-	
-	else
-	{	
-		glUniform1i(m_parameters[U_LIGHTENABLED], 0);
-	}
-	
+
 	if(mesh->textureID > 0)
 	{
 		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
@@ -966,14 +935,66 @@ void SceneText::RenderMesh(Mesh *mesh, bool enableLight)
 		glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 		glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
 	}
-	
+
 	else
 	{
 		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
 	}
-	
+
 	mesh->Render();
-	
+
+	if(mesh->textureID > 0)
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
+	projectionStack.PopMatrix();
+}
+
+void SceneText::RenderMesh(Mesh *mesh, bool enableLight)
+{
+	Mtx44 MVP, modelView, modelView_inverse_transpose;
+
+	MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
+	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+
+	if(enableLight && bLightEnabled)
+	{
+		glUniform1i(m_parameters[U_LIGHTENABLED], 1);
+		modelView = viewStack.Top() * modelStack.Top();
+		glUniformMatrix4fv(m_parameters[U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
+		modelView_inverse_transpose = modelView.GetInverse().GetTranspose();
+		glUniformMatrix4fv(m_parameters[U_MODELVIEW_INVERSE_TRANSPOSE], 1, GL_FALSE, &modelView.a[0]);
+
+		//load material
+		glUniform3fv(m_parameters[U_MATERIAL_AMBIENT], 1, &mesh->material.kAmbient.r);
+		glUniform3fv(m_parameters[U_MATERIAL_DIFFUSE], 1, &mesh->material.kDiffuse.r);
+		glUniform3fv(m_parameters[U_MATERIAL_SPECULAR], 1, &mesh->material.kSpecular.r);
+		glUniform1f(m_parameters[U_MATERIAL_SHININESS], mesh->material.kShininess);
+	}
+
+	else
+	{	
+		glUniform1i(m_parameters[U_LIGHTENABLED], 0);
+	}
+
+	if(mesh->textureID > 0)
+	{
+		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+		glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	}
+
+	else
+	{
+		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
+	}
+
+	mesh->Render();
+
 	if(mesh->textureID > 0)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -986,47 +1007,47 @@ void SceneText::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, 
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 1024, 0, 800, -10, 10);
 	projectionStack.PushMatrix();
-		projectionStack.LoadMatrix(ortho);
-		viewStack.PushMatrix();
-			viewStack.LoadIdentity();
-			modelStack.PushMatrix();
-				modelStack.LoadIdentity();
-				modelStack.Translate(x, y, 0);
-				modelStack.Scale(size, size, size);
-				
-				if(rotate)
-				{
-					//glDisable(GL_CULL_FACE);
-					//modelStack.Rotate(180, 0, 1, 0);
-				}
-       
-				Mtx44 MVP, modelView, modelView_inverse_transpose;
-	
-				MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
-				glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-				
-				if(mesh->textureID > 0)
-				{
-					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, mesh->textureID);
-					glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				}
-				
-				else
-				{
-					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
-				}
-				
-				mesh->Render();
-				
-				if(mesh->textureID > 0)
-				{
-					glBindTexture(GL_TEXTURE_2D, 0);
-				}
-       
-			modelStack.PopMatrix();
-		viewStack.PopMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, size);
+
+	if(rotate)
+	{
+		//glDisable(GL_CULL_FACE);
+		//modelStack.Rotate(180, 0, 1, 0);
+	}
+
+	Mtx44 MVP, modelView, modelView_inverse_transpose;
+
+	MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
+	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+
+	if(mesh->textureID > 0)
+	{
+		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+		glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	}
+
+	else
+	{
+		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
+	}
+
+	mesh->Render();
+
+	if(mesh->textureID > 0)
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
 	glEnable(GL_DEPTH_TEST);
 }
@@ -1181,15 +1202,15 @@ void SceneText::RenderInit()
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	projectionStack.LoadMatrix(perspective);
-	
+
 	//Camera matrix
 	viewStack.LoadIdentity();
 	viewStack.LookAt(
-						camera.position.x, camera.position.y, camera.position.z,
-						camera.target.x, camera.target.y, camera.target.z,
-						camera.up.x, camera.up.y, camera.up.z
-					);
-	
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+		);
+
 	//Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 }
@@ -1261,7 +1282,7 @@ void SceneText::RenderEnemies()
 		CEnemy *go = (CEnemy *)*it;
 		int theEnemy_x = go->GetPos_x() - CurrentMap->mapOffset_x;
 		int theEnemy_y = go->GetPos_y();
-		
+
 		if(go->active)	
 		{			
 			RenderSprites(meshList[GEO_TILEENEMYSHEET], enemyTileID, 32, theEnemy_x, theEnemy_y);
@@ -1278,7 +1299,7 @@ void SceneText::RenderTileMap()
 {
 	int m = 0;	
 	CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
-	
+
 	for(int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
 	{
 		for(int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
@@ -1290,7 +1311,7 @@ void SceneText::RenderTileMap()
 			{
 				break;
 			}
-			
+
 			if(level == 1)
 			{
 				if(CurrentMap->theScreenMap[i][m] < 0)
@@ -1309,14 +1330,14 @@ void SceneText::RenderTileMap()
 					{
 						RenderTilesMap(meshList[GEO_SCREENTILESHEET], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 					}
-					
+
 					else
 					{
 						if(hero.GetdoorOpened() == false)
 						{
 							RenderTilesMap(meshList[GEO_SCREENTILESHEET], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 						}
-						
+
 						else
 						{
 							Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
@@ -1324,7 +1345,7 @@ void SceneText::RenderTileMap()
 					}				
 				}
 			}
-			
+
 			else if(level == 2)
 			{
 				if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
@@ -1346,12 +1367,12 @@ void SceneText::RenderTileMap()
 				m = CurrentMap->tileOffset_x + k;
 
 				//If we have reached the right side of the map, then do not display the extra column of tiles
-				
+
 				if(m >= CurrentMap->getNumOfTiles_MapWidth())
 				{
 					break;
 				}
-				
+
 				if(CurrentMap->theScreenMap[i][m] >= 0)
 				{
 					RenderTilesMap(meshList[GEO_TILE], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
@@ -1385,17 +1406,17 @@ void SceneText::RenderGoodies()
 		{
 			int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
 			int theGoodies_y = go->GetPos_y();
-			
+
 			if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
 			{
 				Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x -  CurrentMap->mapOffset_x, theGoodies_y);	
 			}
-			
+
 			else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 			{
 				Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
 			}
-			
+
 			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
 			{
 				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
@@ -1495,19 +1516,19 @@ void SceneText::Render()
 {
 	/*if (menu == true)
 	{
-		RenderQuadOnScreen(meshList[GEO_MENU], 82, 62, 40, 30, false);
-		RenderMenu(InteractHighLight, 1, 0);
+	RenderQuadOnScreen(meshList[GEO_MENU], 82, 62, 40, 30, false);
+	RenderMenu(InteractHighLight, 1, 0);
 	}
 
 	if (menu == false)
 	{*/
-		RenderInit();
-		RenderTileMap();
-		RenderEnemies();
-		RenderGoodies();
-		RenderHero();
-		RenderText();
-		RenderHUD();
+	RenderInit();
+	RenderTileMap();
+	RenderEnemies();
+	RenderGoodies();
+	RenderHero();
+	RenderText();
+	RenderHUD();
 	//}
 }
 
@@ -1519,7 +1540,7 @@ void SceneText::Exit()
 		if(meshList[i])
 			delete meshList[i];
 	}
-	
+
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
