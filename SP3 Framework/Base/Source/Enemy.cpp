@@ -101,11 +101,11 @@ int CEnemy::GetHealth()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap* map, Vector3& heroTile)
+void CEnemy::Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map, eneCurrTile, heroTile, direction);
+		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 }

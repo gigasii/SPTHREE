@@ -87,6 +87,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
 				tempGoodies->active = true;
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 			
@@ -96,6 +97,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 
@@ -105,6 +107,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 
@@ -113,7 +116,8 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;
+				tempGoodies->tilePos.Set(j,i,0);
 				BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -156,6 +160,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
 				tempGoodies->active = true;
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 			
@@ -165,6 +170,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 
@@ -174,6 +180,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 
@@ -183,6 +190,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				tempGoodies->tilePos.Set(j,i,0);
 				BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -196,7 +204,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
 				tempEnemy->setWayPoints(m_cScreenMap);
-				tempEnemy->eneCurrTile = Vector3(j,i,0);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);	
 				enemyList.push_back(tempEnemy);
 			}
 		}

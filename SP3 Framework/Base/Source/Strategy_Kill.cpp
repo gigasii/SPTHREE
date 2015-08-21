@@ -8,7 +8,7 @@ CStrategy_Kill::~CStrategy_Kill()
 {
 }
 
-void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir)
+void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList)
 {
 	//Decide which state to change to
 	int distanceHeroToEnemy = CalculateDistance();
@@ -42,7 +42,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 
 			route2 = pathFind(enemyTile.x, enemyTile.y, 
 					theEnemyPath.WayPointTileList[theEnemyPath.location].x, 
-					theEnemyPath.WayPointTileList[theEnemyPath.location].y);
+					theEnemyPath.WayPointTileList[theEnemyPath.location].y,
+					goodyList);
 
 		}
 
@@ -66,7 +67,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 			{
 				if (routeCounter == 0)
 				{	
-					route = pathFind(enemyTile.x, enemyTile.y, heroTile.x, heroTile.y);
+					route = pathFind(enemyTile.x, enemyTile.y, heroTile.x, heroTile.y,goodyList);
 					checkMoved = false;
 				}
 			}
@@ -167,7 +168,8 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 
 				route2 = pathFind(enemyTile.x, enemyTile.y, 
 					theEnemyPath.WayPointTileList[theEnemyPath.location].x, 
-					theEnemyPath.WayPointTileList[theEnemyPath.location].y);
+					theEnemyPath.WayPointTileList[theEnemyPath.location].y,
+					goodyList);
 			}
 
 			for (int i = 0; i < route2.length(); ++i)
@@ -264,7 +266,7 @@ CStrategy_Kill::CURRENT_STATE CStrategy_Kill::GetState()
 	return CurrentState;
 }
 
-string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int& xFinish, const int& yFinish)
+string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int& xFinish, const int& yFinish,vector<CGoodies*> goodyList)
 {
 	static priority_queue<CNode> myQueue[2];
 	static int queueIndex;
@@ -336,54 +338,76 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 			ydy = y + dy[i];
 		
 
-			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 || Map[xdx][ydy] == 1 || Map[xdx][ydy] == 4 || closed_nodes_map[xdx][ydy] == 1))
+			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 || Map[xdx][ydy] == 1 ||  Map[xdx][ydy] == 4 ||closed_nodes_map[xdx][ydy] == 1))
 			{
-				//generate child node
-				tempNode2 = new CNode (xdx, ydy, tempNode1->getLevel(), tempNode1->getPriority());
-				tempNode2->nextLevel(i);
-				tempNode2->updatePriority(xFinish, yFinish);
-
-				//add if not already in open list
-				if (open_nodes_map[xdx][ydy] == 0)
+				if (Map[xdx][ydy] == 5)
 				{
-					//update priority
-					open_nodes_map[xdx][ydy] = tempNode2->getPriority();
-					myQueue[queueIndex].push(*tempNode2);
-					//update direction
-					dir_map[xdx][ydy] = (i + dir/2) % dir;
-				}
-
-				else if(open_nodes_map[xdx][ydy] > tempNode2->getPriority())
-				{
-					// update the priority info
-					open_nodes_map[xdx][ydy] = tempNode2->getPriority();
-					// update the parent direction info
-					dir_map[xdx][ydy]=(i+dir/2)%dir;
-					//replace the node
-					while (!(myQueue[queueIndex].top().getPosX() == xdx &&
-					    myQueue[queueIndex].top().getPosY() == ydy))
+					for(std::vector<CGoodies *>::iterator it = goodyList.begin(); it != goodyList.end(); ++it)
 					{
-						myQueue[1 - queueIndex].push(myQueue[queueIndex].top());
-						myQueue[queueIndex].pop();
+						CGoodies *go = (CGoodies *)*it;
+
+						if (go->tilePos == Vector3(xdx,ydy,0) && go->active == false)
+						{
+							goto pathfind;
+						}
+
+						else
+						{
+							break;
+						}
 					}
-
-					myQueue[queueIndex].pop();
-
-					if (myQueue[queueIndex].size() > myQueue[1 - queueIndex].size())
-						queueIndex = 1 - queueIndex;
-
-					while (!myQueue[queueIndex].empty())
-					{
-						myQueue[1 - queueIndex].push(myQueue[queueIndex].top());
-						myQueue[queueIndex].pop();
-					}
-
-					queueIndex = 1 - queueIndex;
-					myQueue[queueIndex].push(*tempNode2);
 				}
 
 				else
-					delete tempNode2;
+				{
+					pathfind:
+					//generate child node
+					tempNode2 = new CNode (xdx, ydy, tempNode1->getLevel(), tempNode1->getPriority());
+					tempNode2->nextLevel(i);
+					tempNode2->updatePriority(xFinish, yFinish);
+
+					//add if not already in open list
+					if (open_nodes_map[xdx][ydy] == 0)
+					{
+						//update priority
+						open_nodes_map[xdx][ydy] = tempNode2->getPriority();
+						myQueue[queueIndex].push(*tempNode2);
+						//update direction
+						dir_map[xdx][ydy] = (i + dir/2) % dir;
+					}
+
+					else if(open_nodes_map[xdx][ydy] > tempNode2->getPriority())
+					{
+						// update the priority info
+						open_nodes_map[xdx][ydy] = tempNode2->getPriority();
+						// update the parent direction info
+						dir_map[xdx][ydy]=(i+dir/2)%dir;
+						//replace the node
+						while (!(myQueue[queueIndex].top().getPosX() == xdx &&
+							myQueue[queueIndex].top().getPosY() == ydy))
+						{
+							myQueue[1 - queueIndex].push(myQueue[queueIndex].top());
+							myQueue[queueIndex].pop();
+						}
+
+						myQueue[queueIndex].pop();
+
+						if (myQueue[queueIndex].size() > myQueue[1 - queueIndex].size())
+							queueIndex = 1 - queueIndex;
+
+						while (!myQueue[queueIndex].empty())
+						{
+							myQueue[1 - queueIndex].push(myQueue[queueIndex].top());
+							myQueue[queueIndex].pop();
+						}
+
+						queueIndex = 1 - queueIndex;
+						myQueue[queueIndex].push(*tempNode2);
+					}
+
+					else
+						delete tempNode2;
+				}
 			}
 		}
 
