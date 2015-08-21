@@ -72,25 +72,24 @@ class SceneText : public Scene
 		GEO_TILE_WAYPOINT,
 
 		//Enemy sprite Animation
-		GEO_TILEENEMY_FRAME0,
-		GEO_TILEENEMY_FRAME1,
+		GEO_TILEENEMYSHEET,
 
 		// Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
 
-		// HUD Geometry Mesh
+		//Goodies
+		GEO_DIAMOND,
+		GEO_KEY,
+		GEO_CHEST,
+
+		// HUD icons
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
 
 		// Menu
 		GEO_MENU,
-
-		//Goodies
-		GEO_DIAMOND,
-		GEO_KEY,
-		GEO_CHEST,
-		
+	
 		NUM_GEOMETRY,
 	};
 
@@ -158,8 +157,10 @@ private:
 	CMap map;
 	
 	//current map/map handler
-	CMap * CurrentMap;
-	CBoss* BossPointer;
+	CMap *CurrentMap;
+	
+	//Boss handler
+	CBoss *BossPointer;
 
 	//Vector list of enemies
 	std::vector<CEnemy *> enemyList;
@@ -177,34 +178,29 @@ private:
 	float attackSpeed;
 	int DistanceFromEnemyX;
 	int DistanceFromEnemyY;
-
-	//Sound effects
+	float healthLeft;
+	bool stabOnce;
 
 	//Sprites Variable
 	float heroTileID;
-	float bossCounter;
 	float BossTileID;
+	float enemyTileID;
+
+	//Boss Variables
+	bool IsTurn;
+	float bossCounter;
+	bool EnemiesRendered;
 
 	// HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
 
-	// Boss Variables
-	bool IsTurn;
-	bool EnemiesRendered;
-
 	// Menu Variables
 	int delay;
 	int InteractHighLight;
-
 	bool menu;
-
 	string Text[2];
-
-protected:
-	float m_worldWidth;
-	float m_worldHeight;
 };
 
 #endif

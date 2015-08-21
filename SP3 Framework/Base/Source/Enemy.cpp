@@ -4,13 +4,14 @@
 
 CEnemy::CEnemy()
 	: theENEMYPosition(0, 0)
-	, enemyAnimationCounter(0)
 	, enemyAnimationInvert(false)
+	, enemyAnimationFlip(false)
+	, health(2)
 	, theStrategy(NULL)
 	, active(true)
 	, ID(50)
-	, eneCurrTile(0,0,0)
-	, direction(1,0,0)
+	, eneCurrTile(0, 0, 0)
+	, direction(0, 0, 0)
 {
 }
 
@@ -54,16 +55,9 @@ void CEnemy::SetDestination(const int pos_x, const int pos_y)
 	}
 }
 
-//Set Animation Invert status of the player
-void CEnemy::SetAnimationInvert(bool enemyAnimationInvert)
+void CEnemy::SetHealth(int health_)
 {
-	this->enemyAnimationInvert = enemyAnimationInvert;
-}
-
-//Set Animation Counter of the player
-void CEnemy::SetAnimationCounter(int enemyAnimationCounter)
-{
-	this->enemyAnimationCounter = enemyAnimationCounter;
+	health = health_;
 }
 
 //Get position x of the enemy
@@ -96,10 +90,14 @@ bool CEnemy::GetAnimationInvert()
 	return enemyAnimationInvert;
 }
 
-//Get Animation Counter of the player
-int CEnemy::GetAnimationCounter()
+bool CEnemy::GetAnimationFlip()
 {
-	return enemyAnimationCounter;
+	return enemyAnimationFlip;
+}
+
+int CEnemy::GetHealth()
+{
+	return health;
 }
 
 //Enemy Update
