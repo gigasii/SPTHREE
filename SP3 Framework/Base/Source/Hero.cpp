@@ -217,11 +217,6 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 			else
 				return true;
 		}
-
-		if (mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BOSS)
-		{
-			return true;
-		}
 	}
 
 	else if(checkright)
@@ -337,11 +332,6 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 			else
 				return true;
 		}
-
-		if (mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BOSS)
-		{
-			return true;
-		}
 	}
 
 	else if(checkdown)
@@ -395,10 +385,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 				return true;
 		}
 
-		if (mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BOSS)
-		{
-			return true;
-		}		
+		
 	}
 
 	return false;

@@ -227,15 +227,11 @@ private:
 	bool IsTurn;
 	float bossCounter;
 	bool EnemiesRendered;
-	bool derenderDoor;
-	bool GetKey;
 
 	// HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
-	float RenderHeartCounter;
-	float RenderEnemyHeartCounter;
 
 	// Menu Variables
 	int delay;
