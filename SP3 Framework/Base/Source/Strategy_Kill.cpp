@@ -338,7 +338,8 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 			ydy = y + dy[i];
 		
 
-			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 || Map[xdx][ydy] == CMap::WALL ||  Map[xdx][ydy] == CMap::CHEST ||closed_nodes_map[xdx][ydy] == 1))
+			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 ||  Map[xdx][ydy] == CMap::CHEST ||closed_nodes_map[xdx][ydy] == 1 ||
+				 !((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL)))
 			{
 				if (Map[xdx][ydy] == CMap::BARREL)
 				{

@@ -90,6 +90,38 @@ class SceneText : public Scene
 
 		// Menu
 		GEO_MENU,
+
+		//tiles
+		GEO_20,
+		GEO_21,
+		GEO_22,
+		GEO_23,
+		GEO_24,
+		GEO_25,
+		GEO_26,
+		GEO_27,
+		GEO_28,
+		GEO_29,
+		GEO_30,
+		GEO_31,
+		GEO_32,
+		GEO_33,
+		GEO_34,
+		GEO_35,
+		GEO_36,
+		GEO_37,
+		GEO_38,
+		GEO_39,
+		GEO_40,
+		GEO_41,
+		GEO_42,
+		GEO_43,
+		GEO_44,
+		GEO_45,
+		GEO_46,
+		GEO_47,
+		GEO_48,
+		GEO_49,
 	
 		NUM_GEOMETRY,
 	};
