@@ -5,6 +5,7 @@ CGoodies::CGoodies()
 	, pos_y(0) 
 	, theMesh(NULL) 
 	, active(true)
+	, tilePos(0,0,0)
 	, GoodiesType(Goodies_Type::JEWEL)
 { 
 } 

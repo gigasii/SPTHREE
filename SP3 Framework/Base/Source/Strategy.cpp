@@ -11,7 +11,7 @@ CStrategy::~CStrategy()
 {
 }
 
-void CStrategy::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir)
+void CStrategy::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList)
 {
 	cout << "void CStrategy::Update()" << endl;
 }
