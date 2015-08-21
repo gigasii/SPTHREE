@@ -4,6 +4,8 @@
 #include "Node.h"
 #include "Pathfinding.h"
 
+class CMap;
+
 class CStrategy_Kill
 	: public CStrategy
 {

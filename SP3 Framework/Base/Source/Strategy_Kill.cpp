@@ -338,9 +338,9 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 			ydy = y + dy[i];
 		
 
-			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 || Map[xdx][ydy] == 1 ||  Map[xdx][ydy] == 4 ||closed_nodes_map[xdx][ydy] == 1))
+			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 || Map[xdx][ydy] == CMap::WALL ||  Map[xdx][ydy] == CMap::CHEST ||closed_nodes_map[xdx][ydy] == 1))
 			{
-				if (Map[xdx][ydy] == 5)
+				if (Map[xdx][ydy] == CMap::BARREL)
 				{
 					for(std::vector<CGoodies *>::iterator it = goodyList.begin(); it != goodyList.end(); ++it)
 					{
