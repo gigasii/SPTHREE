@@ -18,13 +18,14 @@ public:
 
 	enum tileList
 	{
-		GROUND,
-		WALL,
-		JEWEL,
-		KEY,
-		CHEST,
-		BARREL,
-		DOOR,
+		GROUND = 0,
+		WALL = 1,
+		JEWEL = 2,
+		KEY = 3,
+		CHEST = 4 ,
+		BARREL =5,
+		DOOR = 6 ,
+		HAY = 7,
 		ENEMY_1 = 50, WAYPOINT_1 = -1, WAYPOINT_2 = -2, WAYPOINT_3 = -3,
 		ENEMY_2 = 51, WAYPOINT_4 = -4, WAYPOINT_5 = -5, WAYPOINT_6 = -6, WAYPOINT_7 = -7,
 		ENEMY_3 = 52, WAYPOINT_8 = -8, WAYPOINT_9 = -9, WAYPOINT_10 = -10, WAYPOINT_11 = -11,
