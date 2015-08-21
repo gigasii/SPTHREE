@@ -188,6 +188,9 @@ void SceneText::Init()
 	meshList[GEO_CHEST] = MeshBuilder::Generate2DMesh("GEO_CHEST", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_CHEST]->textureID = LoadTGA("Image//Goodies//chest.tga");
 
+	meshList[GEO_BARREL] = MeshBuilder::Generate2DMesh("GEO_BARREL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_BARREL]->textureID = LoadTGA("Image//Goodies//barrel.tga");
+
 	meshList[GEO_TILE_WAYPOINT] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILE_WAYPOINT]->textureID = LoadTGA("Image//tile0_blank_red.tga");
 
@@ -274,14 +277,14 @@ void SceneText::Init()
 	if(level == 1)
 	{
 		// === Initialise and Load the Screenmap ===
-		map.InitScreenMap(enemyList, GoodiesList);
+		map.InitScreenMap(enemyList, GoodiesList, BarrelList);
 		CurrentMap = map.m_cScreenMap;
 	}
 
 	else if(level == 2)
 	{
 		// === Initialise and load the tilemap ===
-		map.InitMap(enemyList, GoodiesList);
+		map.InitMap(enemyList, GoodiesList, BarrelList);
 		CurrentMap = map.m_cMap;
 	}
 
@@ -421,7 +424,7 @@ void SceneText::Update(double dt)
 		hero.SetDaggerAcquired(true);
 	}
 
-	hero.HeroUpdate(CurrentMap, CHAR_HEROKEY, level);
+	hero.HeroUpdate(CurrentMap, BarrelList, CHAR_HEROKEY, level);
 	CHAR_HEROKEY = NULL;
 
 	// =================================== UPDATE THE ENEMY ===================================
@@ -517,6 +520,26 @@ void SceneText::Update(double dt)
 		CGoodies *go = (CGoodies *)*it;
 		if(go->active)	
 		{
+			if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+			{
+				int tileTopLeft_x = (int) ((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
+				int tileTopLeft_y = CurrentMap->GetNumOfTiles_Height() - (int)ceil( (float)(hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+
+				if(CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
+				{	
+					
+						if(hero.GetAttackStatus())
+						{
+							go->active = false;	
+							
+						}
+					
+
+					//CheckBarrelsInRange(go);
+				}
+			}
+			else
+			{	
 			if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
 			{
 				if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
@@ -540,6 +563,7 @@ void SceneText::Update(double dt)
 					go->active = false;
 					keyCount++;
 				}
+			}
 			}
 		}
 	}
@@ -632,7 +656,7 @@ void SceneText::Update(double dt)
 				hero.heroCurrTile.x = 1;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitMap(enemyList, GoodiesList);
+				map.InitMap(enemyList, GoodiesList, BarrelList);
 				CurrentMap = map.m_cMap;
 			}
 
@@ -642,7 +666,7 @@ void SceneText::Update(double dt)
 				hero.settheHeroPositionx(1024 - 32);
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitScreenMap(enemyList, GoodiesList);
+				map.InitScreenMap(enemyList, GoodiesList, BarrelList);
 				CurrentMap = map.m_cScreenMap;	
 			}
 
@@ -651,7 +675,7 @@ void SceneText::Update(double dt)
 				hero.settheHeroPositionx(32);
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitMap(enemyList, GoodiesList);
+				map.InitMap(enemyList, GoodiesList, BarrelList);
 				CurrentMap = map.m_cBossMap;
 			}
 		}
@@ -1375,6 +1399,10 @@ void SceneText::RenderGoodies()
 			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
 			{
 				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+			}
+			else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+			{
+				Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
 			}
 		}
 	}

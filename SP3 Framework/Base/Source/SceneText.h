@@ -81,6 +81,7 @@ class SceneText : public Scene
 		GEO_DIAMOND,
 		GEO_KEY,
 		GEO_CHEST,
+		GEO_BARREL,
 
 		// HUD icons
 		GEO_HUD_HEART,
@@ -167,6 +168,9 @@ private:
 
 	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
+
+	//Vector of obstakles - barrels
+	std::vector<CGoodies *> BarrelList;
 
 	//General variables
 	float fps;

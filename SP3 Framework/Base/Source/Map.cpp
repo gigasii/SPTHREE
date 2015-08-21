@@ -66,7 +66,7 @@ void CMap::Init(const int theScreen_Height, const int theScreen_Width, const int
 		theScreenMap[i].resize(theNumOfTiles_MapWidth);
 }
 
-void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList)
+void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
 {
 	m_cMap = new CMap();
 	m_cMap->Init(800, 1024, 25, 32, 800, 2048, 32);
@@ -108,6 +108,16 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 				GoodiesList.push_back(tempGoodies);
 			}
 
+			else if(tempType == CMap::BARREL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
 			else if (tempType >= CMap::ENEMY_1)
 			{
 				tempEnemy = new CEnemy();
@@ -125,7 +135,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 }
 
 
-void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList)
+void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
 {
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
@@ -164,6 +174,16 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::BARREL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 

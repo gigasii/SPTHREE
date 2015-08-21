@@ -21,6 +21,7 @@ public:
 		KEY,
 		CHEST,
 		DOOR,
+		BARREL,
 		GOODIES_TOTAL
 	};
 
