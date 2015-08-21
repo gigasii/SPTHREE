@@ -159,10 +159,100 @@ void SceneText::Init()
 	meshList[GEO_SCREENTILESHEET]->textureID = LoadTGA("Image//tilesheet.tga");
 
 	meshList[GEO_TILEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_S_TILEGROUND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_TILEBACKGROUND]->textureID = LoadTGA("Image//tile0_blank.tga");
+	meshList[GEO_TILEBACKGROUND]->textureID = LoadTGA("Image//ground.tga");
 
 	meshList[GEO_TILE] = MeshBuilder::GenerateTileMap("GEO_TILE", 6, 6);
 	meshList[GEO_TILE]->textureID = LoadTGA("Image//tile.tga");
+
+	meshList[GEO_20] = MeshBuilder::Generate2DMesh("GEO_20", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_20]->textureID = LoadTGA("Image//Desert//tile20.tga");
+
+	meshList[GEO_21] = MeshBuilder::Generate2DMesh("GEO_21", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_21]->textureID = LoadTGA("Image//Desert//tile21.tga");
+
+	meshList[GEO_22] = MeshBuilder::Generate2DMesh("GEO_22", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_22]->textureID = LoadTGA("Image//Desert//tile22.tga");
+
+	meshList[GEO_23] = MeshBuilder::Generate2DMesh("GEO_23", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_23]->textureID = LoadTGA("Image//Desert//tile23.tga");
+
+	meshList[GEO_24] = MeshBuilder::Generate2DMesh("GEO_24", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_24]->textureID = LoadTGA("Image//Desert//tile24.tga");
+
+	meshList[GEO_25] = MeshBuilder::Generate2DMesh("GEO_25", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_25]->textureID = LoadTGA("Image//Desert//tile25.tga");
+
+	meshList[GEO_26] = MeshBuilder::Generate2DMesh("GEO_26", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_26]->textureID = LoadTGA("Image//Desert//tile26.tga");
+
+	meshList[GEO_27] = MeshBuilder::Generate2DMesh("GEO_27", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_27]->textureID = LoadTGA("Image//Desert//tile27.tga");
+
+	meshList[GEO_28] = MeshBuilder::Generate2DMesh("GEO_28", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_28]->textureID = LoadTGA("Image//Desert//tile28.tga");
+
+	meshList[GEO_29] = MeshBuilder::Generate2DMesh("GEO_29", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_29]->textureID = LoadTGA("Image//Desert//tile29.tga");
+
+	meshList[GEO_30] = MeshBuilder::Generate2DMesh("GEO_30", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_30]->textureID = LoadTGA("Image//Desert//tile30.tga");
+
+	meshList[GEO_31] = MeshBuilder::Generate2DMesh("GEO_31", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_31]->textureID = LoadTGA("Image//Desert//tile31.tga");
+
+	meshList[GEO_32] = MeshBuilder::Generate2DMesh("GEO_32", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_32]->textureID = LoadTGA("Image//Desert//tile32.tga");
+
+	meshList[GEO_33] = MeshBuilder::Generate2DMesh("GEO_33", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_33]->textureID = LoadTGA("Image//Desert//tile33.tga");
+
+	meshList[GEO_34] = MeshBuilder::Generate2DMesh("GEO_34", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_34]->textureID = LoadTGA("Image//Desert//tile34.tga");
+
+	meshList[GEO_35] = MeshBuilder::Generate2DMesh("GEO_35", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_35]->textureID = LoadTGA("Image//Desert//tile35.tga");
+
+	meshList[GEO_36] = MeshBuilder::Generate2DMesh("GEO_36", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_36]->textureID = LoadTGA("Image//Desert//tile36.tga");
+
+	meshList[GEO_37] = MeshBuilder::Generate2DMesh("GEO_37", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_37]->textureID = LoadTGA("Image//Desert//tile37.tga");
+
+	meshList[GEO_38] = MeshBuilder::Generate2DMesh("GEO_38", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_38]->textureID = LoadTGA("Image//Desert//tile38.tga");
+
+	meshList[GEO_39] = MeshBuilder::Generate2DMesh("GEO_39", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_39]->textureID = LoadTGA("Image//Desert//tile39.tga");
+
+	meshList[GEO_40] = MeshBuilder::Generate2DMesh("GEO_40", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_40]->textureID = LoadTGA("Image//Desert//tile40.tga");
+
+	meshList[GEO_41] = MeshBuilder::Generate2DMesh("GEO_41", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_41]->textureID = LoadTGA("Image//Desert//tile41.tga");
+
+	meshList[GEO_42] = MeshBuilder::Generate2DMesh("GEO_42", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_42]->textureID = LoadTGA("Image//Desert//tile42.tga");
+
+	meshList[GEO_43] = MeshBuilder::Generate2DMesh("GEO_43", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_43]->textureID = LoadTGA("Image//Desert//tile43.tga");
+
+	meshList[GEO_44] = MeshBuilder::Generate2DMesh("GEO_44", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_44]->textureID = LoadTGA("Image//Desert//tile44.tga");
+
+	meshList[GEO_45] = MeshBuilder::Generate2DMesh("GEO_45", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_45]->textureID = LoadTGA("Image//Desert//tile45.tga");
+
+	meshList[GEO_46] = MeshBuilder::Generate2DMesh("GEO_46", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_46]->textureID = LoadTGA("Image//Desert//tile46.tga");
+
+	meshList[GEO_47] = MeshBuilder::Generate2DMesh("GEO_47", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_47]->textureID = LoadTGA("Image//Desert//tile47.tga");
+
+	meshList[GEO_48] = MeshBuilder::Generate2DMesh("GEO_48", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_48]->textureID = LoadTGA("Image//Desert//tile48.tga");
+
+	meshList[GEO_49] = MeshBuilder::Generate2DMesh("GEO_49", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_49]->textureID = LoadTGA("Image//Desert//tile49.tga");
 
 	// =================================== Load Hero ===================================
 
@@ -223,8 +313,13 @@ void SceneText::Init()
 
 	// === Set hero's position ===
 
-	hero.settheHeroPositionx(920);
+	hero.settheHeroPositionx(888);
 	hero.settheHeroPositiony(640);
+
+	int tempHeroPosX = (int) ceil ((float)(888	) / 32);
+	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
+
+	hero.heroCurrTile = Vector3(tempHeroPosX,tempHeroPosY,0);
 
 	// === Variables ===
 
@@ -268,11 +363,6 @@ void SceneText::Init()
 	Text[1] = "How To Play?";
 
 	//========================================================================
-
-	int tempHeroPosX = (int) ceil ((float)(920) / 32);
-	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
-
-	hero.heroCurrTile = Vector3(tempHeroPosX,tempHeroPosY,0);
 
 	if(level == 1)
 	{
@@ -1314,12 +1404,18 @@ void SceneText::RenderTileMap()
 
 			if(level == 1)
 			{
-				if(CurrentMap->theScreenMap[i][m] < 0)
+				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
-					Render2DMesh(meshList[GEO_TILE_WAYPOINT], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					int tempMesh = CurrentMap->theScreenMap[i][m] - 20;
+					Render2DMesh(meshList[GEO_20 + tempMesh], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				else if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
+				else
+				{
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+			/*	if(CurrentMap->theScreenMap[i][m] != CMap::WALL && CurrentMap->theScreenMap[i][m] != CMap::DOOR)
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -1343,7 +1439,7 @@ void SceneText::RenderTileMap()
 							Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 						}
 					}				
-				}
+				}*/
 			}
 
 			else if(level == 2)
