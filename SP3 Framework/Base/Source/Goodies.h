@@ -1,6 +1,7 @@
 #pragma once 
  
 #include "Mesh.h" 
+#include "Vector3.h"
  
 class CGoodies 
 { 
@@ -52,6 +53,8 @@ public:
 	bool CalculateDistance(int pos_x, int pos_y);
 
 	Goodies_Type GoodiesType;
+
+	Vector3 tilePos;
 }; 
 
 

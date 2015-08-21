@@ -441,7 +441,7 @@ void SceneText::Update(double dt)
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
-			go->Update(CurrentMap, hero.heroCurrTile);
+			go->Update(CurrentMap, hero.heroCurrTile,BarrelList);
 
 			DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 			DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
@@ -510,7 +510,7 @@ void SceneText::Update(double dt)
 		}
 
 		//std::cout << "DISTANCE:" << DistanceFromEnemyX << "," <<  DistanceFromEnemyY << std::endl;
-		std::cout << go->GetHealth() << std::endl;
+		//std::cout << go->GetHealth() << std::endl;
 	}
 
 	// =================================== UPDATE THE GOODIES ===================================

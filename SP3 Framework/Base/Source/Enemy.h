@@ -70,7 +70,7 @@ public:
 	int GetHealth();
 
 	//Enemy Update
-	void Update(CMap* map, Vector3& heroTile);
+	void Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
