@@ -282,7 +282,7 @@ void SceneText::Init()
 	meshList[GEO_BARREL]->textureID = LoadTGA("Image//Goodies//barrel.tga");
 
 	meshList[GEO_HAY] = MeshBuilder::Generate2DMesh("GEO_HAY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay.tga");
+	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay2.tga");
 
 
 	meshList[GEO_TILE_WAYPOINT] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -653,8 +653,7 @@ void SceneText::Update(double dt)
 					//CheckBarrelsInRange(go);
 				}
 			}
-			else
-			{	
+				
 				if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
 				{
 					if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
@@ -674,7 +673,7 @@ void SceneText::Update(double dt)
 						}
 					}
 				}
-			}
+			
 		}
 	}
 
@@ -1625,9 +1624,9 @@ void SceneText::Render()
 	{*/
 	RenderInit();
 	RenderTileMap();
-	RenderEnemies();
 	RenderHero();
 	RenderGoodies();
+	RenderEnemies();
 	RenderText();
 	RenderHUD();
 	//}
