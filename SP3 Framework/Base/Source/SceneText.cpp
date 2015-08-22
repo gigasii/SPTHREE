@@ -263,13 +263,10 @@ void SceneText::Init()
 	meshList[GEO_TILEHEROSHEET] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET", 4, 4);
 	meshList[GEO_TILEHEROSHEET]->textureID = LoadTGA("Image//Hero//hero.tga");
 
-	meshList[GEO_TILEHEROSHEET2] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET2", 2, 2);
-	meshList[GEO_TILEHEROSHEET2]->textureID = LoadTGA("Image//Hero//hero2.tga");
-
 	// ================================= Load Enemies =================================
 
-	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 4, 4);
-	meshList[GEO_TILEENEMYSHEET]->textureID = LoadTGA("Image//Enemy//army.tga");
+	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 5, 5);
+	meshList[GEO_TILEENEMYSHEET]->textureID = LoadTGA("Image//Enemy//enemy.tga");
 
 	// ==================================== Goodies ====================================
 
@@ -517,7 +514,6 @@ void SceneText::Update(double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
-			cout << go->direction << endl;
 			if(go->currentStrat != CEnemy::STRAT_KILL)
 			{
 				go->ChangeStrategy(new CStrategy_Kill());
@@ -525,7 +521,7 @@ void SceneText::Update(double dt)
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
-			go->Update(CurrentMap, hero.heroCurrTile,BarrelList);
+			go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
 
 			int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 			int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
@@ -540,6 +536,7 @@ void SceneText::Update(double dt)
 					hero.health--;
 					go->attackReactionTime = 0;
 					go->attackStatus = false;
+					attackAnimation = true;
 				}
 			}
 
@@ -548,7 +545,16 @@ void SceneText::Update(double dt)
 				go->attackReactionTime = 0;
 			}
 
-			//std::cout << "Reaction Time:" << go->attackReactionTime << std::endl;
+			//Attacking animation for enemy
+			if(attackAnimation == true)
+			{
+				attackAnimationTimer += dt;
+				if(attackAnimationTimer >= 0.7)
+				{
+					attackAnimationTimer = 0;
+					attackAnimation = false;
+				}
+			}
 
 			//Movement Sprite Animation
 			if(go->direction == Vector3(0, -1, 0))
@@ -560,7 +566,7 @@ void SceneText::Update(double dt)
 					go->enemyTileID = 0;
 				}
 
-				else if(go->enemyTileID > 2)
+				else if(go->enemyTileID > 3)
 				{
 					go->enemyTileID = 0;
 				}
@@ -570,14 +576,14 @@ void SceneText::Update(double dt)
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 4)
+				if(go->enemyTileID < 5)
 				{
-					go->enemyTileID = 4;
+					go->enemyTileID = 5;
 				}
 
-				else if(go->enemyTileID > 6)
+				else if(go->enemyTileID > 8)
 				{
-					go->enemyTileID = 4;
+					go->enemyTileID = 5;
 				}
 			}
 
@@ -585,14 +591,14 @@ void SceneText::Update(double dt)
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 8)
+				if(go->enemyTileID < 10)
 				{
-					go->enemyTileID = 8;
+					go->enemyTileID = 10;
 				}
 
-				else if(go->enemyTileID > 10)
+				else if(go->enemyTileID > 13)
 				{
-					go->enemyTileID = 8;
+					go->enemyTileID = 10;
 				}
 			}
 
@@ -600,21 +606,20 @@ void SceneText::Update(double dt)
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 12)
+				if(go->enemyTileID < 15)
 				{
-					go->enemyTileID = 12;
+					go->enemyTileID = 15;
 				}
 
-				else if(go->enemyTileID > 14)
+				else if(go->enemyTileID > 18)
 				{
-					go->enemyTileID = 12;
+					go->enemyTileID = 15;
 				}
 			}
-
-			//std::cout << "DISTANCE:" << DistanceFromEnemyX << "," << DistanceFromEnemyY << std::endl;
 		}
 
-			//std::cout << go->GetHealth() << std::endl;
+		//cout << go->direction << endl;
+		std::cout << "Reaction Time:" << go->attackReactionTime << std::endl;
 	}
 
 	// =================================== UPDATE THE GOODIES ===================================
@@ -1375,22 +1380,22 @@ void SceneText::RenderHero()
 	{
 		if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 0, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 
 		else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 1, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 
 		else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 2, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 
 		else
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 	}
 
@@ -1411,19 +1416,49 @@ void SceneText::RenderEnemies()
 		Vector3 theEnemyPos (theEnemy_x,theEnemy_y,0);
 
 		if(go->active)	
-		{			
-			RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemyPos.x, theEnemyPos.y);
-			
+		{	
+			//Detection radius
 			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
 			{
 				Vector3 go2 = (Vector3)*it2;
 				Render2DMesh(meshList[GEO_TILE_WAYPOINT], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);	
 			}
+
+			//Attacking
+			if(attackAnimation == true)
+			{
+				if(go->direction == Vector3(0, -1, 0))
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else if(go->direction == Vector3(-1, 0, 0))
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else if(go->direction == Vector3(1, 0, 0))
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 13, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 18, 32, theEnemy_x, theEnemy_y);
+				}
+			}
+
+			//Walking
+			else
+			{		
+				RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+			}
 		}
 
+		//Dead
 		else
 		{
-			RenderSprites(meshList[GEO_TILEENEMYSHEET], 15, 32, theEnemy_x, theEnemy_y);
+			RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
 		}
 	}
 }
