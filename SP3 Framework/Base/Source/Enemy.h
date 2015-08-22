@@ -40,6 +40,7 @@ public:
 	float enemyTileID;
 	bool attackStatus;
 	float attackReactionTime;
+	vector <Vector3> detectionGrid;
 
 	//Initialise this class instance
 	void Init();

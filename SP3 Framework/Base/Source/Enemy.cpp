@@ -101,6 +101,65 @@ void CEnemy::Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList)
 		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
+
+	detectionGrid.erase(detectionGrid.begin(),detectionGrid.end());
+
+	Vector3 eneDir (direction.x, -direction.y, 0);
+	Vector3 enemyRight = eneDir.Cross(Vector3(0,0,1));
+	Vector3 tempTile;
+	bool renderUp(true), renderDown(true), renderFront(true);
+
+	for (int i = 0; i < 8; ++i)
+	{
+		switch (i)
+		{
+		case 0:
+			tempTile = eneCurrTile + eneDir;
+			break;
+		case 1:
+			tempTile = eneCurrTile + enemyRight;
+			break;
+		case 2:
+			tempTile = eneCurrTile - enemyRight;
+			break;
+		case 3:
+			tempTile = eneCurrTile + eneDir + enemyRight;
+			break;
+		case 4:
+			tempTile = eneCurrTile + eneDir - enemyRight;
+			break;
+		case 5:
+			tempTile = eneCurrTile + eneDir * 2;
+			break;
+		case 6:
+			tempTile = eneCurrTile + enemyRight * 2;
+			break;
+		case 7:
+			tempTile = eneCurrTile - enemyRight * 2;
+			break;
+		}
+
+		if (!(map->theScreenMap[tempTile.y][tempTile.x] == 20 || 
+			(map->theScreenMap[tempTile.y][tempTile.x] >= 28 && 
+			map->theScreenMap[tempTile.y][tempTile.x] <= 49)))
+		{
+			if ((i == 5 && renderFront == false) || (i == 6 && renderUp == false) || (i == 7 && renderDown == false))
+			{
+			}
+			else
+				detectionGrid.push_back(Vector3(tempTile.x * 32, 32 * (map->GetNumOfTiles_Height() - tempTile.y) - 32, 0));
+		}
+
+		else
+		{
+			if (i == 0)
+				renderFront = false;
+			else if (i == 1)
+				renderUp = false;
+			else if (i == 2)
+				renderDown = false;
+		}
+	}
 }
 
 //Strategy

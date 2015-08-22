@@ -517,6 +517,7 @@ void SceneText::Update(double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
+			cout << go->direction << endl;
 			if(go->currentStrat != CEnemy::STRAT_KILL)
 			{
 				go->ChangeStrategy(new CStrategy_Kill());
@@ -1407,10 +1408,17 @@ void SceneText::RenderEnemies()
 		CEnemy *go = (CEnemy *)*it;
 		int theEnemy_x = go->GetPos_x() - CurrentMap->mapOffset_x;
 		int theEnemy_y = go->GetPos_y();
+		Vector3 theEnemyPos (theEnemy_x,theEnemy_y,0);
 
 		if(go->active)	
 		{			
-			RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+			RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemyPos.x, theEnemyPos.y);
+			
+			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
+			{
+				Vector3 go2 = (Vector3)*it2;
+				Render2DMesh(meshList[GEO_TILE_WAYPOINT], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);	
+			}
 		}
 
 		else
