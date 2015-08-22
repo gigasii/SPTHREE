@@ -32,6 +32,8 @@ public:
 	CStrategy_Kill::CURRENT_STATE GetState();
 	
 	string pathFind (const int& xStart, const int& yStart, const int& xFinish, const int& yFinish, vector<CGoodies*> goodyList);
+
+	bool detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir);
 private:
 	//Enemy AI State
 	CStrategy_Kill::CURRENT_STATE CurrentState;
@@ -42,5 +44,6 @@ private:
 	Vector3 oldTile, currTile;
 	
 	bool checkMoved;
+	bool isAttacking;
 };
 
