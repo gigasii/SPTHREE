@@ -514,6 +514,8 @@ void SceneText::Update(double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
+			go->theStrategy->CurrentState;
+
 			if(go->currentStrat != CEnemy::STRAT_KILL)
 			{
 				go->ChangeStrategy(new CStrategy_Kill());

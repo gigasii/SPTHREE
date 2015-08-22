@@ -9,6 +9,16 @@ class CStrategy
 {
 
 public:
+
+	//The AI states of the enemy
+	enum CURRENT_STATE
+	{
+		PATROL,
+		REPEL,
+		ATTACK,
+		NUM_ENEMY_STATE,
+	};
+
 	CStrategy();
 	~CStrategy();
 
@@ -27,5 +37,8 @@ public:
 
 	//The path of the enemy
 	CPathing theEnemyPath;
+
+	//Enemy AI State
+	CStrategy::CURRENT_STATE CurrentState;
 };
 

@@ -260,16 +260,6 @@ void CStrategy_Kill::GetEnemyPosition(float& x, float& y)
 	y = theEnemyPosition.y;
 }
 
-void CStrategy_Kill::SetState(CStrategy_Kill::CURRENT_STATE theEnemyState)
-{
-	CurrentState = theEnemyState;
-}
-
-CStrategy_Kill::CURRENT_STATE CStrategy_Kill::GetState()
-{
-	return CurrentState;
-}
-
 string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int& xFinish, const int& yFinish,vector<CGoodies*> goodyList)
 {
 	static priority_queue<CNode> myQueue[2];
