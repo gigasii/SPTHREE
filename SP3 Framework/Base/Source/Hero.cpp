@@ -18,6 +18,8 @@ Hero::Hero()
 	, moveToDown(false)
 	, moveToUp(false)
 	, heroCurrTile(0,0,0)
+	, heroTileID(0)
+	, health(3)
 {
 }
 
@@ -600,10 +602,11 @@ void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, vector<CEnemy*>
 	{
 		if(mapType->mapOffset_x > 0)
 		{
-			if (mapType->mapOffset_x >= 1024)
+			if(mapType->mapOffset_x >= 1024)
 			{
 				ConstrainHero(mapType, 480, 992, 25, 740, 1.0f);
 			}
+			
 			else
 			{
 				ConstrainHero(mapType, 480, 544, 25, 740, 1.0f);
@@ -619,7 +622,7 @@ void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, vector<CEnemy*>
 	mapType->tileOffset_x = (int)(mapType->mapOffset_x / mapType->GetTileSize());
 	if(mapType->tileOffset_x + mapType->GetNumOfTiles_Width() > mapType->getNumOfTiles_MapWidth())
 	{
-		mapType->tileOffset_x = mapType->getNumOfTiles_MapWidth() -mapType->GetNumOfTiles_Width();
+		mapType->tileOffset_x = mapType->getNumOfTiles_MapWidth() - mapType->GetNumOfTiles_Width();
 	}
 }
 

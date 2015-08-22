@@ -200,8 +200,6 @@ private:
 
 	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
-
-	//Vector of obstacles - barrels
 	std::vector<CGoodies *> BarrelList;
 
 	//General variables
@@ -210,27 +208,24 @@ private:
 	bool bLightEnabled;
 
 	//Project variables
-	int level;
+	int stage;
 	float attackSpeed;
 	bool stabOnce;
 
-	//Sprites Variable
-	float heroTileID;
-	float BossTileID;
-
 	//Boss Variables
 	bool IsTurn;
+	float BossTileID;
 	float bossCounter;
 	bool EnemiesRendered;
 	bool derenderDoor;
 	bool GetKey;
 
-	// HUD Variable
+	//HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
 
-	// Menu Variables
+	//Menu Variables
 	int delay;
 	int InteractHighLight;
 	bool menu;
