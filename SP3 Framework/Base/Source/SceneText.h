@@ -68,7 +68,6 @@ class SceneText : public Scene
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
-		GEO_TILEHEROSHEET2,
 
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
@@ -211,6 +210,8 @@ private:
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
+	bool attackAnimation;
+	float attackAnimationTimer;
 
 	//Boss Variables
 	bool IsTurn;
