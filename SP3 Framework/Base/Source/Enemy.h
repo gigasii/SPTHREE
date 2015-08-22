@@ -38,6 +38,8 @@ public:
 	Vector3 eneCurrTile;
 	Vector3 direction;
 	float enemyTileID;
+	bool attackStatus;
+	float attackReactionTime;
 
 	//Initialise this class instance
 	void Init();

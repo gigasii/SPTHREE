@@ -18,7 +18,7 @@ private:
 	bool heroAnimationFlip;
 	bool moveToLeft, moveToRight, moveToUp, moveToDown;
 
-	//Character map interaction
+	//Hero map interaction
 	bool keyAcquired;
 	bool doorOpened;
 	
@@ -32,6 +32,8 @@ public:
 	~Hero();
 
 	Vector3 heroCurrTile;
+	float heroTileID;
+	int health;
 
 	//Set the position x of the player
 	void settheHeroPositionx(int theHeroPositionx_);

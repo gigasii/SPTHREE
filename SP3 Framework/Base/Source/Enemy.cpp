@@ -13,6 +13,8 @@ CEnemy::CEnemy()
 	, eneCurrTile(0, 0, 0)
 	, direction(0, 0, 0)
 	, enemyTileID(0)
+	, attackStatus(false)
+	, attackReactionTime(0)
 {
 }
 
