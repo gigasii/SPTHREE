@@ -151,13 +151,25 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 	}
 }
 
-bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool checkleft, bool checkright, bool checkdown, bool checkup)
+bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEnemy*> enemyList, bool checkleft, bool checkright, bool checkdown, bool checkup)
 {
 	int tileTopLeft_x = (int) ((mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize());
 	int tileTopLeft_y = mapType->GetNumOfTiles_Height() - (int)ceil( (float)(theHeroPositiony + mapType->GetTileSize()) / mapType->GetTileSize());
 
 	if(checkleft)
 	{
+		for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			CEnemy *go = (CEnemy *)*it;
+			if(go->active)	
+			{
+				if((theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x <= 32 && theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x >= 0) && (theHeroPositiony - go->GetPos_y() >= 0 && theHeroPositiony - go->GetPos_y() <= 1))
+				{
+					return true;
+				}
+			}
+		}
+
 	   if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::DOOR)
 		{
 			if(this->doorOpened == false)
@@ -166,7 +178,14 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 			}
 
 			else
+			{
 				return false;
+			}
+	   }
+
+	   if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BOSS)
+	   {
+		   return true;
 	   }
 
 	   else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::HAY)
@@ -179,9 +198,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 		   for(std::vector<CGoodies *>::iterator it = obstacles.begin(); it != obstacles.end(); ++it)
 		   {
 			   CGoodies *go = (CGoodies *)*it;
-
 			   int tile_x = go->GetPos_x() / mapType->GetTileSize();
-
 			   int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
 			   if(tile_y == tileTopLeft_y)
@@ -189,9 +206,14 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 				   if(tile_x == tileTopLeft_x - 1)
 				   {
 					   if(go->active)
+					   {
 						   return true;
+					   }
+					   
 					   else
+					   {
 						   return false;
+					   }
 				   }
 			   }
 		   }
@@ -210,17 +232,31 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] > 3)
 		{
-			if ((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <=27) ||
-				mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1]  >= 50)
+			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1]  >= 50)
 			{
 			}
+			
 			else
+			{
 				return true;
+			}
 		}
 	}
 
 	else if(checkright)
 	{
+		for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			CEnemy *go = (CEnemy *)*it;
+			if(go->active)	
+			{
+				if((theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x <= 0 && theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x >= -32) && (theHeroPositiony - go->GetPos_y() >= 0 && theHeroPositiony - go->GetPos_y() <= 1))
+				{
+					return true;
+				}
+			}
+		}
+
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::DOOR)
 		{
 			if(this->doorOpened == false)
@@ -229,7 +265,9 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 			}
 
 			else
+			{
 				return false;
+			}
 		}
 
 		else if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::HAY)
@@ -242,9 +280,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 			for(std::vector<CGoodies *>::iterator it = obstacles.begin(); it != obstacles.end(); ++it)
 			{
 				CGoodies *go = (CGoodies *)*it;
-
 				int tile_x = go->GetPos_x() / mapType->GetTileSize();
-
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
 				if(tile_y == tileTopLeft_y)
@@ -252,9 +288,14 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 					if(tile_x == tileTopLeft_x + 1)
 					{
 						if(go->active)
+						{
 							return true;
+						}
+						
 						else
+						{
 							return false;
+						}
 					}
 				}
 			}
@@ -273,17 +314,31 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] > 3)
 		{
-			if ((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <=27) ||
-				mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1]  >= 50)
+			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1]  >= 50)
 			{
 			}
+			
 			else
+			{
 				return true;
+			}
 		}
 	}
 
 	else if(checkup)
 	{
+		for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			CEnemy *go = (CEnemy *)*it;
+			if(go->active)	
+			{
+				if((theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x >= 0 && theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x <= 1) && (theHeroPositiony - go->GetPos_y() >= -32 && theHeroPositiony - go->GetPos_y() <= 0))
+				{
+					return true;
+				}
+			}
+		}
+
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
 		{
 			pickUpWeapon = true;
@@ -300,14 +355,17 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 		   return false;
 	    }
 
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BOSS)
+		{
+			return true;
+		}
+
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL)
 		{
 			for(std::vector<CGoodies *>::iterator it = obstacles.begin(); it != obstacles.end(); ++it)
 			{
 				CGoodies *go = (CGoodies *)*it;
-
 				int tile_x = go->GetPos_x() / mapType->GetTileSize();
-
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
 				if(tile_y == tileTopLeft_y - 1)
@@ -315,9 +373,14 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 					if(tile_x == tileTopLeft_x)
 					{
 						if(go->active)
+						{
 							return true;
+						}
+
 						else
+						{
 							return false;
+						}
 					}
 				}
 			}
@@ -325,17 +388,31 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] > 3)
 		{
-			if ((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <=27) ||
-				mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x]  >= 50)
+			if((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x]  >= 50)
 			{
 			}
+
 			else
+			{
 				return true;
+			}
 		}
 	}
 
 	else if(checkdown)
 	{
+		for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			CEnemy *go = (CEnemy *)*it;
+			if(go->active)	
+			{
+				if((theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x >= 0 && theHeroPositionx - go->GetPos_x() + mapType->mapOffset_x <= 1) && (theHeroPositiony - go->GetPos_y() >= 0 && theHeroPositiony - go->GetPos_y() <= 32))
+				{
+					return true;
+				}
+			}
+		}
+
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
 		{
 			pickUpWeapon = true;
@@ -352,14 +429,17 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 		   return false;
 	    }
 
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BOSS)
+		{
+			return true;
+		}
+
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
 		{
 			for(std::vector<CGoodies *>::iterator it = obstacles.begin(); it != obstacles.end(); ++it)
 			{
 				CGoodies *go = (CGoodies *)*it;
-
 				int tile_x = go->GetPos_x() / mapType->GetTileSize();
-
 				int tile_y = mapType->GetNumOfTiles_Height() - (go->GetPos_y() + mapType->GetTileSize()) / mapType->GetTileSize();
 
 				if(tile_y == tileTopLeft_y + 1)
@@ -367,35 +447,40 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, bool check
 					if(tile_x == tileTopLeft_x)
 					{
 						if(go->active)
+						{
 							return true;
-						else 
+						}
+						
+						else
+						{
 							return false;
+						}
 					}
 				}
 			}
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x]  > 3)
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] > 3)
 		{
-			if ((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <=27) ||
-				mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x]  >= 50)
+			if((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 50)
 			{
 			}
-			else
-				return true;
-		}
 
-		
+			else
+			{
+				return true;
+			}
+		}	
 	}
 
 	return false;
 }
 
-void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, const char key, int level) 
+void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, vector<CEnemy*> enemyList, const char key, int level) 
 {	
 	if(moveToRight == false && moveToLeft == false && moveToDown == false && moveToUp == false)
 	{
-		if(key == 'a' && !CheckCollision(mapType, obtacles, true, false, false, false))
+		if(key == 'a' && !CheckCollision(mapType, obtacles, enemyList, true, false, false, false))
 		{
 			HeroMoveLeftRight(true, 1.0f);
 			float tempCheckLeft = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
@@ -411,28 +496,28 @@ void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, const char key,
 			}
 		}
 
-		else if(key == 'd' && !CheckCollision(mapType, obtacles, false, true, false, false))
+		else if(key == 'd' && !CheckCollision(mapType, obtacles, enemyList, false, true, false, false))
 		{
 			HeroMoveLeftRight(false, 1.0f);
 			float tempCheckRight = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
-			if (moveToRight == false)
+			if(moveToRight == false)
 			{
 				heroCurrTile.x += 1;
 			}
 
-			if (tempCheckRight != (int)tempCheckRight)
+			if(tempCheckRight != (int)tempCheckRight)
 			{
 				moveToRight = true;
 			}
 		}
 
-		if(key == 'w' && !CheckCollision(mapType, obtacles, false, false, false, true))
+		if(key == 'w' && !CheckCollision(mapType, obtacles, enemyList, false, false, false, true))
 		{
 			HeroMoveUpDown(true, 1.0f);
 			float tempCheckUp = ((float)(theHeroPositiony) / mapType->GetTileSize());
 
-			if(moveToUp== false)
+			if(moveToUp == false)
 			{
 				heroCurrTile.y -= 1;
 			}
@@ -443,7 +528,7 @@ void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, const char key,
 			}
 		}
 
-		else if(key == 's' && !CheckCollision(mapType, obtacles, false, false, true, false))
+		else if(key == 's' && !CheckCollision(mapType, obtacles, enemyList, false, false, true, false))
 		{
 			HeroMoveUpDown(false, 1.0f);
 			float tempCheckDown = ((float)(theHeroPositiony) / mapType->GetTileSize());
@@ -465,13 +550,13 @@ void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, const char key,
 		HeroMoveLeftRight(true, 1.0f);
 		float tempCheckLeft2 = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();
 
-		if (tempCheckLeft2 == (int)tempCheckLeft2)
+		if(tempCheckLeft2 == (int)tempCheckLeft2)
 		{
 			moveToLeft = false;
 		}
 	}
 
-	if (moveToRight == true)
+	if(moveToRight == true)
 	{
 		HeroMoveLeftRight(false, 1.0f);
 		float tempCheckRight2 = (float)(mapType->mapOffset_x + theHeroPositionx) / mapType->GetTileSize();

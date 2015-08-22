@@ -6,12 +6,13 @@ CEnemy::CEnemy()
 	: theENEMYPosition(0, 0)
 	, enemyAnimationInvert(false)
 	, enemyAnimationFlip(false)
-	, health(2)
 	, theStrategy(NULL)
 	, active(true)
 	, ID(50)
+	, health(2)
 	, eneCurrTile(0, 0, 0)
 	, direction(0, 0, 0)
+	, enemyTileID(0)
 {
 }
 
@@ -55,11 +56,6 @@ void CEnemy::SetDestination(const int pos_x, const int pos_y)
 	}
 }
 
-void CEnemy::SetHealth(int health_)
-{
-	health = health_;
-}
-
 //Get position x of the enemy
 int CEnemy::GetPos_x()
 {
@@ -93,11 +89,6 @@ bool CEnemy::GetAnimationInvert()
 bool CEnemy::GetAnimationFlip()
 {
 	return enemyAnimationFlip;
-}
-
-int CEnemy::GetHealth()
-{
-	return health;
 }
 
 //Enemy Update
@@ -135,13 +126,15 @@ void CEnemy::setWayPoints(CMap* map)
 {
 	switch(ID)
 	{
-	case CMap::ENEMY_1:
+		case CMap::ENEMY_1:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
-	case CMap::ENEMY_2:
+		
+		case CMap::ENEMY_2:
 		path.setWayPoints(map, 3, CMap::WAYPOINT_5, CMap::WAYPOINT_6, CMap::WAYPOINT_7);
 		break;
-	case CMap::ENEMY_3:
+		
+		case CMap::ENEMY_3:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_8, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11);
 		break;
 	}
