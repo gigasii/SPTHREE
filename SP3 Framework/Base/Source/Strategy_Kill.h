@@ -6,8 +6,7 @@
 
 class CMap;
 
-class CStrategy_Kill
-	: public CStrategy
+class CStrategy_Kill : public CStrategy
 {
 
 public:
@@ -19,16 +18,14 @@ public:
 	void SetEnemyPosition(const float x, const float y);
 	void GetEnemyPosition(float& x, float& y);
 	
-	string pathFind (const int& xStart, const int& yStart, const int& xFinish, const int& yFinish, vector<CGoodies*> goodyList);
+	string pathFind(const int& xStart, const int& yStart, const int& xFinish, const int& yFinish, vector<CGoodies*> goodyList);
 
 	bool detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir);
-private:
 
+private:
 	string route, route2;
 	int routeCounter, routeCounter2;
-
 	Vector3 oldTile, currTile;
-	
 	bool checkMoved;
 	bool isAttacking;
 };

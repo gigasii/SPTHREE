@@ -165,8 +165,11 @@ void SceneText::Init()
 	meshList[GEO_TILE] = MeshBuilder::GenerateTileMap("GEO_TILE", 6, 6);
 	meshList[GEO_TILE]->textureID = LoadTGA("Image//tile2.tga");
 
-	meshList[GEO_TILE_WAYPOINT] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_TILE_WAYPOINT]->textureID = LoadTGA("Image//tile0_blank_red.tga");
+	meshList[GEO_TILEDETECTIONRADIUS] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_TILEDETECTIONRADIUS]->textureID = LoadTGA("Image//tile0_blank_red.tga");
+
+	meshList[GEO_TILEEXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_TILEEXCLAMATIONMARK]->textureID = LoadTGA("Image//exclamationmark.tga");
 
 	meshList[GEO_20] = MeshBuilder::Generate2DMesh("GEO_20", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_20]->textureID = LoadTGA("Image//Desert//tile20.tga");
@@ -533,7 +536,7 @@ void SceneText::Update(double dt)
 			if(go->attackStatus == true)
 			{
 				go->attackReactionTime += dt;
-				if(go->attackReactionTime >= 1.5)
+				if(go->attackReactionTime >= 0.5)
 				{
 					hero.health--;
 					go->attackReactionTime = 0;
@@ -618,10 +621,12 @@ void SceneText::Update(double dt)
 					go->enemyTileID = 15;
 				}
 			}
+
+			cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
 		}
 
 		//cout << go->direction << endl;
-		std::cout << "Reaction Time:" << go->attackReactionTime << std::endl;
+		//cout << "Reaction Time:" << go->attackReactionTime << endl;
 	}
 
 	// =================================== UPDATE THE GOODIES ===================================
@@ -936,6 +941,22 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 				}
 			}
 		}
+
+		//Assassination from haystack
+		else
+		{
+			if(hero.hiding == true)
+			{
+				if(hero.GetAttackStatus() == true && stabOnce == false)
+				{
+					if((DistanceFromEnemyX >= -4 && DistanceFromEnemyX <= 4) && (DistanceFromEnemyY >= -50 && DistanceFromEnemyY <= 50) || (DistanceFromEnemyY >= -4 && DistanceFromEnemyY <= 4) && (DistanceFromEnemyX >= -50 && DistanceFromEnemyX <= 50))
+					{
+						go->health -= 2;
+						stabOnce = true;
+					}		
+				}
+			}
+		}
 	}
 
 	//Reset for hero to hit again
@@ -953,12 +974,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 	}
 
 	//Checking if enemy can attack hero
-	if((DistanceFromEnemyY >= 0 && DistanceFromEnemyY <= 1) && (DistanceFromEnemyX >= -32 && DistanceFromEnemyX <= 32))
-	{
-		go->attackStatus = true;
-	}
-
-	else if((DistanceFromEnemyX >= 0 && DistanceFromEnemyX <= 1) && (DistanceFromEnemyY >= -32 && DistanceFromEnemyY <= 32))
+	if((DistanceFromEnemyY >= 0 && DistanceFromEnemyY <= 1) && (DistanceFromEnemyX >= -32 && DistanceFromEnemyX <= 32) || (DistanceFromEnemyX >= 0 && DistanceFromEnemyX <= 1) && (DistanceFromEnemyY >= -32 && DistanceFromEnemyY <= 32))
 	{
 		go->attackStatus = true;
 	}
@@ -1377,6 +1393,22 @@ void SceneText::RenderText()
 
 void SceneText::RenderHero()
 {
+	//For dislaying Hero's Health
+	if(hero.health >= 1)
+	{
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
+
+		if(hero.health >= 2)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);	
+			
+			if(hero.health == 3)
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
+			}
+		}
+	}
+
 	//Attacking
 	if(hero.GetAttackStatus() == true)
 	{
@@ -1410,6 +1442,20 @@ void SceneText::RenderHero()
 
 void SceneText::RenderEnemies()
 {
+	//For displaying Enemy's Health
+	for(int i = 0; i < enemyList.size(); ++i)
+	{
+		if(enemyList[i]->health >= 1)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+
+			if(enemyList[i]->health == 2)
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+			}
+		}
+	}
+
 	for(vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		CEnemy *go = (CEnemy *)*it;
@@ -1422,8 +1468,16 @@ void SceneText::RenderEnemies()
 			//Detection radius
 			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
 			{
-				Vector3 go2 = (Vector3)*it2;
-				Render2DMesh(meshList[GEO_TILE_WAYPOINT], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);	
+				if(go->theStrategy->CurrentState == CStrategy::PATROL)
+				{
+					Vector3 go2 = (Vector3)*it2;
+					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
+				}
+
+				else if(go->theStrategy->CurrentState == CStrategy::ATTACK)
+				{
+					Render2DMesh(meshList[GEO_TILEEXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
+				}
 			}
 
 			//Attacking
@@ -1611,7 +1665,7 @@ void SceneText::RenderHUD()
 {
 	if(stage != 7)
 	{
-		//For Indicating number of diamonds collected
+		//For indicating number of diamonds collected
 		RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
 
 		std::ostringstream ss1;
@@ -1620,44 +1674,14 @@ void SceneText::RenderHUD()
 		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
 	}
 
-	//For Indicating how number of keys collected
+	//For indicating number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56.5, false);
 
 	std::ostringstream ss2;
 	ss2.precision(5);
 	ss2 << "x " << keyCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
-
-	//For dislaying Hero's Health
-	if(hero.health >= 1)
-	{
-		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 35);
-
-		if(hero.health >= 2)
-		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 35);	
-			
-			if(hero.health == 3)
-			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 35);
-			}
-		}
-	}
 		
-	//For displaying Enemy's Health
-	for(int i = 0; i < enemyList.size(); ++i)
-	{
-		if(enemyList[i]->health >= 1)
-		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() + 35);
-
-			if(enemyList[i]->health == 2)
-			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() + 35);
-			}
-		}
-	}
-
 	//For Point System
 	std::ostringstream ss3;
 	ss3.precision(5);
@@ -1726,7 +1750,7 @@ void SceneText::Render()
 		RenderMenu(InteractHighLight, 1, 0);
 	}*/
 
-	//if (menu == false)
+	//if(menu == false)
 	//{
 		RenderInit();
 		RenderTileMap();
