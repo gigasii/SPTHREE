@@ -64,11 +64,11 @@ class SceneText : public Scene
 		GEO_TILEBACKGROUND,
 		GEO_TILEDOOR,
 		GEO_TILE,
-		GEO_TILE_WAYPOINT,
+		GEO_TILEDETECTIONRADIUS,
+		GEO_TILEEXCLAMATIONMARK,
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
-		GEO_TILEHEROSHEET2,
 
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
@@ -200,8 +200,6 @@ private:
 
 	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
-
-	//Vector of obstacles - barrels
 	std::vector<CGoodies *> BarrelList;
 
 	//General variables
@@ -210,27 +208,26 @@ private:
 	bool bLightEnabled;
 
 	//Project variables
-	int level;
+	int stage;
 	float attackSpeed;
 	bool stabOnce;
-
-	//Sprites Variable
-	float heroTileID;
-	float BossTileID;
+	bool attackAnimation;
+	float attackAnimationTimer;
 
 	//Boss Variables
 	bool IsTurn;
+	float BossTileID;
 	float bossCounter;
 	bool EnemiesRendered;
 	bool derenderDoor;
 	bool GetKey;
 
-	// HUD Variable
+	//HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
 
-	// Menu Variables
+	//Menu Variables
 	int delay;
 	int InteractHighLight;
 	bool menu;

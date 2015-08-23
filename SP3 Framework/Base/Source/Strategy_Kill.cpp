@@ -1,6 +1,6 @@
 #include "Strategy_Kill.h"
 
-CStrategy_Kill::CStrategy_Kill() : routeCounter(0), routeCounter2(0), oldTile(0,0,0), currTile(0,0,0), checkMoved(true)
+CStrategy_Kill::CStrategy_Kill() : routeCounter(0), routeCounter2(0), oldTile(0,0,0), currTile(0,0,0), checkMoved(true), isAttacking(false)
 {
 }
 
@@ -20,21 +20,13 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 			Map[j][i] = map->theScreenMap[i][j];
 		}
 	}
-
-	if(distanceHeroToEnemy < 49729.0f)
+	
+	if (detectionCheck(map, enemyTile, heroTile, enemyDir))
 	{
-		if(distanceHeroToEnemy < 1024.f)
-		{
-			CurrentState = REPEL;
-		}
-
-		else if (routeCounter2 == 0)
-		{
-			CurrentState = ATTACK;
-		}
+		isAttacking = true;
 	}
 
-	else if (routeCounter == 0)
+	else if (routeCounter == 0 && isAttacking == false)
 	{
 		if (CurrentState != PATROL)
 		{
@@ -48,6 +40,18 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 		}
 
 		CurrentState = PATROL;
+	}
+
+	if (isAttacking == true)
+	{
+		if(distanceHeroToEnemy < 1024.f)
+			CurrentState = REPEL;
+
+		else if (routeCounter2 == 0)
+			CurrentState = ATTACK;
+
+		if(distanceHeroToEnemy > 49729.0f || map->theScreenMap[heroTile.y][heroTile.x] == CMap::HAY && routeCounter2 == 0)
+			isAttacking = false;
 	}
 
 	//Based on the current state, move the enemy
@@ -256,16 +260,6 @@ void CStrategy_Kill::GetEnemyPosition(float& x, float& y)
 	y = theEnemyPosition.y;
 }
 
-void CStrategy_Kill::SetState(CStrategy_Kill::CURRENT_STATE theEnemyState)
-{
-	CurrentState = theEnemyState;
-}
-
-CStrategy_Kill::CURRENT_STATE CStrategy_Kill::GetState()
-{
-	return CurrentState;
-}
-
 string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int& xFinish, const int& yFinish,vector<CGoodies*> goodyList)
 {
 	static priority_queue<CNode> myQueue[2];
@@ -416,3 +410,45 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 	return ""; // no path found
 }
 
+bool  CStrategy_Kill::detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir)
+{
+	if (map->theScreenMap[heroTile.y][heroTile.x] == CMap::HAY)
+		return false;
+
+	Vector3 tempTile;
+	Vector3 enemyDir2 (enemyDir.x, -enemyDir.y, 0);
+	Vector3 enemyRight = enemyDir2.Cross(Vector3(0,0,1));
+
+	if (enemyTile + enemyDir2 == heroTile || enemyTile + enemyDir2 + enemyRight == heroTile || 
+		enemyTile + enemyDir2 - enemyRight == heroTile || enemyTile + enemyRight == heroTile || 
+		enemyTile - enemyRight == heroTile)
+	{
+		return true;
+	}
+
+	tempTile = enemyTile + enemyDir2;
+
+	if (!(map->theScreenMap[tempTile.y][tempTile.x] >= 44 && map->theScreenMap[tempTile.y][tempTile.x] <= 49) &&
+		enemyTile + (enemyDir2 * 2) == heroTile)
+	{
+		return true;
+	}
+
+	tempTile = enemyTile + enemyRight;
+
+	if (!(map->theScreenMap[tempTile.y][tempTile.x] >= 44 && map->theScreenMap[tempTile.y][tempTile.x] <= 49) &&
+		enemyTile + (enemyRight * 2) == heroTile)
+	{
+		return true;
+	}
+
+	tempTile = enemyTile - enemyRight;
+
+	if (!(map->theScreenMap[tempTile.y][tempTile.x] >= 44 && map->theScreenMap[tempTile.y][tempTile.x] <= 49) &&
+		enemyTile - (enemyRight * 2) == heroTile)
+	{
+		return true;
+	}
+
+	return false;
+}

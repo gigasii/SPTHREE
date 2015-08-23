@@ -15,8 +15,6 @@ private:
 
 	//The Destination is the position of the Hero
 	Vector2 theDestination;
-	CStrategy *theStrategy;
-
 public:
 	CEnemy();
 	~CEnemy();
@@ -38,6 +36,11 @@ public:
 	Vector3 eneCurrTile;
 	Vector3 direction;
 	float enemyTileID;
+	bool attackStatus;
+	float attackReactionTime;
+	vector <Vector3> detectionGrid;
+
+	CStrategy *theStrategy;
 
 	//Initialise this class instance
 	void Init();

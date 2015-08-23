@@ -43,7 +43,7 @@ public:
 	int getNumOfTiles_MapHeight(void);		//Get the number of tiles for the height of the map
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
-	void InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
+	void InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
 	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList);
 
@@ -59,7 +59,7 @@ public:
 	int theScreen_Height;
 
 	//Map Inits
-	CMap *m_cMap;
+	CMap *m_cScrollingMap;
 	CMap *m_cScreenMap;
 	CMap *m_cBossMap;
 

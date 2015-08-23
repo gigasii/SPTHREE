@@ -17,7 +17,7 @@ CMap::CMap(void)
 , tileOffset_y(0)
 , mapFineOffset_x(0)
 , mapFineOffset_y(0)
-, m_cMap(NULL)
+, m_cScrollingMap(NULL)
 , m_cScreenMap(NULL)
 , m_cBossMap(NULL)
 , scroll(false)
@@ -27,10 +27,10 @@ CMap::CMap(void)
 
 CMap::~CMap(void)
 {
-	if(m_cMap)
+	if(m_cScrollingMap)
 	{
-		delete m_cMap;
-		m_cMap = NULL;
+		delete m_cScrollingMap;
+		m_cScrollingMap = NULL;
 	}
 
 	if(m_cScreenMap)
@@ -39,7 +39,7 @@ CMap::~CMap(void)
 		m_cScreenMap = NULL;
 	}
 
-	if (m_cBossMap)
+	if(m_cBossMap)
 	{
 		delete m_cBossMap;
 		m_cBossMap = NULL;
@@ -66,26 +66,26 @@ void CMap::Init(const int theScreen_Height, const int theScreen_Width, const int
 		theScreenMap[i].resize(theNumOfTiles_MapWidth);
 }
 
-void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
+void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
 {
-	m_cMap = new CMap();
-	m_cMap->Init(800, 1024, 25, 32, 800, 2048, 32);
-	m_cMap->LoadMap("Image//MapDesign_Scrolling.csv");
-	m_cMap->scroll = true;
+	m_cScrollingMap = new CMap();
+	m_cScrollingMap->Init(800, 1024, 25, 32, 800, 2048, 32);
+	m_cScrollingMap->LoadMap("Image//MapDesign_Scrolling.csv");
+	m_cScrollingMap->scroll = true;
 	int tempType;
 	CEnemy* tempEnemy;
 	CGoodies* tempGoodies;
 
-	for (int i = 0; i < m_cMap->getNumOfTiles_MapHeight(); ++i)
+	for (int i = 0; i < m_cScrollingMap->getNumOfTiles_MapHeight(); ++i)
 	{
-		for (int j = 0; j < m_cMap->getNumOfTiles_MapWidth(); ++j)
+		for (int j = 0; j < m_cScrollingMap->getNumOfTiles_MapWidth(); ++j)
 		{
-			tempType = m_cMap->theScreenMap[i][j];
+			tempType = m_cScrollingMap->theScreenMap[i][j];
 
 			if(tempType == CMap::JEWEL)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->SetPos(j * m_cScrollingMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
@@ -94,7 +94,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 			else if(tempType == CMap::KEY)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->SetPos(j * m_cScrollingMap->GetTileSize(), m_cScrollingMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
 				tempGoodies->tilePos.Set(j,i,0);
@@ -104,7 +104,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 			else if(tempType == CMap::CHEST)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->SetPos(j * m_cScrollingMap->GetTileSize(), m_cScrollingMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
 				tempGoodies->tilePos.Set(j,i,0);
@@ -114,7 +114,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 			else if(tempType == CMap::BARREL)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->SetPos(j * m_cScrollingMap->GetTileSize(), m_cScrollingMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;
 				tempGoodies->tilePos.Set(j,i,0);
@@ -125,7 +125,7 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 			else if(tempType == CMap::HAY)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cMap->GetTileSize(), m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempGoodies->SetPos(j * m_cScrollingMap->GetTileSize(), m_cScrollingMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;
 				tempGoodies->tilePos.Set(j,i,0);
@@ -137,18 +137,17 @@ void CMap::InitMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &Go
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
-				tempEnemy->SetPos_x(j * m_cMap->GetTileSize());
-				tempEnemy->SetPos_y(m_cMap->GetTileSize() * (m_cMap->GetNumOfTiles_Height() - i) -  m_cMap->GetTileSize());
+				tempEnemy->SetPos_x(j * m_cScrollingMap->GetTileSize());
+				tempEnemy->SetPos_y(m_cScrollingMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
-				tempEnemy->setWayPoints(m_cMap);
+				tempEnemy->setWayPoints(m_cScrollingMap);
 				tempEnemy->eneCurrTile = Vector3(j,i,0);
 				enemyList.push_back(tempEnemy);
 			}
 		}
 	}
 }
-
 
 void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
 {

@@ -17,7 +17,8 @@ static const float TILE_SIZE = 32;
 ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 
 SceneText::SceneText()
-	: BossPointer(NULL)
+	: CurrentMap(NULL)
+	, BossPointer(NULL)
 {
 }
 
@@ -164,8 +165,11 @@ void SceneText::Init()
 	meshList[GEO_TILE] = MeshBuilder::GenerateTileMap("GEO_TILE", 6, 6);
 	meshList[GEO_TILE]->textureID = LoadTGA("Image//tile2.tga");
 
-	meshList[GEO_TILE_WAYPOINT] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_TILE_WAYPOINT]->textureID = LoadTGA("Image//tile0_blank_red.tga");
+	meshList[GEO_TILEDETECTIONRADIUS] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_TILEDETECTIONRADIUS]->textureID = LoadTGA("Image//tile0_blank_red.tga");
+
+	meshList[GEO_TILEEXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_TILEEXCLAMATIONMARK]->textureID = LoadTGA("Image//exclamationmark.tga");
 
 	meshList[GEO_20] = MeshBuilder::Generate2DMesh("GEO_20", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_20]->textureID = LoadTGA("Image//Desert//tile20.tga");
@@ -262,13 +266,10 @@ void SceneText::Init()
 	meshList[GEO_TILEHEROSHEET] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET", 4, 4);
 	meshList[GEO_TILEHEROSHEET]->textureID = LoadTGA("Image//Hero//hero.tga");
 
-	meshList[GEO_TILEHEROSHEET2] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET2", 2, 2);
-	meshList[GEO_TILEHEROSHEET2]->textureID = LoadTGA("Image//Hero//hero2.tga");
-
 	// ================================= Load Enemies =================================
 
-	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 4, 4);
-	meshList[GEO_TILEENEMYSHEET]->textureID = LoadTGA("Image//Enemy//army.tga");
+	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 5, 5);
+	meshList[GEO_TILEENEMYSHEET]->textureID = LoadTGA("Image//Enemy//enemy.tga");
 
 	// ==================================== Goodies ====================================
 
@@ -319,10 +320,10 @@ void SceneText::Init()
 	hero.settheHeroPositionx(888);
 	hero.settheHeroPositiony(640);
 
-	int tempHeroPosX = (int) ceil ((float)(888	) / 32);
+	int tempHeroPosX = (int) ceil ((float)(888) / 32);
 	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
 
-	hero.heroCurrTile = Vector3(tempHeroPosX,tempHeroPosY,0);
+	hero.heroCurrTile = Vector3(tempHeroPosX, tempHeroPosY, 0);
 
 	// === Variables ===
 	
@@ -330,13 +331,9 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	level = 1;
+	stage = 1;
 	attackSpeed = 0;
 	stabOnce = false;
-
-	// === Sprites Variable ===
-	
-	heroTileID = 0;
 
 	// === Boss's Variables and Pointers ===
 
@@ -363,23 +360,21 @@ void SceneText::Init()
 	Text[0] = "Start Game";
 	Text[1] = "How To Play?";
 
-	//========================================================================
+	// ========================== Initializing Map Inits ==========================
 
-	if(level == 1)
+	if(stage == 1)
 	{
-		// === Initialise and Load the Screenmap ===
 		map.InitScreenMap(enemyList, GoodiesList, BarrelList);
 		CurrentMap = map.m_cScreenMap;
 	}
 
-	else if(level == 2)
+	else if(stage == 2)
 	{
-		// === Initialise and load the tilemap ===
-		map.InitMap(enemyList, GoodiesList, BarrelList);
-		CurrentMap = map.m_cMap;
+		map.InitScrollingMap(enemyList, GoodiesList, BarrelList);
+		CurrentMap = map.m_cScrollingMap;
 	}
 
-	else if(level == 7)
+	else if(stage == 7)
 	{
 		map.InitBossMap(enemyList, GoodiesList);
 		CurrentMap = map.m_cBossMap;
@@ -435,15 +430,15 @@ void SceneText::Update(double dt)
 		CHAR_HEROKEY = 'a';
 
 		//Sprite Animation
-		heroTileID += 0.1;
-		if(heroTileID < 4)
+		hero.heroTileID += 0.1;
+		if(hero.heroTileID < 4)
 		{
-			heroTileID = 4;
+			hero.heroTileID = 4;
 		}
 
-		if(heroTileID > 6)
+		if(hero.heroTileID > 6)
 		{
-			heroTileID = 4;
+			hero.heroTileID = 4;
 		}
 	}
 
@@ -452,15 +447,15 @@ void SceneText::Update(double dt)
 		CHAR_HEROKEY = 'd';
 
 		//Sprite Animation
-		heroTileID += 0.1;
-		if(heroTileID < 8)
+		hero.heroTileID += 0.1;
+		if(hero.heroTileID < 8)
 		{
-			heroTileID = 8;
+			hero.heroTileID = 8;
 		}
 
-		if(heroTileID > 10)
+		if(hero.heroTileID > 10)
 		{
-			heroTileID = 8;
+			hero.heroTileID = 8;
 		}
 	}
 
@@ -469,15 +464,15 @@ void SceneText::Update(double dt)
 		CHAR_HEROKEY = 'w';
 
 		//Sprite Animation
-		heroTileID += 0.1;
-		if(heroTileID < 12)
+		hero.heroTileID += 0.1;
+		if(hero.heroTileID < 12)
 		{
-			heroTileID = 12;
+			hero.heroTileID = 12;
 		}
 
-		if(heroTileID > 14)
+		if(hero.heroTileID > 14)
 		{
-			heroTileID = 12;
+			hero.heroTileID = 12;
 		}
 	}
 
@@ -486,15 +481,15 @@ void SceneText::Update(double dt)
 		CHAR_HEROKEY = 's';
 
 		//Sprite Animation
-		heroTileID += 0.1;
-		if(heroTileID < 0)
+		hero.heroTileID += 0.1;
+		if(hero.heroTileID < 0)
 		{
-			heroTileID = 0;
+			hero.heroTileID = 0;
 		}
 
-		if(heroTileID > 2)
+		if(hero.heroTileID > 2)
 		{
-			heroTileID = 0;
+			hero.heroTileID = 0;
 		}
 	}
 
@@ -522,6 +517,8 @@ void SceneText::Update(double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
+			go->theStrategy->CurrentState;
+
 			if(go->currentStrat != CEnemy::STRAT_KILL)
 			{
 				go->ChangeStrategy(new CStrategy_Kill());
@@ -529,11 +526,40 @@ void SceneText::Update(double dt)
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
-			go->Update(CurrentMap, hero.heroCurrTile,BarrelList);
+			go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
 
 			int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 			int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 			CheckEnemiesInRange(go, DistanceFromEnemyX, DistanceFromEnemyY);
+
+			//Checking enemy attack status
+			if(go->attackStatus == true)
+			{
+				go->attackReactionTime += dt;
+				if(go->attackReactionTime >= 0.5)
+				{
+					hero.health--;
+					go->attackReactionTime = 0;
+					go->attackStatus = false;
+					attackAnimation = true;
+				}
+			}
+
+			else
+			{
+				go->attackReactionTime = 0;
+			}
+
+			//Attacking animation for enemy
+			if(attackAnimation == true)
+			{
+				attackAnimationTimer += dt;
+				if(attackAnimationTimer >= 0.7)
+				{
+					attackAnimationTimer = 0;
+					attackAnimation = false;
+				}
+			}
 
 			//Movement Sprite Animation
 			if(go->direction == Vector3(0, -1, 0))
@@ -545,7 +571,7 @@ void SceneText::Update(double dt)
 					go->enemyTileID = 0;
 				}
 
-				else if(go->enemyTileID > 2)
+				else if(go->enemyTileID > 3)
 				{
 					go->enemyTileID = 0;
 				}
@@ -555,14 +581,14 @@ void SceneText::Update(double dt)
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 4)
+				if(go->enemyTileID < 5)
 				{
-					go->enemyTileID = 4;
+					go->enemyTileID = 5;
 				}
 
-				else if(go->enemyTileID > 6)
+				else if(go->enemyTileID > 8)
 				{
-					go->enemyTileID = 4;
+					go->enemyTileID = 5;
 				}
 			}
 
@@ -570,14 +596,14 @@ void SceneText::Update(double dt)
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 8)
+				if(go->enemyTileID < 10)
 				{
-					go->enemyTileID = 8;
+					go->enemyTileID = 10;
 				}
 
-				else if(go->enemyTileID > 10)
+				else if(go->enemyTileID > 13)
 				{
-					go->enemyTileID = 8;
+					go->enemyTileID = 10;
 				}
 			}
 
@@ -585,21 +611,22 @@ void SceneText::Update(double dt)
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 12)
+				if(go->enemyTileID < 15)
 				{
-					go->enemyTileID = 12;
+					go->enemyTileID = 15;
 				}
 
-				else if(go->enemyTileID > 14)
+				else if(go->enemyTileID > 18)
 				{
-					go->enemyTileID = 12;
+					go->enemyTileID = 15;
 				}
 			}
 
-			//std::cout << "DISTANCE:" << DistanceFromEnemyX << "," << DistanceFromEnemyY << std::endl;
+			cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
 		}
 
-		//std::cout << go->GetHealth() << std::endl;
+		//cout << go->direction << endl;
+		//cout << "Reaction Time:" << go->attackReactionTime << endl;
 	}
 
 	// =================================== UPDATE THE GOODIES ===================================
@@ -714,7 +741,7 @@ void SceneText::Update(double dt)
 		derenderDoor = true;
 	}
 
-	if(level == 7 && (CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS))
+	if(stage == 7 && (CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS))
 	{
 		if(Application::IsKeyPressed(VK_SPACE))
 		{
@@ -777,32 +804,30 @@ void SceneText::Update(double dt)
 	{
 		if(hero.GetdoorOpened() == true)
 		{
-			if(level == 1)
+			if(stage == 1)
 			{
 				hero.SetKeyAcquired(false);	
 				hero.SetdoorOpened(false);
-				level = 2;
+				stage = 2;
 				hero.settheHeroPositionx(32);
 				hero.heroCurrTile.x = 1;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitMap(enemyList, GoodiesList, BarrelList);
-				CurrentMap = map.m_cMap;
+				map.InitScrollingMap(enemyList, GoodiesList, BarrelList);
+				CurrentMap = map.m_cScrollingMap;
 			}
 
-			else if(level == 2)
+			else if(stage == 2)
 			{
-				level = 3;
+				stage = 3;
 				hero.settheHeroPositionx(1024 - 32);
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				map.InitScreenMap(enemyList, GoodiesList, BarrelList);
-				CurrentMap = map.m_cScreenMap;	
 			}
 		}
 	}
 
-	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, level);
+	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
 	CHAR_HEROKEY = NULL;
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -822,6 +847,7 @@ void SceneText::UpdateAttackStatus(const unsigned char key)
 
 void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int DistanceFromEnemyY)
 {
+	//Check hero's attack status
 	if(hero.GetAttackStatus() == true && stabOnce == false)
 	{
 		//Check enemies in x-order
@@ -830,7 +856,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 			if(DistanceFromEnemyX >= 0 && DistanceFromEnemyX <= 32)
 			{
 				//Hero facing left
-				if(heroTileID >= 4 && heroTileID <= 6)
+				if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
 				{
 					//Backstab enemy
 					if(go->direction == Vector3(-1, 0, 0))
@@ -851,7 +877,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 			else if(DistanceFromEnemyX <= 0 && DistanceFromEnemyX >= -32)
 			{
 				//Hero facing right
-				if(heroTileID >= 8 && heroTileID <= 10)
+				if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
 				{
 					//Backstab enemy
 					if(go->direction == Vector3(1, 0, 0))
@@ -876,7 +902,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 			if(DistanceFromEnemyY >= 0 && DistanceFromEnemyY <= 32)
 			{
 				//Hero is facing down
-				if(heroTileID >= 0 && heroTileID <= 2)
+				if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
 				{
 					//Backstab enemy
 					if(go->direction == Vector3(0, -1, 0))
@@ -897,7 +923,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 			else if(DistanceFromEnemyY <= 0 && DistanceFromEnemyY >= -32)
 			{
 				//Hero is facing up
-				if(heroTileID >= 12 && heroTileID <= 14)
+				if(hero.heroTileID >= 12 && hero.heroTileID <= 14)
 				{
 					//Backstab enemy
 					if(go->direction == Vector3(0, 1, 0))
@@ -915,17 +941,47 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 				}
 			}
 		}
+
+		//Assassination from haystack
+		else
+		{
+			if(hero.hiding == true)
+			{
+				if(hero.GetAttackStatus() == true && stabOnce == false)
+				{
+					if((DistanceFromEnemyX >= -4 && DistanceFromEnemyX <= 4) && (DistanceFromEnemyY >= -50 && DistanceFromEnemyY <= 50) || (DistanceFromEnemyY >= -4 && DistanceFromEnemyY <= 4) && (DistanceFromEnemyX >= -50 && DistanceFromEnemyX <= 50))
+					{
+						go->health -= 2;
+						stabOnce = true;
+					}		
+				}
+			}
+		}
 	}
 
+	//Reset for hero to hit again
 	else if(hero.GetAttackStatus() == false && stabOnce == true)
 	{
 		stabOnce = false;
 	}
 
+	//Check enemies' health
 	if(go->health <= 0)
 	{
 		go->active = false;
 		go->health = 0;
+		go->attackReactionTime = 0;
+	}
+
+	//Checking if enemy can attack hero
+	if((DistanceFromEnemyY >= 0 && DistanceFromEnemyY <= 1) && (DistanceFromEnemyX >= -32 && DistanceFromEnemyX <= 32) || (DistanceFromEnemyX >= 0 && DistanceFromEnemyX <= 1) && (DistanceFromEnemyY >= -32 && DistanceFromEnemyY <= 32))
+	{
+		go->attackStatus = true;
+	}
+
+	else
+	{
+		go->attackStatus = false;
 	}
 }
 
@@ -1337,53 +1393,128 @@ void SceneText::RenderText()
 
 void SceneText::RenderHero()
 {
+	//For dislaying Hero's Health
+	if(hero.health >= 1)
+	{
+		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
+
+		if(hero.health >= 2)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);	
+			
+			if(hero.health == 3)
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
+			}
+		}
+	}
+
 	//Attacking
 	if(hero.GetAttackStatus() == true)
 	{
-		if(heroTileID >= 0 && heroTileID <= 2)
+		if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 0, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 
-		else if(heroTileID >= 4 && heroTileID <= 6)
+		else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 1, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 
-		else if(heroTileID >= 8 && heroTileID <= 10)
+		else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 2, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 
 		else
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET2], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 	}
 
 	//Walking
 	else
 	{
-		RenderSprites(meshList[GEO_TILEHEROSHEET], heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+		RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 	}
 }
 
 void SceneText::RenderEnemies()
 {
+	//For displaying Enemy's Health
+	for(int i = 0; i < enemyList.size(); ++i)
+	{
+		if(enemyList[i]->health >= 1)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+
+			if(enemyList[i]->health == 2)
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+			}
+		}
+	}
+
 	for(vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		CEnemy *go = (CEnemy *)*it;
 		int theEnemy_x = go->GetPos_x() - CurrentMap->mapOffset_x;
 		int theEnemy_y = go->GetPos_y();
+		Vector3 theEnemyPos (theEnemy_x,theEnemy_y,0);
 
 		if(go->active)	
-		{			
-			RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+		{	
+			//Detection radius
+			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
+			{
+				if(go->theStrategy->CurrentState == CStrategy::PATROL)
+				{
+					Vector3 go2 = (Vector3)*it2;
+					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
+				}
+
+				else if(go->theStrategy->CurrentState == CStrategy::ATTACK)
+				{
+					Render2DMesh(meshList[GEO_TILEEXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
+				}
+			}
+
+			//Attacking
+			if(attackAnimation == true)
+			{
+				if(go->direction == Vector3(0, -1, 0))
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else if(go->direction == Vector3(-1, 0, 0))
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else if(go->direction == Vector3(1, 0, 0))
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 13, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], 18, 32, theEnemy_x, theEnemy_y);
+				}
+			}
+
+			//Walking
+			else
+			{		
+				RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+			}
 		}
 
+		//Dead
 		else
 		{
-			RenderSprites(meshList[GEO_TILEENEMYSHEET], 15, 32, theEnemy_x, theEnemy_y);
+			RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
 		}
 	}
 }
@@ -1405,7 +1536,7 @@ void SceneText::RenderTileMap()
 				break;
 			}
 
-			if(level == 1)
+			if(stage == 1)
 			{
 				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
@@ -1432,7 +1563,7 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(level == 2)
+			else if(stage == 2)
 			{
 				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
@@ -1451,7 +1582,7 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(level == 7)
+			else if(stage == 7)
 			{
 				int m = 0;
 				CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
@@ -1532,9 +1663,9 @@ void SceneText::RenderGoodies()
 
 void SceneText::RenderHUD()
 {
-	if(level != 7)
+	if(stage != 7)
 	{
-		//For Indicating number of diamonds collected
+		//For indicating number of diamonds collected
 		RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
 
 		std::ostringstream ss1;
@@ -1543,33 +1674,14 @@ void SceneText::RenderHUD()
 		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
 	}
 
-	//For Indicating how number of keys collected
+	//For indicating number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56.5, false);
 
 	std::ostringstream ss2;
 	ss2.precision(5);
 	ss2 << "x " << keyCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
-
-	//For dislaying Hero's Health
-	Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 35);
-	Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 35);
-	Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 35);
-
-	//For displaying Enemy's Health
-	for(int i = 0; i < enemyList.size(); ++i)
-	{
-		if(enemyList[i]->health >= 1)
-		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() + 35);
-
-			if(enemyList[i]->health == 2)
-			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() + 35);
-			}
-		}
-	}
-
+		
 	//For Point System
 	std::ostringstream ss3;
 	ss3.precision(5);
@@ -1638,7 +1750,7 @@ void SceneText::Render()
 		RenderMenu(InteractHighLight, 1, 0);
 	}*/
 
-	//if (menu == false)
+	//if(menu == false)
 	//{
 		RenderInit();
 		RenderTileMap();
