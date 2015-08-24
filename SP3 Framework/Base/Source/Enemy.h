@@ -15,6 +15,7 @@ private:
 
 	//The Destination is the position of the Hero
 	Vector2 theDestination;
+
 public:
 	CEnemy();
 	~CEnemy();
@@ -73,7 +74,6 @@ public:
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
-	
 	void setWayPoints(CMap* map);
 };
 

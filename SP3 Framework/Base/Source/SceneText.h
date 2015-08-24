@@ -63,15 +63,15 @@ class SceneText : public Scene
 		//Tilesheet
 		GEO_TILEBACKGROUND,
 		GEO_TILEDOOR,
-		GEO_TILE,
 		GEO_TILEDETECTIONRADIUS,
-		GEO_TILEEXCLAMATIONMARK,
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
 
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
+		GEO_TILEENEMYSHEET2,
+		GEO_EXCLAMATIONMARK,
 
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
@@ -90,11 +90,11 @@ class SceneText : public Scene
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
+		GEO_DETECTIONEYE,
+		GEO_DETECTIONEYE2,
 
-		//Menu
+		//Game Screens
 		GEO_MENU,
-
-		//Game Over
 		GEO_LOSE,
 
 		//Sahara desert
@@ -226,6 +226,7 @@ private:
 	bool stabOnce;
 	bool attackAnimation;
 	float attackAnimationTimer;
+	bool RenderDim;
 
 	//Boss Variables
 	bool IsTurn;
@@ -249,11 +250,10 @@ private:
 	//Custom Menu Variables
 	bool RenderCustomMenu;
 
-	// Game Over Variables
+	//Game Over Variables
 	bool lose;
 	float LoseTimer;
 
-	bool RenderDim;
 protected:
 	float m_worldWidth;
 	float m_worldHeight;

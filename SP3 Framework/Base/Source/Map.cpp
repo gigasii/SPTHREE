@@ -17,9 +17,11 @@ CMap::CMap(void)
 , tileOffset_y(0)
 , mapFineOffset_x(0)
 , mapFineOffset_y(0)
-, m_cScrollingMap(NULL)
 , m_cScreenMap(NULL)
+, m_cScreenMap3(NULL)
+, m_cScrollingMap(NULL)
 , m_cBossMap(NULL)
+, m_cCustomMap(NULL)
 , scroll(false)
 {
 	theScreenMap.clear();
@@ -27,22 +29,34 @@ CMap::CMap(void)
 
 CMap::~CMap(void)
 {
-	if(m_cScrollingMap)
-	{
-		delete m_cScrollingMap;
-		m_cScrollingMap = NULL;
-	}
-
 	if(m_cScreenMap)
 	{
 		delete m_cScreenMap;
 		m_cScreenMap = NULL;
 	}
 
+	if(m_cScreenMap3)
+	{
+		delete m_cScreenMap3;
+		m_cScreenMap3 = NULL;
+	}
+
+	if(m_cScrollingMap)
+	{
+		delete m_cScrollingMap;
+		m_cScrollingMap = NULL;
+	}
+
 	if(m_cBossMap)
 	{
 		delete m_cBossMap;
 		m_cBossMap = NULL;
+	}
+
+	if(m_cCustomMap)
+	{
+		delete m_cCustomMap;
+		m_cCustomMap = NULL;
 	}
 
 	theScreenMap.clear();
@@ -66,6 +80,187 @@ void CMap::Init(const int theScreen_Height, const int theScreen_Width, const int
 		theScreenMap[i].resize(theNumOfTiles_MapWidth);
 }
 
+void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
+{
+	m_cScreenMap = new CMap();
+	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
+	m_cScreenMap->LoadMap("Image//MapDesign_Screen.csv");
+	m_cScreenMap->scroll = false;
+	int tempType;
+	CEnemy* tempEnemy;
+	CGoodies* tempGoodies;
+
+	for(int i = 0; i < m_cScreenMap->getNumOfTiles_MapHeight(); ++i)
+	{
+		for(int j = 0; j < m_cScreenMap->getNumOfTiles_MapWidth(); ++j)
+		{
+			tempType = m_cScreenMap->theScreenMap[i][j];
+
+			if(tempType == CMap::JEWEL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+			
+			else if(tempType == CMap::KEY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::CHEST)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::HAY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
+				tempGoodies->tilePos.Set(j,i,0);
+				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::BARREL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				tempGoodies->tilePos.Set(j,i,0);
+				BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType >= CMap::ENEMY_1)
+			{
+				tempEnemy = new CEnemy();
+				tempEnemy->ChangeStrategy(NULL,false);
+				tempEnemy->SetPos_x(j * m_cScreenMap->GetTileSize());
+				tempEnemy->SetPos_y(m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempEnemy->active = true;
+				tempEnemy->ID = tempType;
+				tempEnemy->health = 2;
+				tempEnemy->setWayPoints(m_cScreenMap);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);	
+				enemyList.push_back(tempEnemy);
+			}
+		}
+	}
+}
+
+void CMap::InitScreenMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
+{
+	m_cScreenMap3 = new CMap();
+	m_cScreenMap3->Init(800, 1024, 25, 32, 800, 1024, 32);
+	m_cScreenMap3->LoadMap("Image//MapDesign_Screen3.csv");
+	m_cScreenMap3->scroll = false;
+	int tempType;
+	CEnemy* tempEnemy;
+	CGoodies* tempGoodies;
+
+	for(int i = 0; i < m_cScreenMap3->getNumOfTiles_MapHeight(); ++i)
+	{
+		for(int j = 0; j < m_cScreenMap3->getNumOfTiles_MapWidth(); ++j)
+		{
+			tempType = m_cScreenMap3->theScreenMap[i][j];
+
+			if(tempType == CMap::JEWEL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap3->GetTileSize(), m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::KEY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap3->GetTileSize(), m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::CHEST)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap3->GetTileSize(), m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::BARREL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap3->GetTileSize(), m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				tempGoodies->tilePos.Set(j,i,0);
+				BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::HAY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap3->GetTileSize(), m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			if(tempType >= CMap::ENEMY_1 && tempType < CMap::ENEMYAMOURED_80)
+			{
+				tempEnemy = new CEnemy();
+				tempEnemy->ChangeStrategy(NULL,false);
+				tempEnemy->SetPos_x(j * m_cScreenMap3->GetTileSize());
+				tempEnemy->SetPos_y(m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempEnemy->active = true;
+				tempEnemy->ID = tempType;
+				tempEnemy->health = 2;
+				tempEnemy->setWayPoints(m_cScreenMap3);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);	
+				enemyList.push_back(tempEnemy);
+			}
+
+			else if(tempType >= CMap::ENEMYAMOURED_80)
+			{
+				tempEnemy = new CEnemy();
+				tempEnemy->ChangeStrategy(NULL,false);
+				tempEnemy->SetPos_x(j * m_cScreenMap3->GetTileSize());
+				tempEnemy->SetPos_y(m_cScreenMap3->GetTileSize() * (m_cScreenMap3->GetNumOfTiles_Height() - i) - m_cScreenMap3->GetTileSize());
+				tempEnemy->active = true;
+				tempEnemy->ID = tempType;
+				tempEnemy->health = 3;
+				tempEnemy->setWayPoints(m_cScreenMap3);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);	
+				enemyList.push_back(tempEnemy);
+			}
+		}
+	}
+}
+
 void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
 {
 	m_cScrollingMap = new CMap();
@@ -76,9 +271,9 @@ void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodi
 	CEnemy* tempEnemy;
 	CGoodies* tempGoodies;
 
-	for (int i = 0; i < m_cScrollingMap->getNumOfTiles_MapHeight(); ++i)
+	for(int i = 0; i < m_cScrollingMap->getNumOfTiles_MapHeight(); ++i)
 	{
-		for (int j = 0; j < m_cScrollingMap->getNumOfTiles_MapWidth(); ++j)
+		for(int j = 0; j < m_cScrollingMap->getNumOfTiles_MapWidth(); ++j)
 		{
 			tempType = m_cScrollingMap->theScreenMap[i][j];
 
@@ -141,91 +336,9 @@ void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodi
 				tempEnemy->SetPos_y(m_cScrollingMap->GetTileSize() * (m_cScrollingMap->GetNumOfTiles_Height() - i) - m_cScrollingMap->GetTileSize());
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
+				tempEnemy->health = 2;
 				tempEnemy->setWayPoints(m_cScrollingMap);
 				tempEnemy->eneCurrTile = Vector3(j,i,0);
-				enemyList.push_back(tempEnemy);
-			}
-		}
-	}
-}
-
-void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
-{
-	m_cScreenMap = new CMap();
-	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
-	m_cScreenMap->LoadMap("Image//MapDesign_Screen.csv");
-	m_cScreenMap->scroll = false;
-	int tempType;
-	CEnemy* tempEnemy;
-	CGoodies* tempGoodies;
-
-	for (int i = 0; i < m_cScreenMap->getNumOfTiles_MapHeight(); ++i)
-	{
-		for (int j = 0; j < m_cScreenMap->getNumOfTiles_MapWidth(); ++j)
-		{
-			tempType = m_cScreenMap->theScreenMap[i][j];
-
-			if(tempType == CMap::JEWEL)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->tilePos.Set(j,i,0);
-				GoodiesList.push_back(tempGoodies);
-			}
-			
-			else if(tempType == CMap::KEY)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
-				tempGoodies->tilePos.Set(j,i,0);
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if(tempType == CMap::CHEST)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
-				tempGoodies->tilePos.Set(j,i,0);
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if(tempType == CMap::HAY)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
-				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if(tempType == CMap::BARREL)
-			{
-				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
-				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
-				tempGoodies->tilePos.Set(j,i,0);
-				BarrelsList.push_back(tempGoodies);
-				GoodiesList.push_back(tempGoodies);
-			}
-
-			else if (tempType >= CMap::ENEMY_1)
-			{
-				tempEnemy = new CEnemy();
-				tempEnemy->ChangeStrategy(NULL,false);
-				tempEnemy->SetPos_x(j * m_cScreenMap->GetTileSize());
-				tempEnemy->SetPos_y(m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
-				tempEnemy->active = true;
-				tempEnemy->ID = tempType;
-				tempEnemy->setWayPoints(m_cScreenMap);
-				tempEnemy->eneCurrTile = Vector3(j,i,0);	
 				enemyList.push_back(tempEnemy);
 			}
 		}
@@ -242,13 +355,13 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 	CEnemy* tempEnemy;
 	CGoodies* tempGoodies;
 
-	for (int i = 0; i < m_cBossMap->getNumOfTiles_MapHeight(); ++i)
+	for(int i = 0; i < m_cBossMap->getNumOfTiles_MapHeight(); ++i)
 	{
-		for (int j = 0; j < m_cBossMap->getNumOfTiles_MapWidth(); ++j)
+		for(int j = 0; j < m_cBossMap->getNumOfTiles_MapWidth(); ++j)
 		{
 			tempType = m_cBossMap->theScreenMap[i][j];
 
-			if (tempType == CMap::JEWEL)
+			if(tempType == CMap::JEWEL)
 			{
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
@@ -256,7 +369,7 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if (tempType == CMap::KEY)
+			else if(tempType == CMap::KEY)
 			{
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
@@ -265,7 +378,7 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if (tempType == CMap::CHEST)
+			else if(tempType == CMap::CHEST)
 			{
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
@@ -274,14 +387,13 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if (tempType == CMap::HAY)
+			else if(tempType == CMap::HAY)
 			{
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;
 				tempGoodies->tilePos.Set(j, i, 0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 
@@ -315,6 +427,7 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 				tempEnemy->SetPos_y(m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
+				tempEnemy->health = 2;
 				tempEnemy->setWayPoints(m_cBossMap);
 				tempEnemy->eneCurrTile = Vector3(j, i, 0);
 				enemyList.push_back(tempEnemy);
