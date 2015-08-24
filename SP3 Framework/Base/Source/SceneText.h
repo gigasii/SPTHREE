@@ -129,6 +129,8 @@ class SceneText : public Scene
 		GEO_48,
 		GEO_49,
 	
+		GEO_DIM,
+
 		NUM_GEOMETRY,
 	};
 
@@ -174,7 +176,7 @@ public:
 	//Render Goodies
 	void RenderGoodies();
 
-
+	static bool bReset;
 
 enum CHARACTER_ACTION
 {
@@ -251,6 +253,7 @@ private:
 	bool lose;
 	float LoseTimer;
 
+	bool RenderDim;
 protected:
 	float m_worldWidth;
 	float m_worldHeight;
