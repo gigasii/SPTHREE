@@ -64,7 +64,8 @@ class SceneText : public Scene
 		GEO_TILEBACKGROUND,
 		GEO_TILEDOOR,
 		GEO_TILE,
-		GEO_TILE_WAYPOINT,
+		GEO_TILEDETECTIONRADIUS,
+		GEO_TILEEXCLAMATIONMARK,
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
@@ -79,7 +80,9 @@ class SceneText : public Scene
 		GEO_DIAMOND,
 		GEO_KEY,
 		GEO_CHEST,
+		GEO_CHEST_OPENED,
 		GEO_BARREL,
+		GEO_BARREL_BROKEN,
 		GEO_HAY,
 
 		//HUD icons

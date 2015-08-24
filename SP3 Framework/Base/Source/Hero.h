@@ -34,6 +34,7 @@ public:
 	Vector3 heroCurrTile;
 	float heroTileID;
 	int health;
+	bool hiding;
 
 	//Set the position x of the player
 	void settheHeroPositionx(int theHeroPositionx_);
