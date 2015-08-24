@@ -12,7 +12,6 @@
 using namespace irrklang;
 
 bool SceneText::bReset;
-
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
 
@@ -276,6 +275,11 @@ void SceneText::Init()
 	meshList[GEO_EXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_EXCLAMATIONMARK]->textureID = LoadTGA("Image//Enemy//exclamationmark.tga");
 
+	// ================================= Load Boss =================================
+
+	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
+	meshList[GEO_TILEBOSS_FRAME0]->textureID = LoadTGA("Image//Enemy//boss.tga");
+
 	// ==================================== Goodies ====================================
 
 	meshList[GEO_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -301,21 +305,6 @@ void SceneText::Init()
 
 	meshList[GEO_HOLE] = MeshBuilder::Generate2DMesh("GEO_HOLE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Goodies//hole.tga");
-	
-	// ================================= Load Boss =================================
-
-	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
-	meshList[GEO_TILEBOSS_FRAME0]->textureID = LoadTGA("Image//Enemy//boss.tga");
-
-	// ================================= Load Menu =================================
-
-	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
-	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
-
-	// ================================= Load Game Over Screen =================================
-	
-	meshList[GEO_LOSE] = MeshBuilder::GenerateQuad("gameover", Color(1, 1, 1), 1);
-	meshList[GEO_LOSE]->textureID = LoadTGA("Image//lose_screen.tga");
 
 	// ==================================== Load HUD ====================================
 
@@ -337,6 +326,14 @@ void SceneText::Init()
 	meshList[GEO_DIM] = MeshBuilder::Generate2DMesh("GEO_DIM", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_DIM]->textureID = LoadTGA("Image//tile0_blank_grey.tga");
 
+	// ================================= Game Screens =================================
+
+	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
+	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
+	
+	meshList[GEO_LOSE] = MeshBuilder::GenerateQuad("gameover", Color(1, 1, 1), 1);
+	meshList[GEO_LOSE]->textureID = LoadTGA("Image//lose_screen.tga");
+
 	// ==================================================================================
 
 	Mtx44 perspective;
@@ -347,10 +344,8 @@ void SceneText::Init()
 
 	hero.settheHeroPositionx(888);
 	hero.settheHeroPositiony(640);
-
 	int tempHeroPosX = (int) ceil ((float)(888) / 32);
 	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
-
 	hero.heroCurrTile = Vector3(tempHeroPosX, tempHeroPosY, 0);
 
 	// === Variables ===
@@ -359,9 +354,10 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 5;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
+	RenderDim = false;
 
 	// === Boss's Variables and Pointers ===
 
@@ -391,9 +387,14 @@ void SceneText::Init()
 	// === Custom cMenu Variables ===
 	
 	RenderCustomMenu = false;
+	
+	// === GameOver Variables ===
+	
+	lose = false;
 	LoseTimer = 0.0f;
 
 	// === LastKeyPressed Variables ===
+	
 	LastKeyPressed = NULL;
 
 	// ========================== Initializing Map Inits ==========================
@@ -589,7 +590,7 @@ void SceneText::Update(double dt)
 					hero.health--;
 					go->attackReactionTime = 0;
 					go->attackStatus = false;
-					attackAnimation = true;
+					go->attackAnimation = true;
 				}
 			}
 
@@ -599,13 +600,13 @@ void SceneText::Update(double dt)
 			}
 
 			//Attacking animation for enemy
-			if(attackAnimation == true)
+			if(go->attackAnimation == true)
 			{
-				attackAnimationTimer += dt;
-				if(attackAnimationTimer >= 0.7)
+				go->attackAnimationTimer += dt;
+				if(go->attackAnimationTimer >= 0.7)
 				{
-					attackAnimationTimer = 0;
-					attackAnimation = false;
+					go->attackAnimationTimer = 0;
+					go->attackAnimation = false;
 				}
 			}
 
@@ -669,28 +670,26 @@ void SceneText::Update(double dt)
 					go->enemyTileID = 15;
 				}
 			}
-
-			//cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
 		}
-
-		//cout << go->direction << endl;
-		//cout << "Reaction Time:" << go->attackReactionTime << endl;
 	}
 
-	// =================================== update LastKeyPressed ===================================
+	// =================================== Update LastKeyPressed ===================================
 
 	if(Application::IsKeyPressed('W'))
 	{
 		LastKeyPressed = 'w';
 	}
+	
 	else if(Application::IsKeyPressed('S'))
 	{
 		LastKeyPressed = 's';
 	}
+	
 	else if(Application::IsKeyPressed('A'))
 	{
 		LastKeyPressed = 'a';
 	}
+	
 	else if(Application::IsKeyPressed('D'))
 	{
 		LastKeyPressed = 'd';
@@ -862,14 +861,13 @@ void SceneText::Update(double dt)
 
 	BossPointer->Set_SpawnGuards(IsTurn);
 
-
 	// ============================= MOUSE SECTION ====================================
-	//Mouse Section
+
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
 	{
 		bLButtonState = true;
-		std::cout << "LBUTTON DOWN" << std::endl;
+		//std::cout << "LBUTTON DOWN" << std::endl;
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
@@ -878,7 +876,7 @@ void SceneText::Update(double dt)
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
-		if (CustomMap->theScreenMap[CustomMap->GetNumOfTiles_Height() - (x / 32)][y / 32] == 1)
+		if(CustomMap->theScreenMap[CustomMap->GetNumOfTiles_Height() - (x / 32)][y / 32] == 1)
 		{
 			std::cout << "This is the correct tile" << std::endl;
 		}
@@ -887,7 +885,7 @@ void SceneText::Update(double dt)
 	else if (bLButtonState && !Application::IsMousePressed(0))
 	{
 		bLButtonState = false;
-		std::cout << "LBUTTON UP" << std::endl;
+		//std::cout << "LBUTTON UP" << std::endl;
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
@@ -898,10 +896,10 @@ void SceneText::Update(double dt)
 	}
 
 	static bool bRButtonState = false;
-	if (!bRButtonState && Application::IsMousePressed(1))
+	if(!bRButtonState && Application::IsMousePressed(1))
 	{
 		bRButtonState = true;
-		std::cout << "RBUTTON DOWN" << std::endl;
+		//std::cout << "RBUTTON DOWN" << std::endl;
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
@@ -911,10 +909,10 @@ void SceneText::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 	}
 
-	else if (bRButtonState && !Application::IsMousePressed(1))
+	else if(bRButtonState && !Application::IsMousePressed(1))
 	{
 		bRButtonState = false;
-		std::cout << "RBUTTON UP" << std::endl;
+		//std::cout << "RBUTTON UP" << std::endl;
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
@@ -924,28 +922,22 @@ void SceneText::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 	}
 
-
 	// =================================== Lose Screen UPDATES ===================================
-	if (hero.health <= 0)
+	
+	if(hero.health <= 0)
 	{
 		lose = true;
+	}
 
-		if (lose == true)
+	if(lose == true)
+	{
+		LoseTimer += 0.01f;
+		if(LoseTimer >= 2.0f)
 		{
-			LoseTimer += 0.01f;
+			bReset = true;
 		}
 	}
-
-	if (LoseTimer >= 2.0f)
-	{
-		LoseTimer = 2.02f;
-		lose = false;
-		hero.health = 3;
-	}
-
-	//cout << LoseTimer << endl;
-
-
+	
 	// =================================== MAIN UPDATES ===================================
 
 	//Moving from screen stage to scrollnig stage conditions
@@ -1008,14 +1000,10 @@ void SceneText::Update(double dt)
 	{
 		RenderDim = true;
 	}
+	
 	else
 	{
 		RenderDim = false;
-	}
-
-	if(Application::IsKeyPressed('R'))
-	{
-		bReset = true;
 	}
 
 	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
@@ -1182,19 +1170,22 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 				{
 					if((DistanceFromEnemyX >= -4 && DistanceFromEnemyX <= 4) && (DistanceFromEnemyY >= -50 && DistanceFromEnemyY <= 50) || (DistanceFromEnemyY >= -4 && DistanceFromEnemyY <= 4) && (DistanceFromEnemyX >= -50 && DistanceFromEnemyX <= 50))
 					{
-						//Normal soldier
-						if(go->ID >= 50 && go->ID < 80)
+						if(go->theStrategy->CurrentState == CStrategy::PATROL)
 						{
-							go->health -= 2;
-						}
+							//Normal soldier
+							if(go->ID >= 50 && go->ID < 80)
+							{
+								go->health -= 2;
+							}
 
-						//Amoured soldier
-						else if(go->ID >= 80)
-						{
-							go->health -= 3;
+							//Amoured soldier
+							else if(go->ID >= 80)
+							{
+								go->health -= 3;
+							}
+
+							stabOnce = true;
 						}
-						
-						stabOnce = true;
 					}		
 				}
 			}
@@ -1691,13 +1682,13 @@ void SceneText::RenderEnemies()
 		{
 			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
 
-			if(enemyList[i]->health == 2)
+			if(enemyList[i]->health >= 2)
 			{
 				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
 
 				if(enemyList[i]->health == 3)
 				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 30) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 35) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
 				}
 			}
 		}
@@ -1728,7 +1719,7 @@ void SceneText::RenderEnemies()
 			}
 
 			//Attacking
-			if(attackAnimation == true)
+			if(go->attackAnimation == true)
 			{
 				if(go->direction == Vector3(0, -1, 0))
 				{

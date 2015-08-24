@@ -84,7 +84,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 {
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
-	m_cScreenMap->LoadMap("Image//MapDesign_Screen.csv");
+	m_cScreenMap->LoadMap("Image//Level_1-1.csv");
 	m_cScreenMap->scroll = false;
 	int tempType;
 	CEnemy* tempEnemy;
@@ -132,7 +132,6 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 

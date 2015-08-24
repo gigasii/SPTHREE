@@ -224,8 +224,6 @@ private:
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
-	bool attackAnimation;
-	float attackAnimationTimer;
 	bool RenderDim;
 
 	//Boss Variables
@@ -241,7 +239,7 @@ private:
 	int keyCount;
 	int PointSystem;
 
-	//Menu Variables
+	//Main Menu Variables
 	int delay;
 	int InteractHighLight;
 	bool menu;
@@ -250,11 +248,11 @@ private:
 	//Custom Menu Variables
 	bool RenderCustomMenu;
 
-	//Game Over Variables
+	//GameOver Variables
 	bool lose;
 	float LoseTimer;
 
-	//last key pressed
+	//Last key pressed
 	char LastKeyPressed;
 
 protected:
