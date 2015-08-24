@@ -11,8 +11,6 @@
 #pragma comment (lib, "irrKlang.lib")
 using namespace irrklang;
 
-
-
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
 
@@ -1462,11 +1460,11 @@ void SceneText::RenderEnemies()
 	{
 		if(enemyList[i]->health >= 1)
 		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() + 30);
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
 
 			if(enemyList[i]->health == 2)
 			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() + 30);
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
 			}
 		}
 	}

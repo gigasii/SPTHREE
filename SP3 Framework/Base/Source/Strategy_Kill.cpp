@@ -89,7 +89,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 						theEnemyPosition.y -= 1;
 						break;
 					case '1':
-						theEnemyPosition.y -= 4;
+						theEnemyPosition.y -= 3.2;
 
 						enemyDir = Vector3(0,-1,0);
 
@@ -102,7 +102,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 						theEnemyPosition.y -= 1;
 						break;
 					case '2':
-						theEnemyPosition.x -= 4;
+						theEnemyPosition.x -= 3.2;
 
 						enemyDir = Vector3(-1,0,0);
 
@@ -115,7 +115,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 						theEnemyPosition.y += 1;
 						break;
 					case '3':
-						theEnemyPosition.y += 4;
+						theEnemyPosition.y += 3.2;
 
 						enemyDir = Vector3(0,1,0);
 
@@ -128,7 +128,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 						theEnemyPosition.y += 1;
 						break;
 					case '0':
-						theEnemyPosition.x += 4;
+						theEnemyPosition.x += 3.2;
 
 						enemyDir = Vector3(1,0,0);
 
@@ -140,7 +140,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 
 					routeCounter++;
 
-					if (routeCounter >= 8)
+					if (routeCounter >= 10)
 					{
 						route[i] = '9';
 						routeCounter = 0;

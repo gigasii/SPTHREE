@@ -169,8 +169,6 @@ public:
 	//Render Goodies
 	void RenderGoodies();
 
-
-
 enum CHARACTER_ACTION
 {
 	CA_NIL = 0,
