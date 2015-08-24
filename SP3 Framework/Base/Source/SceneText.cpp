@@ -393,6 +393,9 @@ void SceneText::Init()
 	RenderCustomMenu = false;
 	LoseTimer = 0.0f;
 
+	// === LastKeyPressed Variables ===
+	LastKeyPressed = NULL;
+
 	// ========================== Initializing Map Inits ==========================
 
 	if(stage == 1)
@@ -674,6 +677,25 @@ void SceneText::Update(double dt)
 		//cout << "Reaction Time:" << go->attackReactionTime << endl;
 	}
 
+	// =================================== update LastKeyPressed ===================================
+
+	if(Application::IsKeyPressed('W'))
+	{
+		LastKeyPressed = 'w';
+	}
+	else if(Application::IsKeyPressed('S'))
+	{
+		LastKeyPressed = 's';
+	}
+	else if(Application::IsKeyPressed('A'))
+	{
+		LastKeyPressed = 'a';
+	}
+	else if(Application::IsKeyPressed('D'))
+	{
+		LastKeyPressed = 'd';
+	}
+
 	// =================================== UPDATE THE GOODIES ===================================
 
 	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
@@ -688,7 +710,7 @@ void SceneText::Update(double dt)
 					int tileTopLeft_x = (int) ((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
 					int tileTopLeft_y = CurrentMap->GetNumOfTiles_Height() - (int)ceil( (float)(hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
-					if(CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL || CurrentMap->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
+					if(CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL && LastKeyPressed == 'a' || CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL && LastKeyPressed == 'd' || CurrentMap->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL && LastKeyPressed == 'w' || CurrentMap->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL && LastKeyPressed == 's')
 					{	
 						for(std::vector<CGoodies *>::iterator it = BarrelList.begin(); it != BarrelList.end(); ++it)
 						{
