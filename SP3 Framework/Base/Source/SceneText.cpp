@@ -11,6 +11,8 @@
 #pragma comment (lib, "irrKlang.lib")
 using namespace irrklang;
 
+
+
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
 
