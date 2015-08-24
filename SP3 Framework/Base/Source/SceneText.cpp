@@ -11,7 +11,7 @@
 #pragma comment (lib, "irrKlang.lib")
 using namespace irrklang;
 
-
+bool SceneText::bReset;
 
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
@@ -22,7 +22,9 @@ SceneText::SceneText()
 	: CurrentMap(NULL)
 	, CustomMap(NULL)
 	, BossPointer(NULL)
+	, RenderDim(false)
 {
+	bReset = false;
 }
 
 SceneText::~SceneText()
@@ -324,6 +326,9 @@ void SceneText::Init()
 	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
 
+	meshList[GEO_DIM] = MeshBuilder::Generate2DMesh("GEO_DIM", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_DIM]->textureID = LoadTGA("Image//tile0_blank_grey.tga");
+
 	// ==================================================================================
 
 	Mtx44 perspective;
@@ -346,8 +351,8 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 7;
-	attackSpeed = 0;
+	stage = 1;
+	attackSpeed = 0;	
 	stabOnce = false;
 
 	// === Boss's Variables and Pointers ===
@@ -647,7 +652,7 @@ void SceneText::Update(double dt)
 				}
 			}
 
-			cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
+			//cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
 		}
 
 		//cout << go->direction << endl;
@@ -717,7 +722,7 @@ void SceneText::Update(double dt)
 			{
 				if(hero.GetDaggerAcquired() == true)
 				{
-								go->active = false;
+					go->active = false;
 				}
 			}
 		}
@@ -802,16 +807,19 @@ void SceneText::Update(double dt)
 		}
 	}
 
-	for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	if(stage == 7)
 	{
-		CEnemy *go = (CEnemy *)*it;
-		if (EnemiesRendered == true)
+		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 		{
-			go->active = true;
-		}
-		else
-		{
-			go->active = false;
+			CEnemy *go = (CEnemy *)*it;
+			if (EnemiesRendered == true)
+			{
+				go->active = true;
+			}
+			else
+			{
+				go->active = false;
+			}
 		}
 	}
 
@@ -898,7 +906,7 @@ void SceneText::Update(double dt)
 		hero.health = 3;
 	}
 
-	cout << LoseTimer << endl;
+	//cout << LoseTimer << endl;
 
 
 	// =================================== MAIN UPDATES ===================================
@@ -958,6 +966,20 @@ void SceneText::Update(double dt)
 
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
+
+	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY)
+	{
+		RenderDim = true;
+	}
+	else
+	{
+		RenderDim = false;
+	}
+
+	if(Application::IsKeyPressed('R'))
+	{
+		bReset = true;
+	}
 
 	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
 	CHAR_HEROKEY = NULL;
@@ -1750,58 +1772,55 @@ void SceneText::RenderGoodies()
 	for (vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
-		if (go->active)
+		int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
+		int theGoodies_y = go->GetPos_y();
+
+		if (go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
 		{
-			int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
-			int theGoodies_y = go->GetPos_y();
-
-			if (go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+			if (go->active == true)
 			{
-				if (go->active == true)
-				{
-					Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-				}
+				Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 			}
-			else if (go->GoodiesType == CGoodies::Goodies_Type::KEY)
+		}
+		else if (go->GoodiesType == CGoodies::Goodies_Type::KEY)
+		{
+			if (go->active == true)
 			{
-				if (go->active == true)
-				{
-					Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-				}
+				Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 			}
-			else if (go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+		}
+		else if (go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+		{
+			if (go->active == true)
 			{
-				if (go->active == true)
-				{
-					Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-				}
-				else
-				{
-					Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-				}
+				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 			}
-			else if (go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+			else
 			{
-				if (go->active)
-				{
-					Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-				}
-				else
-				{
-					Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-				}
-
+				Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+		}
+		else if (go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+		{
+			if (go->active)
+			{
+				Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+			else
+			{
+				Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 			}
 
-			else if (go->GoodiesType == CGoodies::Goodies_Type::HAY)
-			{
-				Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-			}
+		}
 
-			else if (go->GoodiesType == CGoodies::Goodies_Type::HOLE)
-			{
-				Render2DMesh(meshList[GEO_HOLE], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
-			}
+		else if (go->GoodiesType == CGoodies::Goodies_Type::HAY)
+		{
+			Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+		}
+
+		else if (go->GoodiesType == CGoodies::Goodies_Type::HOLE)
+		{
+			Render2DMesh(meshList[GEO_HOLE], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 		}
 	}
 }
@@ -1829,6 +1848,9 @@ void SceneText::RenderHUD()
 	ss3.precision(5);
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
+
+	if (RenderDim == true)
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 }
 
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
