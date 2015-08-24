@@ -20,6 +20,7 @@ ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED 
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
+	, CustomMap(NULL)
 	, BossPointer(NULL)
 {
 }
@@ -296,6 +297,8 @@ void SceneText::Init()
 	meshList[GEO_HAY] = MeshBuilder::Generate2DMesh("GEO_HAY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay2.tga");
 
+	meshList[GEO_HOLE] = MeshBuilder::Generate2DMesh("GEO_HOLE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Goodies//hole.tga");
 	// ================================= Load Boss =================================
 
 	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
@@ -305,6 +308,10 @@ void SceneText::Init()
 
 	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
+
+	// ================================= Load Game Over Screen =================================
+	meshList[GEO_LOSE] = MeshBuilder::GenerateQuad("gameover", Color(1, 1, 1), 1);
+	meshList[GEO_LOSE]->textureID = LoadTGA("Image//lose_screen.tga");
 
 	// ==================================== Load HUD ====================================
 
@@ -339,7 +346,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 7;
 	attackSpeed = 0;
 	stabOnce = false;
 
@@ -368,6 +375,10 @@ void SceneText::Init()
 	Text[0] = "Start Game";
 	Text[1] = "How To Play?";
 
+	// === Custom cMenu Variables ===
+	RenderCustomMenu = false;
+	LoseTimer = 0.0f;
+
 	// ========================== Initializing Map Inits ==========================
 
 	if(stage == 1)
@@ -384,8 +395,14 @@ void SceneText::Init()
 
 	else if(stage == 7)
 	{
-		map.InitBossMap(enemyList, GoodiesList);
+		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList);
 		CurrentMap = map.m_cBossMap;
+	}
+
+	if (stage >= 0)
+	{
+		map.InitCustomMap();
+		CustomMap = map.m_cCustomMap;
 	}
 }
 
@@ -717,7 +734,7 @@ void SceneText::Update(double dt)
 
 	if(bossCounter < 2.0f)
 	{
-		BossTileID++;
+		BossTileID += 0.1f;
 		if(BossTileID > 2)
 		{
 			BossTileID = 0;
@@ -785,7 +802,104 @@ void SceneText::Update(double dt)
 		}
 	}
 
+	for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	{
+		CEnemy *go = (CEnemy *)*it;
+		if (EnemiesRendered == true)
+		{
+			go->active = true;
+		}
+		else
+		{
+			go->active = false;
+		}
+	}
+
 	BossPointer->Set_SpawnGuards(IsTurn);
+
+
+	// ============================= MOUSE SECTION ====================================
+	//Mouse Section
+	static bool bLButtonState = false;
+	if (!bLButtonState && Application::IsMousePressed(0))
+	{
+		bLButtonState = true;
+		std::cout << "LBUTTON DOWN" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+
+		if (CustomMap->theScreenMap[CustomMap->GetNumOfTiles_Height() - (x / 32)][y / 32] == 1)
+		{
+			std::cout << "This is the correct tile" << std::endl;
+		}
+	}
+
+	else if (bLButtonState && !Application::IsMousePressed(0))
+	{
+		bLButtonState = false;
+		std::cout << "LBUTTON UP" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	}
+
+	static bool bRButtonState = false;
+	if (!bRButtonState && Application::IsMousePressed(1))
+	{
+		bRButtonState = true;
+		std::cout << "RBUTTON DOWN" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	}
+
+	else if (bRButtonState && !Application::IsMousePressed(1))
+	{
+		bRButtonState = false;
+		std::cout << "RBUTTON UP" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	}
+
+
+	// =================================== Lose Screen UPDATES ===================================
+	if (hero.health <= 0)
+	{
+		lose = true;
+
+		if (lose == true)
+		{
+			LoseTimer += 0.01f;
+		}
+	}
+
+	if (LoseTimer >= 2.0f)
+	{
+		LoseTimer = 2.02f;
+		lose = false;
+		hero.health = 3;
+	}
+
+	cout << LoseTimer << endl;
+
 
 	// =================================== MAIN UPDATES ===================================
 
@@ -841,6 +955,9 @@ void SceneText::Update(double dt)
 			}
 		}
 	}
+
+	m_worldHeight = 100.f;
+	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
 	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
 	CHAR_HEROKEY = NULL;
@@ -1526,6 +1643,12 @@ void SceneText::RenderEnemies()
 			}
 		}
 
+		// Idling
+		else if (go->active == false && stage == 7)
+		{
+			RenderSprites(meshList[GEO_TILEENEMYSHEET], 5, 32, theEnemy_x, theEnemy_y);
+		}
+
 		//Dead
 		else
 		{
@@ -1597,115 +1720,101 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(stage == 7)
+			else if (stage == 7)
 			{
-				int m = 0;
-				CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
-
-				m = CurrentMap->tileOffset_x + k;
-
-				//If we have reached the right side of the map, then do not display the extra column of tiles
-				if(m >= CurrentMap->getNumOfTiles_MapWidth())
+				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
-					break;
+					int tempMesh = CurrentMap->theScreenMap[i][m] - 20;
+					Render2DMesh(meshList[GEO_20 + tempMesh], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if(CurrentMap->theScreenMap[i][m] >= 0)
-				{
-					RenderTilesMap(meshList[GEO_TILE], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
-				}
-
-				if (CurrentMap->theScreenMap[i][m] == 5 && derenderDoor == true)
+				else
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if(CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 && IsTurn == true || EnemiesRendered == true)
-				{
-					BossPointer->BossState = CBoss::B_SPAWN;
-					if(BossPointer->BossState == CBoss::B_SPAWN)
-					{
-						if(CurrentMap->theScreenMap[i][m] == 6)
-						{
-							RenderSprites(meshList[GEO_TILEENEMYSHEET], 0, 32, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x - 32, 768 - i * CurrentMap->GetTileSize());
-						}
-					}
-				}
-
-				RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 32, 45, 400);
+				RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 64, 55, 400);
 			}
 		}
 	}
+}
+
+void SceneText::RenderGameOver()
+{
+	RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
 }
 
 void SceneText::RenderGoodies()
 {
 	//Render the goodies
-	for(vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+	for (vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
-		
+		if (go->active)
+		{
 			int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
 			int theGoodies_y = go->GetPos_y();
 
-			if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+			if (go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
 			{
-				if(go->active == true)	
+				if (go->active == true)
 				{
-					Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x -  CurrentMap->mapOffset_x, theGoodies_y);	
+					Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 				}
 			}
-			else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+			else if (go->GoodiesType == CGoodies::Goodies_Type::KEY)
 			{
-				if(go->active == true)	
+				if (go->active == true)
 				{
-					Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+					Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 				}
 			}
-			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+			else if (go->GoodiesType == CGoodies::Goodies_Type::CHEST)
 			{
-				if(go->active == true)	
+				if (go->active == true)
 				{
-					Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+					Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 				}
 				else
 				{
-					Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+					Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 				}
 			}
-			else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+			else if (go->GoodiesType == CGoodies::Goodies_Type::BARREL)
 			{
-				if(go->active)	
-				{		
-					Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				if (go->active)
+				{
+					Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 				}
 				else
 				{
-					Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+					Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 				}
 
 			}
 
-			else if(go->GoodiesType == CGoodies::Goodies_Type::HAY)
+			else if (go->GoodiesType == CGoodies::Goodies_Type::HAY)
 			{
-				Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+
+			else if (go->GoodiesType == CGoodies::Goodies_Type::HOLE)
+			{
+				Render2DMesh(meshList[GEO_HOLE], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 			}
 		}
-	
+	}
 }
 
 void SceneText::RenderHUD()
 {
-	if(stage != 7)
-	{
-		//For indicating number of diamonds collected
-		RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
+	//For indicating number of diamonds collected
+	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
 
-		std::ostringstream ss1;
-		ss1.precision(5);
-		ss1 << "x " << diamondCount;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
-	}
+	std::ostringstream ss1;
+	ss1.precision(5);
+	ss1 << "x " << diamondCount;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
 
 	//For indicating number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56.5, false);
@@ -1714,7 +1823,7 @@ void SceneText::RenderHUD()
 	ss2.precision(5);
 	ss2 << "x " << keyCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
-		
+
 	//For Point System
 	std::ostringstream ss3;
 	ss3.precision(5);
@@ -1783,16 +1892,18 @@ void SceneText::Render()
 		RenderMenu(InteractHighLight, 1, 0);
 	}*/
 
-	//if(menu == false)
-	//{
-		RenderInit();
-		RenderTileMap();
-		RenderEnemies();
-		RenderHero();
-		RenderGoodies();
-		RenderText();
-		RenderHUD();
-	//}
+	RenderInit();
+	RenderTileMap();
+	RenderEnemies();
+	RenderHero();
+	RenderGoodies();
+	RenderText();
+	RenderHUD();
+
+	if (lose == true)
+	{
+		RenderGameOver();
+	}
 }
 
 void SceneText::Exit()

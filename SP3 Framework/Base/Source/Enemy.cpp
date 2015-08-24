@@ -214,5 +214,12 @@ void CEnemy::setWayPoints(CMap* map)
 		case CMap::ENEMY_3:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_8, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11);
 		break;
+
+		// SEAN's ENEMIES
+		case CMap::ENEMY_60:
+			path.setWayPoints(map, 4, CMap::WAYPOINT_41, CMap::WAYPOINT_42, CMap::WAYPOINT_43, CMap::WAYPOINT_44);
+
+		case CMap::ENEMY_61:
+			path.setWayPoints(map, 4, CMap::WAYPOINT_45, CMap::WAYPOINT_46, CMap::WAYPOINT_47, CMap::WAYPOINT_48);
 	}
 }
