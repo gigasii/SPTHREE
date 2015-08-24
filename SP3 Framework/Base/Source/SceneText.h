@@ -84,6 +84,7 @@ class SceneText : public Scene
 		GEO_BARREL,
 		GEO_BARREL_BROKEN,
 		GEO_HAY,
+		GEO_HOLE,
 
 		//HUD icons
 		GEO_HUD_HEART,
@@ -92,6 +93,9 @@ class SceneText : public Scene
 
 		//Menu
 		GEO_MENU,
+
+		//Game Over
+		GEO_LOSE,
 
 		//Sahara desert
 		GEO_20,
@@ -161,6 +165,7 @@ public:
 	void RenderHero();
 	void RenderEnemies();
 	void RenderHUD();
+	void RenderGameOver();
 	void RenderMenu(int &InteractHighLight, int max, int min);
 
 	//General tilemap renderer
@@ -195,6 +200,7 @@ private:
 	
 	//current map/map handler
 	CMap *CurrentMap;
+	CMap *CustomMap;
 	
 	//Boss handler
 	CBoss *BossPointer;
@@ -205,6 +211,7 @@ private:
 	//Vector of GoodieList
 	std::vector<CGoodies *> GoodiesList;
 	std::vector<CGoodies *> BarrelList;
+	std::vector<CGoodies *> HoleList;
 
 	//General variables
 	float fps;
@@ -236,6 +243,17 @@ private:
 	int InteractHighLight;
 	bool menu;
 	string Text[2];
+
+	//Custom Menu Variables
+	bool RenderCustomMenu;
+
+	// Game Over Variables
+	bool lose;
+	float LoseTimer;
+
+protected:
+	float m_worldWidth;
+	float m_worldHeight;
 };
 
 #endif

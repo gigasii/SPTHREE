@@ -232,7 +232,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 	}
 }
 
-void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList)
+void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList)
 {
 	m_cBossMap = new CMap();
 	m_cBossMap->Init(800, 1024, 25, 32, 800, 1024, 32);
@@ -274,7 +274,40 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if (tempType >= CMap::ENEMY_1)
+			else if (tempType == CMap::HAY)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;
+				tempGoodies->tilePos.Set(j, i, 0);
+				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if (tempType == CMap::BARREL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;
+				tempGoodies->tilePos.Set(j, i, 0);
+				BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if (tempType == CMap::HOLE)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cBossMap->GetTileSize(), m_cBossMap->GetTileSize() * (m_cBossMap->GetNumOfTiles_Height() - i) - m_cBossMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HOLE;
+				tempGoodies->tilePos.Set(j, i, 0);
+				BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			if (tempType >= CMap::ENEMY_1)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL, false);
@@ -288,6 +321,14 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 			}
 		}
 	}
+}
+
+void CMap::InitCustomMap()
+{
+	m_cCustomMap = new CMap();
+	m_cCustomMap->Init(800, 1024, 25, 32, 800, 1024, 32);
+	m_cCustomMap->LoadMap("Image//MapDesign_CustomMap.csv");
+	m_cCustomMap->scroll = false;
 }
 
 bool CMap::LoadMap(const string mapName)

@@ -24,6 +24,7 @@ public:
 		DOOR,
 		BARREL,
 		HAY,
+		HOLE,
 		GOODIES_TOTAL
 	};
 
