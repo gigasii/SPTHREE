@@ -54,18 +54,18 @@ bool Application::GetMouseUpdate()
 	camera_yaw = (float) mouse_diff_x * 0.0174555555555556f;// * 3.142f / 180.0f;
 	camera_pitch = mouse_diff_y * 0.0174555555555556f;// 3.142f / 180.0f );
 
-	// Do a wraparound if the mouse cursor has gone out of the deadzone
-	if ((mouse_current_x < m_window_deadzone) || (mouse_current_x > m_window_width-m_window_deadzone))
-	{
-		mouse_current_x = m_window_width >> 1;
-		glfwSetCursorPos(m_window, mouse_current_x, mouse_current_y);
-	}
-	
-	if ((mouse_current_y < m_window_deadzone) || (mouse_current_y > m_window_height-m_window_deadzone))
-	{
-		mouse_current_y = m_window_height >> 1;
-		glfwSetCursorPos(m_window, mouse_current_x, mouse_current_y);
-	}
+	//// Do a wraparound if the mouse cursor has gone out of the deadzone
+	//if ((mouse_current_x < m_window_deadzone) || (mouse_current_x > m_window_width-m_window_deadzone))
+	//{
+	//	mouse_current_x = m_window_width >> 1;
+	//	glfwSetCursorPos(m_window, mouse_current_x, mouse_current_y);
+	//}
+	//
+	//if ((mouse_current_y < m_window_deadzone) || (mouse_current_y > m_window_height-m_window_deadzone))
+	//{
+	//	mouse_current_y = m_window_height >> 1;
+	//	glfwSetCursorPos(m_window, mouse_current_x, mouse_current_y);
+	//}
 
 	//Store the current position as the last position
 	mouse_last_x = mouse_current_x;
@@ -173,7 +173,7 @@ void Application::Init()
 	}
 
 	// Hide the cursor
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	// Set these 2 variables to zero
 	m_dElapsedTime = 0.0;
