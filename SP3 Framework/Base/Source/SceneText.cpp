@@ -282,8 +282,14 @@ void SceneText::Init()
 	meshList[GEO_CHEST] = MeshBuilder::Generate2DMesh("GEO_CHEST", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_CHEST]->textureID = LoadTGA("Image//Goodies//chest.tga");
 
+	meshList[GEO_CHEST_OPENED] = MeshBuilder::Generate2DMesh("GEO_CHEST_OPENED", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_CHEST_OPENED]->textureID = LoadTGA("Image//Goodies//chest_opened.tga");
+
 	meshList[GEO_BARREL] = MeshBuilder::Generate2DMesh("GEO_BARREL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_BARREL]->textureID = LoadTGA("Image//Goodies//barrel.tga");
+
+	meshList[GEO_BARREL_BROKEN] = MeshBuilder::Generate2DMesh("GEO_BARREL_BROKEN", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_BARREL_BROKEN]->textureID = LoadTGA("Image//Goodies//barrel_broken.tga");
 
 	meshList[GEO_HAY] = MeshBuilder::Generate2DMesh("GEO_HAY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay2.tga");
@@ -686,6 +692,13 @@ void SceneText::Update(double dt)
 							PointSystem += 10;
 						}
 					}
+				}
+			}
+			if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+			{
+				if(hero.GetDaggerAcquired() == true)
+				{
+								go->active = false;
 				}
 			}
 		}
@@ -1629,28 +1642,46 @@ void SceneText::RenderGoodies()
 	for(vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
-		if(go->active)	
-		{
+		
 			int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
 			int theGoodies_y = go->GetPos_y();
 
 			if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
 			{
-				Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x -  CurrentMap->mapOffset_x, theGoodies_y);	
+				if(go->active == true)	
+				{
+					Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x -  CurrentMap->mapOffset_x, theGoodies_y);	
+				}
 			}
-
 			else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 			{
-				Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				if(go->active == true)	
+				{
+					Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				}
 			}
-
 			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
 			{
-				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				if(go->active == true)	
+				{
+					Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				}
+				else
+				{
+					Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				}
 			}
 			else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
 			{
-				Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				if(go->active)	
+				{		
+					Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				}
+				else
+				{
+					Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				}
+
 			}
 
 			else if(go->GoodiesType == CGoodies::Goodies_Type::HAY)
@@ -1658,7 +1689,7 @@ void SceneText::RenderGoodies()
 				Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
 			}
 		}
-	}
+	
 }
 
 void SceneText::RenderHUD()
