@@ -254,6 +254,9 @@ private:
 	bool lose;
 	float LoseTimer;
 
+	//last key pressed
+	char LastKeyPressed;
+
 protected:
 	float m_worldWidth;
 	float m_worldHeight;
