@@ -42,6 +42,16 @@ bool Application::IsKeyPressed(unsigned short key)
     return ((GetAsyncKeyState(key) & 0x8001) != 0);
 }
 
+void Application::GetCursorPos(double *xpos, double *ypos)
+{
+	glfwGetCursorPos(m_window, xpos, ypos);
+}
+
+bool Application::IsMousePressed(unsigned short key) //0 - Left, 1 - Right, 2 - Middle
+{
+	return glfwGetMouseButton(m_window, key) != 0;
+}
+
 bool Application::GetMouseUpdate()
 {
     glfwGetCursorPos(m_window, &mouse_current_x, &mouse_current_y);
@@ -78,6 +88,16 @@ bool Application::GetMouseUpdate()
 	}
 
     return false;
+}
+
+int Application::GetWindowWidth()
+{
+	return m_window_width;
+}
+
+int Application::GetWindowHeight()
+{
+	return m_window_height;
 }
 
 bool Application::GetKeyboardUpdate()
@@ -213,6 +233,14 @@ void Application::Run()
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		glfwPollEvents();
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
+
+		if (SceneText::bReset)
+		{
+			scene->Exit();
+			delete scene;
+			scene = new SceneText();
+			scene->Init();
+		}
 
 	} 
 	//Check if the ESC key had been pressed or if the window had been closed

@@ -11,7 +11,7 @@
 #pragma comment (lib, "irrKlang.lib")
 using namespace irrklang;
 
-
+bool SceneText::bReset;
 
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
@@ -20,8 +20,11 @@ ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED 
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
+	, CustomMap(NULL)
 	, BossPointer(NULL)
+	, RenderDim(false)
 {
+	bReset = false;
 }
 
 SceneText::~SceneText()
@@ -163,15 +166,9 @@ void SceneText::Init()
 
 	meshList[GEO_TILEDOOR] = MeshBuilder::Generate2DMesh("GEO_WALL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEDOOR]->textureID = LoadTGA("Image//door.tga");
-	
-	meshList[GEO_TILE] = MeshBuilder::GenerateTileMap("GEO_TILE", 6, 6);
-	meshList[GEO_TILE]->textureID = LoadTGA("Image//tile2.tga");
 
 	meshList[GEO_TILEDETECTIONRADIUS] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_TILEDETECTIONRADIUS]->textureID = LoadTGA("Image//tile0_blank_red.tga");
-
-	meshList[GEO_TILEEXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_TILEEXCLAMATIONMARK]->textureID = LoadTGA("Image//exclamationmark.tga");
 
 	meshList[GEO_20] = MeshBuilder::Generate2DMesh("GEO_20", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_20]->textureID = LoadTGA("Image//Desert//tile20.tga");
@@ -273,6 +270,12 @@ void SceneText::Init()
 	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 5, 5);
 	meshList[GEO_TILEENEMYSHEET]->textureID = LoadTGA("Image//Enemy//enemy.tga");
 
+	meshList[GEO_TILEENEMYSHEET2] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET2", 5, 5);
+	meshList[GEO_TILEENEMYSHEET2]->textureID = LoadTGA("Image//Enemy//enemy2.tga");
+
+	meshList[GEO_EXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_EXCLAMATIONMARK]->textureID = LoadTGA("Image//Enemy//exclamationmark.tga");
+
 	// ==================================== Goodies ====================================
 
 	meshList[GEO_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -296,6 +299,9 @@ void SceneText::Init()
 	meshList[GEO_HAY] = MeshBuilder::Generate2DMesh("GEO_HAY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay2.tga");
 
+	meshList[GEO_HOLE] = MeshBuilder::Generate2DMesh("GEO_HOLE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Goodies//hole.tga");
+	
 	// ================================= Load Boss =================================
 
 	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
@@ -305,6 +311,11 @@ void SceneText::Init()
 
 	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
+
+	// ================================= Load Game Over Screen =================================
+	
+	meshList[GEO_LOSE] = MeshBuilder::GenerateQuad("gameover", Color(1, 1, 1), 1);
+	meshList[GEO_LOSE]->textureID = LoadTGA("Image//lose_screen.tga");
 
 	// ==================================== Load HUD ====================================
 
@@ -316,6 +327,15 @@ void SceneText::Init()
 
 	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
+
+	meshList[GEO_DETECTIONEYE] = MeshBuilder::Generate2DMesh("GEO_DETECTIONEYE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_DETECTIONEYE]->textureID = LoadTGA("Image//HUD//detectioneye.tga");
+
+	meshList[GEO_DETECTIONEYE2] = MeshBuilder::Generate2DMesh("GEO_DETECTIONEYE2", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_DETECTIONEYE2]->textureID = LoadTGA("Image//HUD//detectioneye2.tga");
+	
+	meshList[GEO_DIM] = MeshBuilder::Generate2DMesh("GEO_DIM", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_DIM]->textureID = LoadTGA("Image//tile0_blank_grey.tga");
 
 	// ==================================================================================
 
@@ -339,8 +359,8 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
-	attackSpeed = 0;
+	stage = 5;
+	attackSpeed = 0;	
 	stabOnce = false;
 
 	// === Boss's Variables and Pointers ===
@@ -368,6 +388,11 @@ void SceneText::Init()
 	Text[0] = "Start Game";
 	Text[1] = "How To Play?";
 
+	// === Custom cMenu Variables ===
+	
+	RenderCustomMenu = false;
+	LoseTimer = 0.0f;
+
 	// ========================== Initializing Map Inits ==========================
 
 	if(stage == 1)
@@ -382,10 +407,22 @@ void SceneText::Init()
 		CurrentMap = map.m_cScrollingMap;
 	}
 
+	else if(stage == 5)
+	{
+		map.InitScreenMap3(enemyList, GoodiesList, BarrelList);
+		CurrentMap = map.m_cScreenMap3;
+	}
+
 	else if(stage == 7)
 	{
-		map.InitBossMap(enemyList, GoodiesList);
+		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList);
 		CurrentMap = map.m_cBossMap;
+	}
+
+	if(stage >= 0)
+	{
+		map.InitCustomMap();
+		CustomMap = map.m_cCustomMap;
 	}
 }
 
@@ -630,7 +667,7 @@ void SceneText::Update(double dt)
 				}
 			}
 
-			cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
+			//cout << "Distance: " << DistanceFromEnemyX << "," << DistanceFromEnemyY << endl;
 		}
 
 		//cout << go->direction << endl;
@@ -700,7 +737,7 @@ void SceneText::Update(double dt)
 			{
 				if(hero.GetDaggerAcquired() == true)
 				{
-								go->active = false;
+					go->active = false;
 				}
 			}
 		}
@@ -717,7 +754,7 @@ void SceneText::Update(double dt)
 
 	if(bossCounter < 2.0f)
 	{
-		BossTileID++;
+		BossTileID += 0.1f;
 		if(BossTileID > 2)
 		{
 			BossTileID = 0;
@@ -785,7 +822,107 @@ void SceneText::Update(double dt)
 		}
 	}
 
+	if(stage == 7)
+	{
+		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			CEnemy *go = (CEnemy *)*it;
+			if (EnemiesRendered == true)
+			{
+				go->active = true;
+			}
+			else
+			{
+				go->active = false;
+			}
+		}
+	}
+
 	BossPointer->Set_SpawnGuards(IsTurn);
+
+
+	// ============================= MOUSE SECTION ====================================
+	//Mouse Section
+	static bool bLButtonState = false;
+	if (!bLButtonState && Application::IsMousePressed(0))
+	{
+		bLButtonState = true;
+		std::cout << "LBUTTON DOWN" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+
+		if (CustomMap->theScreenMap[CustomMap->GetNumOfTiles_Height() - (x / 32)][y / 32] == 1)
+		{
+			std::cout << "This is the correct tile" << std::endl;
+		}
+	}
+
+	else if (bLButtonState && !Application::IsMousePressed(0))
+	{
+		bLButtonState = false;
+		std::cout << "LBUTTON UP" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	}
+
+	static bool bRButtonState = false;
+	if (!bRButtonState && Application::IsMousePressed(1))
+	{
+		bRButtonState = true;
+		std::cout << "RBUTTON DOWN" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	}
+
+	else if (bRButtonState && !Application::IsMousePressed(1))
+	{
+		bRButtonState = false;
+		std::cout << "RBUTTON UP" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	}
+
+
+	// =================================== Lose Screen UPDATES ===================================
+	if (hero.health <= 0)
+	{
+		lose = true;
+
+		if (lose == true)
+		{
+			LoseTimer += 0.01f;
+		}
+	}
+
+	if (LoseTimer >= 2.0f)
+	{
+		LoseTimer = 2.02f;
+		lose = false;
+		hero.health = 3;
+	}
+
+	//cout << LoseTimer << endl;
+
 
 	// =================================== MAIN UPDATES ===================================
 
@@ -842,6 +979,23 @@ void SceneText::Update(double dt)
 		}
 	}
 
+	m_worldHeight = 100.f;
+	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
+
+	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY)
+	{
+		RenderDim = true;
+	}
+	else
+	{
+		RenderDim = false;
+	}
+
+	if(Application::IsKeyPressed('R'))
+	{
+		bReset = true;
+	}
+
 	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
 	CHAR_HEROKEY = NULL;
 	camera.Update(dt);
@@ -876,7 +1030,17 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 					//Backstab enemy
 					if(go->direction == Vector3(-1, 0, 0))
 					{
-						go->health -= 2;
+						//Normal soldier
+						if(go->ID >= 50 && go->ID < 80)
+						{
+							go->health -= 2;
+						}
+
+						//Amoured soldier
+						else if(go->ID >= 80)
+						{
+							go->health -= 3;
+						}
 					}
 
 					//Attack enemy from front
@@ -897,7 +1061,17 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 					//Backstab enemy
 					if(go->direction == Vector3(1, 0, 0))
 					{
-						go->health -= 2;
+						//Normal soldier
+						if(go->ID >= 50 && go->ID < 80)
+						{
+							go->health -= 2;
+						}
+
+						//Amoured soldier
+						else if(go->ID >= 80)
+						{
+							go->health -= 3;
+						}
 					}
 
 					//Attack enemy from front
@@ -922,7 +1096,17 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 					//Backstab enemy
 					if(go->direction == Vector3(0, -1, 0))
 					{
-						go->health -= 2;
+						//Normal soldier
+						if(go->ID >= 50 && go->ID < 80)
+						{
+							go->health -= 2;
+						}
+
+						//Amoured soldier
+						else if(go->ID >= 80)
+						{
+							go->health -= 3;
+						}
 					}
 
 					//Attack enemy from front
@@ -943,7 +1127,17 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 					//Backstab enemy
 					if(go->direction == Vector3(0, 1, 0))
 					{
-						go->health -= 2;
+						//Normal soldier
+						if(go->ID >= 50 && go->ID < 80)
+						{
+							go->health -= 2;
+						}
+
+						//Amoured soldier
+						else if(go->ID >= 80)
+						{
+							go->health -= 3;
+						}
 					}
 
 					//Attack enemy from front
@@ -966,7 +1160,18 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 				{
 					if((DistanceFromEnemyX >= -4 && DistanceFromEnemyX <= 4) && (DistanceFromEnemyY >= -50 && DistanceFromEnemyY <= 50) || (DistanceFromEnemyY >= -4 && DistanceFromEnemyY <= 4) && (DistanceFromEnemyX >= -50 && DistanceFromEnemyX <= 50))
 					{
-						go->health -= 2;
+						//Normal soldier
+						if(go->ID >= 50 && go->ID < 80)
+						{
+							go->health -= 2;
+						}
+
+						//Amoured soldier
+						else if(go->ID >= 80)
+						{
+							go->health -= 3;
+						}
+						
 						stabOnce = true;
 					}		
 				}
@@ -1467,6 +1672,11 @@ void SceneText::RenderEnemies()
 			if(enemyList[i]->health == 2)
 			{
 				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+
+				if(enemyList[i]->health == 3)
+				{
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 30) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
+				}
 			}
 		}
 	}
@@ -1491,7 +1701,7 @@ void SceneText::RenderEnemies()
 
 				else if(go->theStrategy->CurrentState == CStrategy::ATTACK)
 				{
-					Render2DMesh(meshList[GEO_TILEEXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
+					Render2DMesh(meshList[GEO_EXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
 				}
 			}
 
@@ -1500,36 +1710,84 @@ void SceneText::RenderEnemies()
 			{
 				if(go->direction == Vector3(0, -1, 0))
 				{
-					RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
+					if(go->ID >= 50 && go->ID < 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if(go->ID >= 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 3, 32, theEnemy_x, theEnemy_y);
+					}
 				}
 
 				else if(go->direction == Vector3(-1, 0, 0))
 				{
-					RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
+					if(go->ID >= 50 && go->ID < 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if(go->ID >= 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 8, 32, theEnemy_x, theEnemy_y);
+					}
 				}
 
 				else if(go->direction == Vector3(1, 0, 0))
 				{
-					RenderSprites(meshList[GEO_TILEENEMYSHEET], 13, 32, theEnemy_x, theEnemy_y);
+					if(go->ID >= 50 && go->ID < 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET], 13, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if(go->ID >= 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 13, 32, theEnemy_x, theEnemy_y);
+					}
 				}
 
 				else
 				{
-					RenderSprites(meshList[GEO_TILEENEMYSHEET], 18, 32, theEnemy_x, theEnemy_y);
+					if(go->ID >= 50 && go->ID < 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET], 18, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if(go->ID >= 80)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 18, 32, theEnemy_x, theEnemy_y);
+					}
 				}
 			}
 
 			//Walking
 			else
-			{		
-				RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+			{
+				if(go->ID >= 50 && go->ID < 80)
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else if(go->ID >= 80)
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET2], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+				}
 			}
 		}
 
 		//Dead
 		else
 		{
-			RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
+			if(go->ID >= 50 && go->ID < 80)
+			{
+				RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
+			}
+
+			else if(go->ID >= 80)
+			{
+				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 19, 32, theEnemy_x, theEnemy_y);
+			}
 		}
 	}
 }
@@ -1551,7 +1809,7 @@ void SceneText::RenderTileMap()
 				break;
 			}
 
-			if(stage == 1)
+			if(stage == 1 || stage == 3 || stage == 5)
 			{
 				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
@@ -1578,7 +1836,7 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(stage == 2)
+			else if(stage == 2 || stage == 4 || stage == 6)
 			{
 				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
@@ -1599,113 +1857,101 @@ void SceneText::RenderTileMap()
 
 			else if(stage == 7)
 			{
-				int m = 0;
-				CurrentMap->mapFineOffset_x = CurrentMap->mapOffset_x % CurrentMap->GetTileSize();
-
-				m = CurrentMap->tileOffset_x + k;
-
-				//If we have reached the right side of the map, then do not display the extra column of tiles
-				if(m >= CurrentMap->getNumOfTiles_MapWidth())
+				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
-					break;
+					int tempMesh = CurrentMap->theScreenMap[i][m] - 20;
+					Render2DMesh(meshList[GEO_20 + tempMesh], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if(CurrentMap->theScreenMap[i][m] >= 0)
-				{
-					RenderTilesMap(meshList[GEO_TILE], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
-				}
-
-				if (CurrentMap->theScreenMap[i][m] == 5 && derenderDoor == true)
+				else
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if(CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 && IsTurn == true || EnemiesRendered == true)
-				{
-					BossPointer->BossState = CBoss::B_SPAWN;
-					if(BossPointer->BossState == CBoss::B_SPAWN)
-					{
-						if(CurrentMap->theScreenMap[i][m] == 6)
-						{
-							RenderSprites(meshList[GEO_TILEENEMYSHEET], 0, 32, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x - 32, 768 - i * CurrentMap->GetTileSize());
-						}
-					}
-				}
-
-				RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 32, 45, 400);
+				RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 64, 55, 400);
 			}
 		}
 	}
+}
+
+void SceneText::RenderGameOver()
+{
+	RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
 }
 
 void SceneText::RenderGoodies()
 {
 	//Render the goodies
-	for(vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+	for (vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
-		
-			int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
-			int theGoodies_y = go->GetPos_y();
+		int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
+		int theGoodies_y = go->GetPos_y();
 
-			if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+		if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+		{
+			if(go->active == true)
 			{
-				if(go->active == true)	
-				{
-					Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f,theGoodies_x -  CurrentMap->mapOffset_x, theGoodies_y);	
-				}
-			}
-			else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
-			{
-				if(go->active == true)	
-				{
-					Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
-				}
-			}
-			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
-			{
-				if(go->active == true)	
-				{
-					Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
-				}
-				else
-				{
-					Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
-				}
-			}
-			else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
-			{
-				if(go->active)	
-				{		
-					Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
-				}
-				else
-				{
-					Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
-				}
-
-			}
-
-			else if(go->GoodiesType == CGoodies::Goodies_Type::HAY)
-			{
-				Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);	
+				Render2DMesh(meshList[GEO_DIAMOND], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 			}
 		}
-	
+		
+		else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+		{
+			if(go->active == true)
+			{
+				Render2DMesh(meshList[GEO_KEY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+		}
+		
+		else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+		{
+			if(go->active == true)
+			{
+				Render2DMesh(meshList[GEO_CHEST], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+			
+			else
+			{
+				Render2DMesh(meshList[GEO_CHEST_OPENED], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+		}
+		
+		else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+		{
+			if(go->active)
+			{
+				Render2DMesh(meshList[GEO_BARREL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+			
+			else
+			{
+				Render2DMesh(meshList[GEO_BARREL_BROKEN], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+			}
+
+		}
+
+		else if(go->GoodiesType == CGoodies::Goodies_Type::HAY)
+		{
+			Render2DMesh(meshList[GEO_HAY], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+		}
+
+		else if(go->GoodiesType == CGoodies::Goodies_Type::HOLE)
+		{
+			Render2DMesh(meshList[GEO_HOLE], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+		}
+	}
 }
 
 void SceneText::RenderHUD()
 {
-	if(stage != 7)
-	{
-		//For indicating number of diamonds collected
-		RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
+	//For indicating number of diamonds collected
+	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
 
-		std::ostringstream ss1;
-		ss1.precision(5);
-		ss1 << "x " << diamondCount;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
-	}
+	std::ostringstream ss1;
+	ss1.precision(5);
+	ss1 << "x " << diamondCount;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
 
 	//For indicating number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56.5, false);
@@ -1714,12 +1960,28 @@ void SceneText::RenderHUD()
 	ss2.precision(5);
 	ss2 << "x " << keyCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
-		
+
 	//For Point System
 	std::ostringstream ss3;
 	ss3.precision(5);
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
+
+	//Detection status
+	if(hero.hiding == false)
+	{
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.7, 25, 54.5, false);
+	}
+
+	else
+	{
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.7, 25, 54.5, false);
+	}
+
+	if(RenderDim == true)
+	{
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+	}
 }
 
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
@@ -1783,16 +2045,18 @@ void SceneText::Render()
 		RenderMenu(InteractHighLight, 1, 0);
 	}*/
 
-	//if(menu == false)
-	//{
-		RenderInit();
-		RenderTileMap();
-		RenderEnemies();
-		RenderHero();
-		RenderGoodies();
-		RenderText();
-		RenderHUD();
-	//}
+	RenderInit();
+	RenderTileMap();
+	RenderEnemies();
+	RenderHero();
+	RenderGoodies();
+	RenderText();
+	RenderHUD();
+
+	if(lose == true)
+	{
+		RenderGameOver();
+	}
 }
 
 void SceneText::Exit()

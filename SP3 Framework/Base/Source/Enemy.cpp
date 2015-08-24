@@ -8,8 +8,8 @@ CEnemy::CEnemy()
 	, enemyAnimationFlip(false)
 	, theStrategy(NULL)
 	, active(true)
-	, ID(50)
-	, health(2)
+	, ID(0)
+	, health(0)
 	, eneCurrTile(0, 0, 0)
 	, direction(0, 0, 0)
 	, enemyTileID(0)
@@ -203,6 +203,7 @@ void CEnemy::setWayPoints(CMap* map)
 {
 	switch(ID)
 	{
+		//BRANDON'S ENEMIES
 		case CMap::ENEMY_1:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
@@ -213,6 +214,28 @@ void CEnemy::setWayPoints(CMap* map)
 		
 		case CMap::ENEMY_3:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_8, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11);
+		break;
+
+		//SEAN's ENEMIES
+		case CMap::ENEMY_60:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_41, CMap::WAYPOINT_42, CMap::WAYPOINT_43, CMap::WAYPOINT_44);
+		break;
+
+		case CMap::ENEMY_61:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_45, CMap::WAYPOINT_46, CMap::WAYPOINT_47, CMap::WAYPOINT_48);
+		break;
+
+		//GIGGS' ENEMIES
+		case CMap::ENEMYAMOURED_80:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_121, CMap::WAYPOINT_122);
+		break;
+
+		case CMap::ENEMYAMOURED_81:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_123, CMap::WAYPOINT_124);
+		break;
+
+		case CMap::ENEMYAMOURED_82:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_125, CMap::WAYPOINT_126);
 		break;
 	}
 }
