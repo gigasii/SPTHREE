@@ -15,6 +15,8 @@ CEnemy::CEnemy()
 	, enemyTileID(0)
 	, attackStatus(false)
 	, attackReactionTime(0)
+	, attackAnimation(false)
+	, attackAnimationTimer(0)
 {
 }
 

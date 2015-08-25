@@ -132,7 +132,6 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 

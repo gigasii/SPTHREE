@@ -218,30 +218,27 @@ private:
 	//General variables
 	float fps;
 	float rotateAngle;
+	float bossCounter;
+
+	bool EnemiesRendered;
 	bool bLightEnabled;
+	bool IsTurn;
+	bool GetKey;
+	bool derenderDoor;
+	float BossTileID;
 
 	//Project variables
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
-	bool attackAnimation;
-	float attackAnimationTimer;
 	bool RenderDim;
-
-	//Boss Variables
-	bool IsTurn;
-	float BossTileID;
-	float bossCounter;
-	bool EnemiesRendered;
-	bool derenderDoor;
-	bool GetKey;
 
 	//HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
 
-	//Menu Variables
+	//Main Menu Variables
 	int delay;
 	int InteractHighLight;
 	bool menu;
@@ -250,11 +247,11 @@ private:
 	//Custom Menu Variables
 	bool RenderCustomMenu;
 
-	//Game Over Variables
+	//GameOver Variables
 	bool lose;
 	float LoseTimer;
 
-	//last key pressed
+	//Last key pressed
 	char LastKeyPressed;
 
 protected:
