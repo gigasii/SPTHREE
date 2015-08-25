@@ -218,21 +218,20 @@ private:
 	//General variables
 	float fps;
 	float rotateAngle;
+	float bossCounter;
+
+	bool EnemiesRendered;
 	bool bLightEnabled;
+	bool IsTurn;
+	bool GetKey;
+	bool derenderDoor;
+	float BossTileID;
 
 	//Project variables
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
 	bool RenderDim;
-
-	//Boss Variables
-	bool IsTurn;
-	float BossTileID;
-	float bossCounter;
-	bool EnemiesRendered;
-	bool derenderDoor;
-	bool GetKey;
 
 	//HUD Variable
 	int diamondCount;

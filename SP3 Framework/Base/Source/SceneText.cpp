@@ -354,7 +354,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 7;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -795,7 +795,7 @@ void SceneText::Update(double dt)
 			{
 				for(int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
 				{
-					if(CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0)
+					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
 					{
 						EnemiesRendered = true;
 					}
@@ -1789,6 +1789,20 @@ void SceneText::RenderEnemies()
 			}
 		}
 
+		//Idling
+		else if (stage == 7)
+		{
+			if (go->ID >= 50 && go->ID < 80)
+			{
+				RenderSprites(meshList[GEO_TILEENEMYSHEET], 5, 32, theEnemy_x, theEnemy_y);
+			}
+
+			else if (go->ID >= 80)
+			{
+				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 5, 32, theEnemy_x, theEnemy_y);
+			}
+		}
+
 		//Dead
 		else
 		{
@@ -1881,7 +1895,10 @@ void SceneText::RenderTileMap()
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 64, 55, 400);
+				if (CurrentMap->theScreenMap[i][m] == 17)
+				{
+					RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 32, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
 			}
 		}
 	}
