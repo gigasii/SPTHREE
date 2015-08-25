@@ -336,24 +336,22 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 				!((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL || Map[xdx][ydy] >= CMap::ENEMY_50 ||
 				   Map[xdx][ydy] == CMap::KEY ||  Map[xdx][ydy] == CMap::JEWEL || Map[xdx][ydy] == CMap::HAY )))
 			{
-				if (Map[xdx][ydy] == CMap::BARREL)
-				{
-					for(std::vector<CGoodies *>::iterator it = goodyList.begin(); it != goodyList.end(); ++it)
-					{
-						CGoodies *go = (CGoodies *)*it;
+				//if (Map[xdx][ydy] == CMap::BARREL)
+				//{
+				//	for(std::vector<CGoodies *>::iterator it = goodyList.begin(); it != goodyList.end(); ++it)
+				//	{
+				//		CGoodies *go = (CGoodies *)*it;
 
-						if (go->tilePos == Vector3(xdx,ydy,0) && go->active == false)
-						{
-							goto pathfind;
-						}
+				//		if (go->tilePos == Vector3(xdx,ydy,0) && go->active == false)
+				//		{
+				//			goto pathfind;
+				//		}
+				//	}
+				//}
 
-						
-					}
-				}
-
-				else
-				{
-					pathfind:
+				//else
+				//{
+					//pathfind:
 					//generate child node
 					tempNode2 = new CNode (xdx, ydy, tempNode1->getLevel(), tempNode1->getPriority());
 					tempNode2->nextLevel(i);
@@ -400,7 +398,7 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 
 					else
 						delete tempNode2;
-				}
+				//}
 			}
 		}
 

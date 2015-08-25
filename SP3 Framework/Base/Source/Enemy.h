@@ -9,7 +9,6 @@ class CEnemy
 
 private:
 	//Enemy's information
-	Vector2 theENEMYPosition;
 	bool enemyAnimationInvert;
 	bool enemyAnimationFlip;
 
@@ -29,6 +28,8 @@ public:
 	};
 
 	STRATEGY_TYPE currentStrat;
+
+	Vector3 theENEMYPosition;
 
 	int ID;
 	int health;

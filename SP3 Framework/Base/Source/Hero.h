@@ -32,6 +32,8 @@ public:
 	~Hero();
 
 	Vector3 heroCurrTile;
+	Vector3 direction;
+
 	float heroTileID;
 	int health;
 	bool hiding;
