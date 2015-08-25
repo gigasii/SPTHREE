@@ -122,7 +122,7 @@ public:
 	virtual void UpdateAttackStatus(const unsigned char key);
 
 	//Check whether hero is in range to attack enemies
-	void CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int DistanceFromEnemyY);
+	void CheckEnemiesInRange(CEnemy *go, Hero hero, int DistanceFromEnemyX, int DistanceFromEnemyY);
 
 	//General functions to run the program
 	void RenderText(Mesh* mesh, std::string text, Color color);
