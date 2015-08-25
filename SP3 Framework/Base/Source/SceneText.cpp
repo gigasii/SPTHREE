@@ -359,7 +359,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 5;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 

@@ -204,16 +204,32 @@ void CEnemy::setWayPoints(CMap* map)
 	switch(ID)
 	{
 		//BRANDON'S ENEMIES
-		case CMap::ENEMY_1:
+		case CMap::ENEMY_50:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
 		
-		case CMap::ENEMY_2:
-		path.setWayPoints(map, 3, CMap::WAYPOINT_5, CMap::WAYPOINT_6, CMap::WAYPOINT_7);
+		case CMap::ENEMY_51:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_5, CMap::WAYPOINT_6, CMap::WAYPOINT_7, CMap::WAYPOINT_8);
 		break;
 		
-		case CMap::ENEMY_3:
-		path.setWayPoints(map, 4, CMap::WAYPOINT_8, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11);
+		case CMap::ENEMY_52:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11, CMap::WAYPOINT_12);
+		break;
+
+		case CMap::ENEMY_53:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_13, CMap::WAYPOINT_14, CMap::WAYPOINT_15, CMap::WAYPOINT_16);
+		break;
+
+		case CMap::ENEMY_54:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_17, CMap::WAYPOINT_18, CMap::WAYPOINT_19, CMap::WAYPOINT_20);
+		break;
+
+		case CMap::ENEMY_55:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_21, CMap::WAYPOINT_22, CMap::WAYPOINT_23, CMap::WAYPOINT_24);
+		break;
+
+		case CMap::ENEMY_56:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_25, CMap::WAYPOINT_26, CMap::WAYPOINT_27, CMap::WAYPOINT_28);
 		break;
 
 		//SEAN's ENEMIES
