@@ -10,9 +10,12 @@
 #include "Hero.h"
 #include "Enemy.h"
 #include "Boss.h"
+#include "GameObject.h"
 
 class SceneText : public Scene
 {
+	static const int MAX_SPEED = 800;
+
 	enum UNIFORM_TYPE
 	{
 		U_MVP = 0,
@@ -57,6 +60,7 @@ class SceneText : public Scene
 	{
 		GEO_AXES,
 		GEO_SPHERE,
+		GEO_CUBE,
 		GEO_QUAD,
 		GEO_TEXT,
 
@@ -150,6 +154,13 @@ public:
 
 	static bool bReset;
 
+	bool checkCollision(GameObject* go, GameObject* go2, double dt);
+	void collisionResponse(GameObject* go, GameObject* go2);
+
+	void RenderGO(GameObject *go);
+
+	GameObject* FetchGO();
+
 enum CHARACTER_ACTION
 {
 	CA_NIL = 0,
@@ -186,6 +197,7 @@ private:
 	std::vector<CGoodies *> GoodiesList;
 	std::vector<CGoodies *> BarrelList;
 	std::vector<CGoodies *> HoleList;
+	std::vector<GameObject *> m_goList;
 
 	//General variables
 	float fps;
@@ -228,6 +240,16 @@ private:
 
 	//Storing Value
 	int a, b;
+	GameObject *m_ghost;
+
+	//Auditing
+	float m1, m2;
+	Vector3 u1, u2, v1, v2;
+
+	Vector3 prevPos;
+
+	bool onHero;
+	bool lockMovement;
 
 protected:
 	float m_worldWidth;

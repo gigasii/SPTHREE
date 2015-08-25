@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Enemy.h"
+#include "GameObject.h"
 
 CMap::CMap(void)
 : theScreen_Height(0)
@@ -80,7 +81,7 @@ void CMap::Init(const int theScreen_Height, const int theScreen_Width, const int
 		theScreenMap[i].resize(theNumOfTiles_MapWidth);
 }
 
-void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList)
+void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
 {
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
@@ -156,8 +157,19 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				tempEnemy->ID = tempType;
 				tempEnemy->health = 2;
 				tempEnemy->setWayPoints(m_cScreenMap);
-				tempEnemy->eneCurrTile = Vector3(j,i,0);	
+				tempEnemy->eneCurrTile = Vector3(j,i,0);
 				enemyList.push_back(tempEnemy);
+				
+				GameObject* go = new GameObject(GameObject::GO_PILLAR);
+				goList.push_back(go);
+				go->active = true;
+				go->pos.Set(tempEnemy->GetPos_x(),tempEnemy->GetPos_y(),0);
+				go->scale.Set(16,16,16);
+				go->ID = tempType;
+			}
+
+			else if (tempType >= 29 && tempType <= 49)
+			{
 			}
 		}
 	}
