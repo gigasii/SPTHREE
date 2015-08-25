@@ -50,7 +50,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 		else if (routeCounter2 == 0)
 			CurrentState = ATTACK;
 
-		if(distanceHeroToEnemy > 49729.0f && routeCounter2 == 0)
+		if(distanceHeroToEnemy > 29729.0f && routeCounter2 == 0)
 			isAttacking = false;
 	}
 
@@ -333,7 +333,7 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 		
 
 			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 ||  Map[xdx][ydy] == CMap::CHEST || closed_nodes_map[xdx][ydy] == 1 ||
-				!((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL || Map[xdx][ydy] >= CMap::ENEMY_1 ||
+				!((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL || Map[xdx][ydy] >= CMap::ENEMY_50 ||
 				   Map[xdx][ydy] == CMap::KEY ||  Map[xdx][ydy] == CMap::JEWEL || Map[xdx][ydy] == CMap::HAY )))
 			{
 				if (Map[xdx][ydy] == CMap::BARREL)

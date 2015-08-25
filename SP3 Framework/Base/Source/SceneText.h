@@ -63,15 +63,15 @@ class SceneText : public Scene
 		//Tilesheet
 		GEO_TILEBACKGROUND,
 		GEO_TILEDOOR,
-		GEO_TILE,
 		GEO_TILEDETECTIONRADIUS,
-		GEO_TILEEXCLAMATIONMARK,
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
 
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
+		GEO_TILEENEMYSHEET2,
+		GEO_EXCLAMATIONMARK,
 
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
@@ -90,11 +90,11 @@ class SceneText : public Scene
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
+		GEO_DETECTIONEYE,
+		GEO_DETECTIONEYE2,
 
-		//Menu
+		//Game Screens
 		GEO_MENU,
-
-		//Game Over
 		GEO_LOSE,
 
 		//Sahara desert
@@ -218,29 +218,27 @@ private:
 	//General variables
 	float fps;
 	float rotateAngle;
+	float bossCounter;
+
+	bool EnemiesRendered;
 	bool bLightEnabled;
+	bool IsTurn;
+	bool GetKey;
+	bool derenderDoor;
+	float BossTileID;
 
 	//Project variables
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
-	bool attackAnimation;
-	float attackAnimationTimer;
-
-	//Boss Variables
-	bool IsTurn;
-	float BossTileID;
-	float bossCounter;
-	bool EnemiesRendered;
-	bool derenderDoor;
-	bool GetKey;
+	bool RenderDim;
 
 	//HUD Variable
 	int diamondCount;
 	int keyCount;
 	int PointSystem;
 
-	//Menu Variables
+	//Main Menu Variables
 	int delay;
 	int InteractHighLight;
 	bool menu;
@@ -249,11 +247,13 @@ private:
 	//Custom Menu Variables
 	bool RenderCustomMenu;
 
-	// Game Over Variables
+	//GameOver Variables
 	bool lose;
 	float LoseTimer;
 
-	bool RenderDim;
+	//Last key pressed
+	char LastKeyPressed;
+
 protected:
 	float m_worldWidth;
 	float m_worldHeight;

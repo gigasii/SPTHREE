@@ -15,6 +15,7 @@ private:
 
 	//The Destination is the position of the Hero
 	Vector2 theDestination;
+
 public:
 	CEnemy();
 	~CEnemy();
@@ -38,6 +39,8 @@ public:
 	float enemyTileID;
 	bool attackStatus;
 	float attackReactionTime;
+	bool attackAnimation;
+	float attackAnimationTimer;
 	vector <Vector3> detectionGrid;
 
 	CStrategy *theStrategy;
@@ -73,7 +76,6 @@ public:
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
-	
 	void setWayPoints(CMap* map);
 };
 

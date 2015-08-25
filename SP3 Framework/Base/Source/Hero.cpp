@@ -621,7 +621,7 @@ void Hero::HeroUpdate(CMap *mapType, vector<CGoodies*> obtacles, vector<CEnemy*>
 	}
 
 	//Screen maps
-	if(level == 1 || level == 7)
+	if(level == 1 || level == 3 || level == 5 || level == 7)
 	{
 		ConstrainHero(mapType, 0, 992, 25, 740, 1.0f);
 	}
