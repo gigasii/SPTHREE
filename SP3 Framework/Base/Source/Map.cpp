@@ -146,7 +146,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if(tempType >= CMap::ENEMY_1)
+			else if(tempType >= CMap::ENEMY_50)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
@@ -229,7 +229,7 @@ void CMap::InitScreenMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			if(tempType >= CMap::ENEMY_1 && tempType < CMap::ENEMYAMOURED_80)
+			if(tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
@@ -264,7 +264,7 @@ void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodi
 {
 	m_cScrollingMap = new CMap();
 	m_cScrollingMap->Init(800, 1024, 25, 32, 800, 2048, 32);
-	m_cScrollingMap->LoadMap("Image//MapDesign_Scrolling.csv");
+	m_cScrollingMap->LoadMap("Image//Level_1-2.csv");
 	m_cScrollingMap->scroll = true;
 	int tempType;
 	CEnemy* tempEnemy;
@@ -327,7 +327,7 @@ void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodi
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if (tempType >= CMap::ENEMY_1)
+			else if (tempType >= CMap::ENEMY_50)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
@@ -418,7 +418,7 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			if (tempType >= CMap::ENEMY_1)
+			if (tempType >= CMap::ENEMY_50)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL, false);
