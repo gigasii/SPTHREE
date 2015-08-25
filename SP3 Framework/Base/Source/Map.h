@@ -5,7 +5,6 @@
 #include <string>
 #include <sstream>
 #include "Goodies.h"
-#include "GameObject.h"
 
 class CEnemy;
 using namespace std;
@@ -65,11 +64,11 @@ public:
 	int getNumOfTiles_MapHeight(void);		//Get the number of tiles for the height of the map
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
-	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
+	void InitScreenMap3(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
 	void InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList);
 	void InitCustomMap();
-	void InitScreenMap3(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
 
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
