@@ -21,6 +21,7 @@ Hero::Hero()
 	, heroTileID(0)
 	, health(3)
 	, hiding(false)
+	, direction(0,-1,0)
 {
 }
 

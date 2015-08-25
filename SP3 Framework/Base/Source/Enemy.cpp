@@ -162,17 +162,17 @@ void CEnemy::Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList)
 
 		else
 		{
-			if (i == 0)
+			if (i == 0 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
 			{
 				renderFront = false;
 			}
 			
-			else if (i == 1)
+			else if (i == 1 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
 			{
 				renderUp = false;
 			}
 			
-			else if (i == 2)
+			else if (i == 2 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
 			{
 				renderDown = false;
 			}

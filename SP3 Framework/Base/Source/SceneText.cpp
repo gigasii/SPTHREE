@@ -267,7 +267,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 5;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -389,6 +389,8 @@ void SceneText::Update(double dt)
 
 	if(Application::IsKeyPressed('A'))
 	{
+		hero.direction = Vector3(-1,0,0);
+
 		CHAR_HEROKEY = 'a';
 
 		//Sprite Animation
@@ -406,6 +408,8 @@ void SceneText::Update(double dt)
 
 	else if(Application::IsKeyPressed('D'))
 	{
+		hero.direction = Vector3(1,0,0);
+
 		CHAR_HEROKEY = 'd';
 
 		//Sprite Animation
@@ -423,6 +427,8 @@ void SceneText::Update(double dt)
 
 	else if(Application::IsKeyPressed('W'))
 	{
+		hero.direction = Vector3(0,1,0);
+
 		CHAR_HEROKEY = 'w';
 
 		//Sprite Animation
@@ -440,6 +446,8 @@ void SceneText::Update(double dt)
 
 	else if(Application::IsKeyPressed('S'))
 	{
+		hero.direction = Vector3(0,-1,0);
+
 		CHAR_HEROKEY = 's';
 
 		//Sprite Animation
@@ -492,7 +500,7 @@ void SceneText::Update(double dt)
 
 			int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 			int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
-			CheckEnemiesInRange(go, DistanceFromEnemyX, DistanceFromEnemyY);
+			CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
 
 			//Checking enemy attack status
 			if(go->attackStatus == true)
@@ -510,6 +518,19 @@ void SceneText::Update(double dt)
 			else
 			{
 				go->attackReactionTime = 0;
+			}
+
+			for(std::vector<CGoodies *>::iterator it2 = BarrelList.begin(); it2!= BarrelList.end(); ++it2)
+			{
+				CGoodies *go2 = (CGoodies *)*it2;
+				if(go2->active)	
+				{
+					if (go->eneCurrTile == go2->tilePos)
+					{
+						go->attackAnimation = true;
+						go2->active = false;
+					}
+				}
 			}
 
 			//Attacking animation for enemy
@@ -608,6 +629,7 @@ void SceneText::Update(double dt)
 		LastKeyPressed = 'd';
 	}
 
+
 	// =================================== UPDATE THE GOODIES ===================================
 
 	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
@@ -619,28 +641,11 @@ void SceneText::Update(double dt)
 			{
 				if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
 				{
-					int tileTopLeft_x = (int) ((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
-					int tileTopLeft_y = CurrentMap->GetNumOfTiles_Height() - (int)ceil( (float)(hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
-
-					if(CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL && LastKeyPressed == 'a' || CurrentMap->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL && LastKeyPressed == 'd' || CurrentMap->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL && LastKeyPressed == 'w' || CurrentMap->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL && LastKeyPressed == 's')
-					{	
-						for(std::vector<CGoodies *>::iterator it = BarrelList.begin(); it != BarrelList.end(); ++it)
-						{
-							CGoodies *go = (CGoodies *)*it;
-							if(go->active)
-							{
-								int tile_x = go->GetPos_x() / CurrentMap->GetTileSize();
-								int tile_y = CurrentMap->GetNumOfTiles_Height() - (go->GetPos_y() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize();
-
-								if(tile_y == tileTopLeft_y || tile_y == tileTopLeft_y - 1 || tile_y == tileTopLeft_y + 1)
-								{
-									if(tile_x == tileTopLeft_x || tile_x == tileTopLeft_x - 1 || tile_x == tileTopLeft_x + 1)
-									{
-										go->active = false;
-									}
-								}
-							}
-						}
+					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
+			
+					if (tempheroTile == go->tilePos)
+					{
+						go->active = false;
 					}
 				}
 			}
@@ -937,7 +942,7 @@ void SceneText::UpdateAttackStatus(const unsigned char key)
 	}
 }
 
-void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int DistanceFromEnemyY)
+void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnemyX, int DistanceFromEnemyY)
 {
 	//Check hero's attack status
 	if(hero.GetAttackStatus() == true && stabOnce == false)
@@ -1120,7 +1125,8 @@ void SceneText::CheckEnemiesInRange(CEnemy *go, int DistanceFromEnemyX, int Dist
 	}
 
 	//Checking if enemy can attack hero
-	if((DistanceFromEnemyY >= 0 && DistanceFromEnemyY <= 1) && (DistanceFromEnemyX >= -32 && DistanceFromEnemyX <= 32) || (DistanceFromEnemyX >= 0 && DistanceFromEnemyX <= 1) && (DistanceFromEnemyY >= -32 && DistanceFromEnemyY <= 32))
+
+	if (go->eneCurrTile == hero.heroCurrTile)
 	{
 		go->attackStatus = true;
 	}
