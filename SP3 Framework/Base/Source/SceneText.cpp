@@ -22,6 +22,8 @@ SceneText::SceneText()
 	, CustomMap(NULL)
 	, BossPointer(NULL)
 	, RenderDim(false)
+	, onHero(false)
+	, lockMovement(false)
 {
 	bReset = false;
 }
@@ -156,7 +158,9 @@ void SceneText::Init()
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//c.tga");
 
-	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
+	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 1.f);
+
+	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube",Color(1, 0, 0),1.f);
 
 	// ============================== Load Map tiles (Screen & scrolling) =============================
 
@@ -314,7 +318,7 @@ void SceneText::Init()
 
 	if(stage == 1)
 	{
-		map.InitScreenMap(enemyList, GoodiesList, BarrelList);
+		map.InitScreenMap(enemyList, GoodiesList, BarrelList, m_goList);
 		CurrentMap = map.m_cScreenMap;
 	}
 
@@ -340,6 +344,152 @@ void SceneText::Init()
 	{
 		map.InitCustomMap();
 		CustomMap = map.m_cCustomMap;
+	}
+
+	m_ghost = new GameObject(GameObject::GO_BALL);
+	m_ghost->active = false;
+
+	m_worldHeight = 800.f;
+	m_worldWidth = 1024.0f;
+}
+
+GameObject* SceneText::FetchGO()
+{
+	//Exercise 2a: implement FetchGO()
+	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	{
+		GameObject *go = static_cast<GameObject *>(*it);
+
+		if(!go->active)
+		{
+			go->active = true;
+			go->reset();
+			return go;
+		}
+	}
+
+	for ( unsigned i = 0; i < 30; ++i ) {
+		GameObject* go = new GameObject(GameObject::GO_BALL);
+		m_goList.push_back(go);
+	}
+
+	GameObject *go = m_goList.back();
+	go->active = true;
+	return go;
+}
+
+bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
+{
+	switch (go2->type)
+	{
+
+	case GameObject::GO_WALL:
+		{
+			Vector3 w0 = go2->pos;
+			Vector3 b1 = go->pos + go->vel * dt;
+			Vector3 N = go2->normal;
+			Vector3 NP = N.Cross(Vector3(0,0,1));
+			float r = go->scale.x;
+			float h = go2->scale.x;
+			float l = go2->scale.y;
+
+			if ( (abs((w0 - b1).Dot(N)) < r + h * 0.5f) &&
+				(abs((w0 - b1).Dot(NP)) < r + l * 0.5f) )
+				return true;
+
+			return false;
+		}
+
+		break;
+
+	case GameObject::GO_AIM:
+		return false;
+		break;
+
+	default:
+		{
+			Vector3 c = go->vel - go2->vel;
+			Vector3 d = go2->pos - go->pos;
+
+			float distanceSquared = (go->pos - go2->pos).LengthSquared();
+			float combinedRadius = go->scale.x + go2->scale.x;
+
+			if (distanceSquared <= combinedRadius * combinedRadius && c.Dot(d) > 0)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		break;
+	}
+
+	return false;
+}
+
+void SceneText::collisionResponse(GameObject* go, GameObject* go2)
+{
+	switch(go2->type)
+	{
+	case GameObject::GO_BALL:
+		{
+			m1 = go->mass;
+			m2 = go2->mass;
+			u1 = go->vel;
+			u2 = go2->vel;
+
+			Vector3 N = (go2->pos - go->pos).Normalized();
+			Vector3 u1N = u1.Dot(N) * N; 
+			Vector3 u2N = u2.Dot(N) * N; 
+
+			go->vel = u1 + (2 * m2 / (m1 + m2)) * (u2N - u1N);
+			go2->vel = u2 + (2 * m1 / (m1 + m2)) * (u1N - u2N);
+
+			//go2->vel = (2 * m1 * u1 + u2 * (m2 - m1)) * (1 / (m1 + m2));
+			//go->vel = (2 * m2 * u2 + u1 * (m1 - m2)) * (1 / (m1 + m2));
+
+			v1 = go->vel;
+		}
+
+		break;
+
+	case GameObject::GO_WALL:
+		{
+			Vector3 w0 = go2->pos;
+			Vector3 b1 = go->pos;
+			Vector3 N = go2->normal;
+			Vector3 NP = N.Cross(Vector3(0,0,1));
+			float r = go->scale.x;
+			float h = go2->scale.x;
+			float l = go2->scale.y;
+
+			if (abs((w0 - b1).Dot(N)) > r + h * 0.5f)
+			{
+				Vector3 u = go->vel;
+				Vector3 v = u - 2 * u.Dot(N) * N;
+				go->vel = v * 0.85;
+			}
+
+			if (abs((w0 - b1).Dot(NP)) > r + l * 0.5f)
+			{
+				Vector3 u = go->vel;
+				Vector3 v = u - 2 * u.Dot(NP) * NP;
+				go->vel = v * 0.8;
+			}
+		}
+
+		break;
+
+	case GameObject::GO_PILLAR:
+		{
+			Vector3 N = (go2->pos - go->pos).Normalize();
+			Vector3 u = go->vel;
+			Vector3 v = u - 2 * u.Dot(N) * N;
+			go->vel = v;
+		}
+
+		break;
 	}
 }
 
@@ -387,82 +537,84 @@ void SceneText::Update(double dt)
 
 	// =================================== UPDATE THE HERO ===================================
 
-	if(Application::IsKeyPressed('A'))
+	if (lockMovement == false)
 	{
-		hero.direction = Vector3(-1,0,0);
-
-		CHAR_HEROKEY = 'a';
-
-		//Sprite Animation
-		hero.heroTileID += 0.1;
-		if(hero.heroTileID < 4)
+		if(Application::IsKeyPressed('A'))
 		{
-			hero.heroTileID = 4;
+			hero.direction = Vector3(-1,0,0);
+
+			CHAR_HEROKEY = 'a';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 4)
+			{
+				hero.heroTileID = 4;
+			}
+
+			if(hero.heroTileID > 6)
+			{
+				hero.heroTileID = 4;
+			}
 		}
 
-		if(hero.heroTileID > 6)
+		else if(Application::IsKeyPressed('D'))
 		{
-			hero.heroTileID = 4;
+			hero.direction = Vector3(1,0,0);
+
+			CHAR_HEROKEY = 'd';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 8)
+			{
+				hero.heroTileID = 8;
+			}
+
+			if(hero.heroTileID > 10)
+			{
+				hero.heroTileID = 8;
+			}
+		}
+
+		else if(Application::IsKeyPressed('W'))
+		{
+			hero.direction = Vector3(0,1,0);
+
+			CHAR_HEROKEY = 'w';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 12)
+			{
+				hero.heroTileID = 12;
+			}
+
+			if(hero.heroTileID > 14)
+			{
+				hero.heroTileID = 12;
+			}
+		}
+
+		else if(Application::IsKeyPressed('S'))
+		{
+			hero.direction = Vector3(0,-1,0);
+
+			CHAR_HEROKEY = 's';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 0)
+			{
+				hero.heroTileID = 0;
+			}
+
+			if(hero.heroTileID > 2)
+			{
+				hero.heroTileID = 0;
+			}
 		}
 	}
-
-	else if(Application::IsKeyPressed('D'))
-	{
-		hero.direction = Vector3(1,0,0);
-
-		CHAR_HEROKEY = 'd';
-
-		//Sprite Animation
-		hero.heroTileID += 0.1;
-		if(hero.heroTileID < 8)
-		{
-			hero.heroTileID = 8;
-		}
-
-		if(hero.heroTileID > 10)
-		{
-			hero.heroTileID = 8;
-		}
-	}
-
-	else if(Application::IsKeyPressed('W'))
-	{
-		hero.direction = Vector3(0,1,0);
-
-		CHAR_HEROKEY = 'w';
-
-		//Sprite Animation
-		hero.heroTileID += 0.1;
-		if(hero.heroTileID < 12)
-		{
-			hero.heroTileID = 12;
-		}
-
-		if(hero.heroTileID > 14)
-		{
-			hero.heroTileID = 12;
-		}
-	}
-
-	else if(Application::IsKeyPressed('S'))
-	{
-		hero.direction = Vector3(0,-1,0);
-
-		CHAR_HEROKEY = 's';
-
-		//Sprite Animation
-		hero.heroTileID += 0.1;
-		if(hero.heroTileID < 0)
-		{
-			hero.heroTileID = 0;
-		}
-
-		if(hero.heroTileID > 2)
-		{
-			hero.heroTileID = 0;
-		}
-	}
-
 	//Limit hero's attak rate
 	if(hero.GetAttackStatus() == true)
 	{
@@ -817,27 +969,142 @@ void SceneText::Update(double dt)
 	if(!bRButtonState && Application::IsMousePressed(1))
 	{
 		bRButtonState = true;
-		//std::cout << "RBUTTON DOWN" << std::endl;
+		std::cout << "RBUTTON DOWN" << std::endl;
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
 		int w = Application::GetWindowWidth();
 		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+
+		float posX = x / w * m_worldWidth;
+		float posY = (h - y) / h * m_worldHeight;
+		m_ghost->pos.Set(posX, posY, 0);
+
+		int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
+		int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+
+		if(Vector3(mouseX,mouseY,0) == hero.heroCurrTile)
+		{
+			onHero = true;
+			for (int i = 0; i < 10; ++i)
+			{
+				GameObject *go = FetchGO();
+				go->type = GameObject::GO_AIM;
+				go->active = true;
+				go->pos.Set(posX,posY,0);
+				go->scale.Set(4,4,4);
+
+				if (i == 0)
+					go->isSet = true;
+			}
+
+			prevPos = m_ghost->pos;	
+			lockMovement = true;
+		}
+
+		else
+			onHero = false;
 	}
 
 	else if(bRButtonState && !Application::IsMousePressed(1))
 	{
 		bRButtonState = false;
-		//std::cout << "RBUTTON UP" << std::endl;
+		std::cout << "RBUTTON UP" << std::endl;
 
+		if (onHero == true)
+		{
+			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			{
+				GameObject *go = (GameObject *)*it;
+
+				if(go->active == false)
+				{
+					go->active = true;
+					go->type = GameObject::GO_BALL;
+					double x, y;
+					Application::GetCursorPos(&x, &y);
+					int w = Application::GetWindowWidth();
+					int h = Application::GetWindowHeight();
+					float worldX = x * m_worldWidth / w;
+					float worldY = (h - y) * m_worldHeight / h;
+
+					go->pos = m_ghost->pos;
+
+					go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
+					go->vel *= 2.5;
+
+					if (go->vel.Length() > MAX_SPEED)
+						go->vel = go->vel.Normalize() * MAX_SPEED;
+
+					go->scale.Set(16,16,16);
+
+					m_ghost->active = false;
+					break;
+				}
+			}
+
+			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			{
+				GameObject *go = (GameObject *)*it;
+
+				if (go->active && go->type == GameObject::GO_AIM)
+				{
+					go->isSet = false;
+					go->active = false;
+				}
+			}
+		}
+
+		lockMovement = false;
+	}
+
+	if (bRButtonState == true)
+	{
 		double x, y;
 		Application::GetCursorPos(&x, &y);
 		int w = Application::GetWindowWidth();
 		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+		float posX = x / w * m_worldWidth;
+		float posY = (h - y) / h * m_worldHeight;
+
+		for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+
+			if(go->active && go->type == GameObject::GO_AIM)
+			{
+				if  (go->isSet == false)
+				{
+					if ((Vector3(posX,posY,0) - prevPos).Length() >= 20)
+					{
+						Vector3 dis = (Vector3(posX,posY,0) - prevPos).Normalize() * 20;
+						go->pos = prevPos + dis;
+						go->isSet = true;
+						prevPos = go->pos;
+						break;
+					}
+				}
+
+				else
+				{
+					Vector3 a = go->pos - m_ghost->pos;
+
+					if (a.IsZero())
+						continue;
+
+					float length = a.Length();
+					Vector3 b =	Vector3(posX,posY,0) - m_ghost->pos;
+
+					if (a.Length() > b.Length())
+						go->render = false;
+					else
+						go->render = true;
+
+					if (!b.IsZero())
+						go->pos = m_ghost->pos + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
+				}
+			}
+		}
 	}
 
 	// =================================== Lose Screen UPDATES ===================================
@@ -911,9 +1178,6 @@ void SceneText::Update(double dt)
 		}
 	}
 
-	m_worldHeight = 100.f;
-	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
-
 	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY)
 	{
 		RenderDim = true;
@@ -922,6 +1186,69 @@ void SceneText::Update(double dt)
 	else
 	{
 		RenderDim = false;
+	}
+
+	
+	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			if (go->type == GameObject::GO_BALL)
+			{
+				Vector3 friction = -go->vel * 0.5f;
+				go->vel += friction * dt;
+				go->pos += go->vel * dt;
+
+				if (go->vel.Length() <= 2.f)
+					go->vel.SetZero();
+
+				float radius = go->scale.x;
+
+				if (go->pos.x >= m_worldWidth - radius && go->vel.x > 0)
+					go->vel.x = -go->vel.x;
+				else if (go->pos.x <= radius && go->vel.x < 0)
+					go->vel.x = -go->vel.x;
+
+				if (go->pos.y >= m_worldHeight - radius && go->vel.y > 0)
+					go->vel.y = -go->vel.y;
+				else if (go->pos.y <= radius && go->vel.y < 0)
+					go->vel.y = -go->vel.y;
+
+				if (go->pos.x >= m_worldWidth || go->pos.x <= 0 || go->pos.y >= m_worldHeight || go->pos.y <= 0) 
+				{
+					go->active = false;
+				}
+
+				for(std::vector<GameObject *>::iterator it2 = m_goList.begin(); it2 != m_goList.end(); ++it2)
+				{
+					GameObject *go2 = (GameObject *)*it2;
+					if(go2->active)
+					{
+						if (checkCollision(go, go2, dt))
+						{
+							collisionResponse(go, go2);	
+						}
+					}
+				}
+			}
+
+			if (go->type == GameObject::GO_PILLAR)
+			{
+				for(std::vector<CEnemy *>::iterator it2 = enemyList.begin(); it2 != enemyList.end(); ++it2)
+				{
+					CEnemy *go2 = (CEnemy *)*it2;
+					if(go2->active)
+					{
+						if (go2->ID == go->ID)
+						{
+							go->pos.x = go2->GetPos_x() + 16;
+							go->pos.y = go2->GetPos_y() + 16;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
@@ -1989,6 +2316,45 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	}
 }
 
+void SceneText::RenderGO(GameObject *go)
+{
+	switch(go->type)
+	{
+	case GameObject::GO_BALL:
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+		modelStack.PopMatrix();
+		break;
+
+	case GameObject::GO_WALL:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			modelStack.PopMatrix();
+		}
+		break;
+
+	case GameObject::GO_PILLAR:
+		{
+			//modelStack.PushMatrix();
+			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			//modelStack.PopMatrix();
+		}
+		break;
+
+	case GameObject::GO_AIM:
+		{
+			if (go->render == true)
+			{
+				modelStack.PushMatrix();
+				Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+				modelStack.PopMatrix();
+			}
+			break;
+		}
+	}
+}
+
 void SceneText::Render()
 {
 	/*if(menu == true)
@@ -1999,6 +2365,19 @@ void SceneText::Render()
 
 	RenderInit();
 	RenderTileMap();
+
+	if (m_ghost->active)
+		RenderGO(m_ghost);
+
+	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			RenderGO(go);
+		}
+	}
+
 	RenderBoss();
 	RenderEnemies();
 	RenderHero();
