@@ -255,5 +255,25 @@ void CEnemy::setWayPoints(CMap* map)
 		case CMap::ENEMYAMOURED_82:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_125, CMap::WAYPOINT_126);
 		break;
+
+		case CMap::ENEMYAMOURED_83:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_127, CMap::WAYPOINT_128);
+		break;
+
+		case CMap::ENEMYAMOURED_84:
+		path.setWayPoints(map, 3, CMap::WAYPOINT_129, CMap::WAYPOINT_130, CMap::WAYPOINT_131);
+		break;
+
+		case CMap::ENEMYAMOURED_85:
+		path.setWayPoints(map, 3, CMap::WAYPOINT_132, CMap::WAYPOINT_133, CMap::WAYPOINT_134);
+		break;
+
+		case CMap::ENEMYAMOURED_86:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_135, CMap::WAYPOINT_136, CMap::WAYPOINT_137, CMap::WAYPOINT_138);
+		break;
+
+		case CMap::ENEMYAMOURED_87:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_139, CMap::WAYPOINT_140, CMap::WAYPOINT_141, CMap::WAYPOINT_142);
+		break;
 	}
 }

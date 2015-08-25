@@ -195,13 +195,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 	   if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::HAY)
 	   {
-		   hiding = true;
 		   return false;
-	   }
-
-	   else
-	   {
-		   hiding = false;
 	   }
 
 	   if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == CMap::BARREL)
@@ -284,14 +278,8 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::HAY)
 	    {
-			hiding = true;
 			return false;
 	    }
-
-		else
-		{
-			 hiding = false;
-		}
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == CMap::BARREL)
 		{
@@ -358,32 +346,15 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 			}
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
-		{
-			pickUpWeapon = true;
-			return true;
-		}
-
-		else
-		{
-			pickUpWeapon = false;
-		}
-
-		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::HAY)
-	    {
-			hiding = true;
-			return false;
-	    }
-
-		else
-		{
-			hiding = false;
-		}
-
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BOSS)
 		{
 			return true;
 		}
+
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::HAY)
+	    {
+			return false;
+	    }
 
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::BARREL)
 		{
@@ -409,6 +380,17 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 					}
 				}
 			}
+		}
+
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == CMap::CHEST)
+		{
+			pickUpWeapon = true;
+			return true;
+		}
+
+		else
+		{
+			pickUpWeapon = false;
 		}
 
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] > 3)
@@ -439,32 +421,15 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 			}
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
-		{
-			pickUpWeapon = true;
-			return true;
-		}
-
-		else
-		{
-			pickUpWeapon = false;
-		}
-
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::HAY)
-	    {
-			hiding = true;
-			return false;
-	    }
-
-		else
-		{
-			hiding = false;
-		}
-
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BOSS)
 		{
 			return true;
 		}
+
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::HAY)
+	    {
+			return false;
+	    }
 
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::BARREL)
 		{
@@ -490,6 +455,17 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 					}
 				}
 			}
+		}
+
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == CMap::CHEST)
+		{
+			pickUpWeapon = true;
+			return true;
+		}
+
+		else
+		{
+			pickUpWeapon = false;
 		}
 
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] > 3)
