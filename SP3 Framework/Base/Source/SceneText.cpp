@@ -37,6 +37,8 @@ SceneText::~SceneText()
 	}
 }
 
+// =============================== INITIALIZING OF VARIABLES/FUNCTIONS ===============================
+
 void SceneText::Init()
 {
 	//Screen background
@@ -187,7 +189,14 @@ void SceneText::Init()
 	meshList[GEO_TILEHEROSHEET] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET", 4, 4);
 	meshList[GEO_TILEHEROSHEET]->textureID = LoadTGA("Image//Hero//hero.tga");
 
+	meshList[GEO_TILEHEROSHEET2] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET2", 4, 4);
+	meshList[GEO_TILEHEROSHEET2]->textureID = LoadTGA("Image//Hero//hero2.tga");
+
+	meshList[GEO_TRANSFORMATIONSHEET] = MeshBuilder::GenerateSprites("GEO_TRANSFORMATIONSHEET", 3, 3);
+	meshList[GEO_TRANSFORMATIONSHEET]->textureID = LoadTGA("Image//Hero//transformation.tga");
+
 	// ================================= Load Customisation Menu =================================
+	
 	meshList[GEO_CUSTOM_MENU] = MeshBuilder::GenerateQuad("GEO_CUSTOM_MENU", Color(1, 1, 1), 1);
 	meshList[GEO_CUSTOM_MENU]->textureID = LoadTGA("Image//CustomMenu//menu.tga");
 
@@ -196,9 +205,6 @@ void SceneText::Init()
 
 	meshList[GEO_HERO_BLUE] = MeshBuilder::GenerateQuad("GEO_HERO_BLUE", Color(1, 1, 1), 1);
 	meshList[GEO_HERO_BLUE]->textureID = LoadTGA("Image//CustomMenu//Hero_Blue.tga");
-
-	meshList[GEO_BLUE_SPRITE] = MeshBuilder::GenerateSprites("GEO_BLUE_SPRITE", 4, 4);
-	meshList[GEO_BLUE_SPRITE]->textureID = LoadTGA("Image//Hero//hero_blue.tga");
 
 	// ================================= Load Enemies =================================
 
@@ -355,7 +361,7 @@ void SceneText::Init()
 
 	// ================================= Minimap =================================
 
-	if (stage == 1)
+	if(stage == 1)
 	{
 		m_cMinimap = new CMinimap();
 		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
@@ -364,7 +370,8 @@ void SceneText::Init()
 		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
 		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
 	}
-	else if (stage == 7)
+	
+	else if(stage == 7)
 	{
 		m_cMinimap = new CMinimap();
 		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
@@ -409,6 +416,8 @@ void SceneText::Init()
 	m_ghost = new GameObject(GameObject::GO_BALL);
 	m_ghost->active = false;
 }
+
+// ================================== PHYSICS METHODS AND FUNCTIONS ==================================
 
 GameObject* SceneText::FetchGO()
 {
@@ -596,6 +605,8 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 	}
 }
 
+// ================================== UPDATES ==================================
+
 void SceneText::Update(double dt)
 {
 	if(Application::IsKeyPressed('1'))
@@ -638,1052 +649,19 @@ void SceneText::Update(double dt)
 		bLightEnabled = false;
 	}
 
-	// =================================== UPDATE THE HERO ===================================
-
-	if(lockMovement == false)
-	{
-		if(Application::IsKeyPressed('A'))
-		{
-			hero.direction = Vector3(-1,0,0);
-
-			CHAR_HEROKEY = 'a';
-
-			//Sprite Animation
-			hero.heroTileID += 0.1;
-			if(hero.heroTileID < 4)
-			{
-				hero.heroTileID = 4;
-			}
-
-			if(hero.heroTileID > 6)
-			{
-				hero.heroTileID = 4;
-			}
-		}
-
-		else if(Application::IsKeyPressed('D'))
-		{
-			hero.direction = Vector3(1,0,0);
-
-			CHAR_HEROKEY = 'd';
-
-			//Sprite Animation
-			hero.heroTileID += 0.1;
-			if(hero.heroTileID < 8)
-			{
-				hero.heroTileID = 8;
-			}
-
-			if(hero.heroTileID > 10)
-			{
-				hero.heroTileID = 8;
-			}
-		}
-
-		else if(Application::IsKeyPressed('W'))
-		{
-			hero.direction = Vector3(0,1,0);
-
-			CHAR_HEROKEY = 'w';
-
-			//Sprite Animation
-			hero.heroTileID += 0.1;
-			if(hero.heroTileID < 12)
-			{
-				hero.heroTileID = 12;
-			}
-
-			if(hero.heroTileID > 14)
-			{
-				hero.heroTileID = 12;
-			}
-		}
-
-		else if(Application::IsKeyPressed('S'))
-		{
-			hero.direction = Vector3(0,-1,0);
-
-			CHAR_HEROKEY = 's';
-
-			//Sprite Animation
-			hero.heroTileID += 0.1;
-			if(hero.heroTileID < 0)
-			{
-				hero.heroTileID = 0;
-			}
-
-			if(hero.heroTileID > 2)
-			{
-				hero.heroTileID = 0;
-			}
-		}
-	}
-	//Limit hero's attak rate
-	if(hero.GetAttackStatus() == true)
-	{
-		attackSpeed += dt;
-		if(attackSpeed >= 0.7)
-		{
-			attackSpeed = 0;
-			hero.SetAttackStatus(false);
-		}
-	}
-
-	//Get dagger
-	if(hero.GetPickUpWeapon() == true && Application::IsKeyPressed(VK_SPACE))
-	{
-		hero.SetDaggerAcquired(true);
-	}
-
-	//Check if player is hiding
-	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY)
-	{
-		hero.hiding = true;
-		RenderDim = true;
-	}
-	
-	else
-	{
-		hero.hiding = false;
-		RenderDim = false;
-	}
-
-	// =================================== UPDATE THE ENEMY ===================================
-
-	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
-	{
-		CEnemy *go = (CEnemy *)*it;
-		if(go->active)	
-		{
-			go->theStrategy->CurrentState;
-
-			if(go->currentStrat != CEnemy::STRAT_KILL)
-			{
-				go->ChangeStrategy(new CStrategy_Kill());
-				go->currentStrat = CEnemy::STRAT_KILL;
-			}
-
-			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
-
-			if (go->stunned && go->routeCounter == 0 && go->routeCounter2 == 0)
-			{
-			}
-			else
-			{
-				go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
-
-				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
-				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
-				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
-			}
-
-			if (go->stunned)
-				go->stunTimer += dt;
-
-			if (go->stunTimer >= 2)
-			{
-				go->stunned = false;
-				go->stunTimer = 0;
-				go->theStrategy->isAttacking = true;
-			}
-
-			//Checking enemy attack status
-			if(go->attackStatus == true)
-			{
-				go->attackReactionTime += dt;
-				if(go->attackReactionTime >= 0.5)
-				{
-					hero.health--;
-					go->attackReactionTime = 0;
-					go->attackStatus = false;
-					go->attackAnimation = true;
-				}
-			}
-
-			else
-			{
-				go->attackReactionTime = 0;
-			}
-
-			for(std::vector<CGoodies *>::iterator it2 = BarrelList.begin(); it2!= BarrelList.end(); ++it2)
-			{
-				CGoodies *go2 = (CGoodies *)*it2;
-				if(go2->active)	
-				{
-					if(go->eneCurrTile == go2->tilePos)
-					{
-						go->attackAnimation = true;
-						go2->active = false;
-					}
-				}
-			}
-
-			//Attacking animation for enemy
-			if(go->attackAnimation == true)
-			{
-				go->attackAnimationTimer += dt;
-				if(go->attackAnimationTimer >= 0.7)
-				{
-					go->attackAnimationTimer = 0;
-					go->attackAnimation = false;
-				}
-			}
-
-			//Movement Sprite Animation
-			if(go->direction == Vector3(0, -1, 0))
-			{
-				//Sprite Animation
-				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 0)
-				{
-					go->enemyTileID = 0;
-				}
-
-				else if(go->enemyTileID > 3)
-				{
-					go->enemyTileID = 0;
-				}
-			}
-
-			else if(go->direction == Vector3(-1, 0, 0))
-			{
-				//Sprite Animation
-				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 5)
-				{
-					go->enemyTileID = 5;
-				}
-
-				else if(go->enemyTileID > 8)
-				{
-					go->enemyTileID = 5;
-				}
-			}
-
-			else if(go->direction == Vector3(1, 0, 0))
-			{
-				//Sprite Animation
-				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 10)
-				{
-					go->enemyTileID = 10;
-				}
-
-				else if(go->enemyTileID > 13)
-				{
-					go->enemyTileID = 10;
-				}
-			}
-
-			else if(go->direction == Vector3(0, 1, 0))
-			{
-				//Sprite Animation
-				go->enemyTileID += 0.1;
-				if(go->enemyTileID < 15)
-				{
-					go->enemyTileID = 15;
-				}
-
-				else if(go->enemyTileID > 18)
-				{
-					go->enemyTileID = 15;
-				}
-			}
-		}
-	}
-
-	// =================================== UPDATE THE GOODIES ===================================
-
-	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
-	{
-		CGoodies *go = (CGoodies *)*it;
-		if(go->active)	
-		{
-			if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
-			{
-				if(hero.GetAttackStatus() == true)
-				{
-					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
-
-					if(tempheroTile == go->tilePos)
-					{
-						go->active = false;
-					}
-				}
-			}
-
-			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
-			{
-				if(hero.GetDaggerAcquired() == true)
-				{
-					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
-					if(tempheroTile == go->tilePos)
-					{
-						go->active = false;
-					}
-				}
-			}
-
-			else
-			{	
-				if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
-				{
-					if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
-					{
-						if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
-						{
-							hero.SetKeyAcquired(true);
-							go->active = false;
-							keyCount++;
-						}
-						
-						else if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
-						{
-							go->active = false;
-							diamondCount++;
-							PointSystem += 10;
-						}
-						else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
-						{
-							if (hero.heroCurrTile == go->tilePos && hero.health < hero.full_health)
-							{
-								go->active = false;
-								hero.health++;
-							}
-						}
-						else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
-						{
-							if (hero.heroCurrTile == go->tilePos)
-							{
-								if(hero.health == hero.full_health)
-								{
-									go->active = false;
-									hero.health++;
-									hero.full_health++;
-								}
-							}
-						}
-						else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
-						{
-							if (hero.heroCurrTile == go->tilePos)
-							{
-					
-									go->active = false;
-									hero.NoOfScroll++;
-					
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// =================================== BOSS LEVEL UPDATES ===================================
-	
-	//map traversing aka character can move from 1 map to another 
+	//Map traversing aka character can move from 1 map to another 
 	int checkPosition_X = (int)((CurrentMap->mapOffset_x + hero.gettheHeroPositionx()) / CurrentMap->GetTileSize());
 	int checkPosition_Y = CurrentMap->GetNumOfTiles_Height() - (int)((hero.gettheHeroPositiony() + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
-	BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
-	bossCounter += 0.01f;
-
-	if(bossCounter < 2.0f)
-	{
-		BossTileID += 0.1f;
-		if(BossTileID > 2)
-		{
-			BossTileID = 0;
-			IsTurn = false;
-		}
-	}
-
-	else if(bossCounter > 2.0f && bossCounter < 4.0f)
-	{
-		BossTileID += 0.1f;
-		if(BossTileID > 5)
-		{
-			BossTileID = 3;
-			IsTurn = true;
-		}
-	}
-
-	else if(bossCounter > 4.0f)
-	{
-		bossCounter = 0;
-	}
-
-	if(hero.GetdoorOpened() == true)
-	{
-		derenderDoor = true;
-	}
-
-	if(stage == 7 && (CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS))
-	{
-		if(Application::IsKeyPressed(VK_SPACE))
-		{
-			if(GetKey == false)
-			{
-				keyCount++;
-			}
-
-			if(keyCount == 1)
-			{
-				hero.SetKeyAcquired(true);
-				GetKey = true;
-			}
-
-			for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
-			{
-				CGoodies *go = (CGoodies *)*it;
-				if(go->active)
-				{
-					if(go->GoodiesType == CGoodies::Goodies_Type::DOOR)
-					{
-						go->active = false;
-					}
-				}
-			}
-		}
-	}
-
-	if (IsTurn == true)
-	{
-		for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
-		{
-			for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
-			{
-				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
-				{
-					EnemiesRendered = true;
-				}
-			}
-		}
-	}
-
-	if(stage == 7)
-	{
-		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
-		{
-			CEnemy *go = (CEnemy *)*it;
-			if (EnemiesRendered == true && go->health > 0)
-			{
-				go->active = true;
-			}
-			else
-			{
-				go->active = false;
-			}
-			
-			if (EnemiesRendered == false)
-			{
-				go->stunned = true;
-			}
-		}
-	}
-
-	BossPointer->Set_SpawnGuards(IsTurn);
-
-	// =================================== Customisation Menu Updates ===================================
-
-	if(CheckCustomMenu == true)
-	{
-		CustomMenuDelay += dt;
-		if(CustomMenuDelay >= 0.2)
-		{
-			CustomMenuDelay = 0;
-			CheckCustomMenu = false;
-
-			if(CloseOpenCustomMenu == 1)
-			{
-				CloseOpenCustomMenu = 2;
-			}
-
-			else
-			{
-				CloseOpenCustomMenu = 1;
-			}			
-		}
-	}
-
-	if(Application::IsKeyPressed('T'))
-	{
-		if(CloseOpenCustomMenu == 1)
-		{
-			CustomMenuRendered = true;
-			CustomMenuSelected = false;
-		}
-
-		else if(CloseOpenCustomMenu == 2)
-		{
-			CustomMenuRendered = false;
-		}
-
-		CheckCustomMenu = true;
-	}
-
-	if(CustomMenuRendered == false)
-	{
-		Temp_Red_Selected = true;
-	}
-
-	if((Red_Selected == true || Blue_Selected == true))
-	{
-		Temp_Red_Selected = false;
-	}
-
-	if(CustomMenuSelected == true)
-	{
-		CustomMenuRendered = false;
-	}
-
-	// ============================= MOUSE SECTION ====================================
-
-	//For Right Click Interaction
-	if(CustomMenuRendered == false)
-	{
-		static bool bLButtonState = false;
-		if (!bLButtonState && Application::IsMousePressed(0))
-		{
-			bLButtonState = true;
-			//std::cout << "LBUTTON DOWN" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = static_cast<float>(x) / w * m_worldWidth;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		}
-
-		else if (bLButtonState && !Application::IsMousePressed(0))
-		{
-			bLButtonState = false;
-			//std::cout << "LBUTTON UP" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = static_cast<float>(x) / w * m_worldWidth;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		}
-
-		static bool bRButtonState = false;
-		if (!bRButtonState && Application::IsMousePressed(1))
-		{
-			bRButtonState = true;
-			std::cout << "RBUTTON DOWN" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-
-			float posX = x / w * m_worldWidth;
-			float posY = (h - y) / h * m_worldHeight;
-			m_ghost->pos.Set(posX, posY, 0);
-
-			int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
-			int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
-
-			if (Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
-			{
-				onHero = true;
-				for (int i = 0; i < 10; ++i)
-				{
-					GameObject *go = FetchGO();
-					go->type = GameObject::GO_AIM;
-					go->active = true;
-					go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
-					go->scale.Set(4, 4, 4);
-
-					if (i == 0)
-					{
-						go->isSet = true;
-					}
-				}
-
-				prevPos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
-				lockMovement = true;
-			}
-
-			else
-			{
-				onHero = false;
-			}
-		}
-
-		else if (bRButtonState && !Application::IsMousePressed(1))
-		{
-			bRButtonState = false;
-			std::cout << "RBUTTON UP" << std::endl;
-
-			if (onHero == true)
-			{
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-
-					if (go->active == false)
-					{
-						go->active = true;
-						go->type = GameObject::GO_BALL;
-						double x, y;
-						Application::GetCursorPos(&x, &y);
-						int w = Application::GetWindowWidth();
-						int h = Application::GetWindowHeight();
-						float worldX = x * m_worldWidth / w;
-						float worldY = (h - y) * m_worldHeight / h;
-
-						go->pos = Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0);
-						go->vel = Vector3(hero.gettheHeroPositionx()+ 16, hero.gettheHeroPositiony() + 16, 0) - Vector3(worldX, worldY, 0);
-						go->vel *= 2.5;
-						go->scale.Set(6, 6, 6);
-
-						if (go->vel.Length() > MAX_SPEED)
-						{
-							go->vel = go->vel.Normalize() * MAX_SPEED;
-						}
-
-						m_ghost->active = false;
-						hero.ammo -= 1;
-						break;
-					}
-				}
-
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-
-					if (go->active && go->type == GameObject::GO_AIM)
-					{
-						go->isSet = false;
-						go->active = false;
-					}
-				}
-			}
-
-			lockMovement = false;
-		}
-
-		if (bRButtonState == true)
-		{
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = x / w * m_worldWidth;
-			float posY = (h - y) / h * m_worldHeight;
-
-			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-			{
-				GameObject *go = (GameObject *)*it;
-
-				if (go->active && go->type == GameObject::GO_AIM)
-				{
-					if (go->isSet == false)
-					{
-						if ((Vector3(posX, posY, 0) - prevPos).Length() >= 20)
-						{
-							Vector3 dis = (Vector3(posX, posY, 0) - prevPos).Normalize() * 20;
-							go->pos = prevPos + dis;
-							go->isSet = true;
-							prevPos = go->pos;
-							break;
-						}
-					}
-
-					else
-					{
-						Vector3 a = go->pos - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
-
-						if (a.IsZero())
-						{
-							continue;
-						}
-
-						float length = a.Length();
-						Vector3 b = Vector3(posX, posY, 0) - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
-
-						if (a.Length() > b.Length())
-						{
-							go->render = false;
-						}
-
-						else
-						{
-							go->render = true;
-						}
-
-						if (!b.IsZero())
-						{
-							go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0) + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// For Left Click Interaction
-	else
-	{
-		static bool bLButtonState = false;
-		if (!bLButtonState && Application::IsMousePressed(0))
-		{
-			bLButtonState = true;
-			//std::cout << "LBUTTON DOWN" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth2();
-			int h = Application::GetWindowHeight2();
-
-			cout << "X: " << x << " Y: " << y << endl;
-
-			if (w <= 800 && h <= 600)
-			{
-				// For Red Hero
-				if ((x > 123 && x < 278) && (y < 404 && y > 203))
-				{
-					cout << "HELLO RED WORLD" << endl;
-
-					Red_Selected = true;
-					Blue_Selected = false;
-				}
-				// For Blue Hero
-				else if ((x > 524 && x < 675) && (y < 404 && y > 203))
-				{
-					cout << "HELLO BLUE WORLD" << endl;
-
-					Red_Selected = false;
-					Blue_Selected = true;
-				}
-			}
-			else
-			{
-				// For Red Hero
-				if ((x > 303 && x < 662) && (y < 684 && y > 349))
-				{
-					cout << "HELLO RED WORLD" << endl;
-
-					Red_Selected = true;
-					Blue_Selected = false;
-				}
-				// For Blue Hero
-				else if ((x > 1266 && x < 1622) && (y < 684 && y > 349))
-				{
-					cout << "HELLO BLUE WORLD" << endl;
-
-					Red_Selected = false;
-					Blue_Selected = true;
-				}
-			}
-
-			CustomMenuSelected = true;
-		}
-
-		else if (bLButtonState && !Application::IsMousePressed(0))
-		{
-			bLButtonState = false;
-			//std::cout << "LBUTTON UP" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth2();
-			int h = Application::GetWindowHeight2();
-		}
-
-
-
-		else if ((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
-		{
-			bLButtonState = true;
-			//std::cout << "LBUTTON DOWN" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth2();
-			int h = Application::GetWindowHeight2();
-
-			if (w <= 800 && h <= 600)
-			{
-				// For Red Hero
-				if ((x > 123 && x < 278) && (y < 404 && y > 203))
-				{
-					Custom_HeroSize_Red = 30;
-				}
-
-				// For BLUE Hero
-				else if ((x > 524 && x < 675) && (y < 404 && y > 203))
-				{
-					Custom_HeroSize_Blue = 30;
-				}
-				else
-				{
-					Custom_HeroSize_Red = 20;
-					Custom_HeroSize_Blue = 20;
-				}
-			}
-			else
-			{
-				// For Red Hero
-				if ((x > 301 && x < 661) && (y < 677 && y > 353))
-				{
-					Custom_HeroSize_Red = 30;
-				}
-
-				// For BLUE Hero
-				else if ((x > 1281 && x < 1618) && (y < 677 && y > 353))
-				{
-					Custom_HeroSize_Blue = 30;
-				}
-				else
-				{
-					Custom_HeroSize_Red = 20;
-					Custom_HeroSize_Blue = 20;
-				}
-			}
-		}
-		else
-		{
-			bLButtonState = false;
-		}
-	}
-
-	// =================================== Lose Screen UPDATES ===================================
-	
-	if(hero.health <= 0)
-	{
-		lose = true;
-	}
-
-	if(lose == true)
-	{
-		LoseTimer += 0.01f;
-		if(LoseTimer >= 2.0f)
-		{
-			bReset = true;
-		}
-	}
-	
-	// =================================== MAIN UPDATES ===================================
-
-	//Moving from screen stage to scrollnig stage conditions
-	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
-	{
-		if(hero.GetKeyAcquired() == true)
-		{
-			if(hero.GetdoorOpened() == false)
-			{
-				if(Application::IsKeyPressed(VK_SPACE))
-				{
-					hero.SetdoorOpened(true);
-					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
-					{
-						CGoodies *go = (CGoodies *)*it;
-						if(go->active)	
-						{	
-							if(go->GoodiesType == CGoodies::Goodies_Type::DOOR)
-							{
-								go->active = false;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
-	{
-		if(hero.GetdoorOpened() == true)
-		{
-			if(stage == 1)
-			{
-				hero.SetKeyAcquired(false);	
-				hero.SetdoorOpened(false);
-				stage = 2;
-				hero.settheHeroPositionx(32);
-				hero.heroCurrTile.x = 1;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 3;
-
-				//Set new map
-				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cScrollingMap;
-			}
-
-			else if(stage == 2)
-			{
-				stage = 3;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 3;
-			}
-
-			else if(stage == 5)
-			{
-				hero.SetKeyAcquired(false);	
-				hero.SetdoorOpened(false);
-				stage = 6;
-				hero.settheHeroPositionx(32);
-				hero.heroCurrTile.x = 1;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 3;
-
-				//Set new map
-				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cScrollingMap3;
-			}
-
-			else if(stage == 6)
-			{
-				stage = 7;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 3;
-			}
-		}
-	}
-
-	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
-		{
-
-			if(go->type == GameObject::GO_BALL)
-			{
-				Vector3 friction = -go->vel * 0.2f;
-				go->vel += friction * dt;
-				go->pos += go->vel * dt;
-				go->timer += dt;
-
-				if(go->vel.Length() <= 2.f)
-				{
-					go->vel.SetZero();
-				}
-
-				for(std::vector<GameObject *>::iterator it2 = m_goList.begin(); it2 != m_goList.end(); ++it2)
-				{
-					GameObject *go2 = (GameObject *)*it2;
-					if(go2->active)
-					{
-						if (checkCollision(go, go2, dt))
-						{
-							if (go2->ID == CMap::BARREL)
-							{
-								for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
-								{
-									CGoodies *go3 = (CGoodies *)*it3;
-
-									if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
-									{
-										collisionResponse(go, go2);	
-
-										if (go->timer < 3)
-											go3->active = false;
-									}
-
-								}
-							}
-
-							else if (go2->ID >= CMap::ENEMY_50)
-							{
-								for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
-								{
-									CEnemy *go4 = (CEnemy *)*it4;
-
-									if(go4->active && go4->ID == go2->ID)
-									{
-										collisionResponse(go, go2);	
-
-										if (go->timer < 3)
-											go4->stunned = true;
-									}
-
-								}
-							}
-
-							else
-								collisionResponse(go, go2);	
-						}
-					}
-				}
-
-				if (go->timer >= 3)
-				{
-					float combinedDist = (Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0) - go->pos).Length();
-					float combinedRad = 32;
-
-					if (combinedDist <= combinedRad)
-					{
-						go->active = false;
-						hero.ammo++;
-						go->timer = 0;
-					}
-					
-				}
-
-			}
-
-			if(go->type == GameObject::GO_PILLAR)
-			{
-				for(std::vector<CEnemy *>::iterator it2 = enemyList.begin(); it2 != enemyList.end(); ++it2)
-				{
-					CEnemy *go2 = (CEnemy *)*it2;
-					if(go2->active)
-					{
-						if (go2->ID == go->ID)
-						{
-							go->pos.x = go2->GetPos_x() + 16 /*+ CurrentMap->mapOffset_x*/;
-							go->pos.y = go2->GetPos_y() + 16;
-						}
-					}
-				}
-			}
-		}
-	}
+	UpdateHero(dt);
+	UpdateEnemies(dt);
+	UpdateGoodies();
+	UpdateBossLevel(checkPosition_X, checkPosition_Y);
+	UpdateCustomisation(dt);
+	UpdateGameOver();
+	UpdateMouse();
+	UpdatePhysics(dt);
+	MainUpdates(checkPosition_X, checkPosition_Y);
 
 	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
 	CHAR_HEROKEY = NULL;
@@ -1697,7 +675,7 @@ void SceneText::UpdateCameraStatus(const unsigned char key, const bool status)
 
 void SceneText::UpdateAttackStatus(const unsigned char key)
 {
-	if(key == CA_ATTACK && hero.GetDaggerAcquired() == true)
+	if(key == CA_ATTACK && hero.GetDaggerAcquired() == true && hero.invisibleStatus == false)
 	{
 		hero.SetAttackStatus(true);
 	}
@@ -1896,6 +874,1102 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 		go->attackStatus = false;
 	}
 }
+
+void SceneText::UpdateHero(double dt)
+{
+	// =================================== UPDATE THE HERO ===================================
+
+	if(lockMovement == false)
+	{
+		if(Application::IsKeyPressed('A') && hero.transform == false)
+		{
+			hero.direction = Vector3(-1,0,0);
+			CHAR_HEROKEY = 'a';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 4)
+			{
+				hero.heroTileID = 4;
+			}
+
+			if(hero.heroTileID > 6)
+			{
+				hero.heroTileID = 4;
+			}
+		}
+
+		else if(Application::IsKeyPressed('D') && hero.transform == false)
+		{
+			hero.direction = Vector3(1,0,0);
+			CHAR_HEROKEY = 'd';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 8)
+			{
+				hero.heroTileID = 8;
+			}
+
+			if(hero.heroTileID > 10)
+			{
+				hero.heroTileID = 8;
+			}
+		}
+
+		else if(Application::IsKeyPressed('W') && hero.transform == false)
+		{
+			hero.direction = Vector3(0,1,0);
+			CHAR_HEROKEY = 'w';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 12)
+			{
+				hero.heroTileID = 12;
+			}
+
+			if(hero.heroTileID > 14)
+			{
+				hero.heroTileID = 12;
+			}
+		}
+
+		else if(Application::IsKeyPressed('S') && hero.transform == false)
+		{
+			hero.direction = Vector3(0,-1,0);
+			CHAR_HEROKEY = 's';
+
+			//Sprite Animation
+			hero.heroTileID += 0.1;
+			if(hero.heroTileID < 0)
+			{
+				hero.heroTileID = 0;
+			}
+
+			if(hero.heroTileID > 2)
+			{
+				hero.heroTileID = 0;
+			}
+		}
+	}
+
+	//Limit hero's attak rate
+	if(hero.GetAttackStatus() == true)
+	{
+		attackSpeed += dt;
+		if(attackSpeed >= 0.7)
+		{
+			attackSpeed = 0;
+			hero.SetAttackStatus(false);
+		}
+	}
+
+	//Check if player is hiding
+	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY || hero.invisibleStatus == true)
+	{
+		hero.hiding = true;
+		RenderDim = true;
+	}
+	
+	else
+	{
+		hero.hiding = false;
+		RenderDim = false;
+	}
+
+	//Transformation to stealth
+	if(hero.transform == true)
+	{
+		hero.heroTransformID += 0.1;
+		if(hero.heroTransformID >= 8)
+		{
+			hero.heroTransformID = 0;
+			hero.transform = false;
+			hero.invisibleStatus = true;
+		}
+	}
+
+	//Timer during invisibility
+	if(hero.invisibleStatus == true)
+	{
+		hero.invisibleTimer += dt;
+		if(hero.invisibleTimer >= 15)
+		{
+			hero.invisibleStatus = false;
+			hero.invisibleTimer = 0;
+			Red_Selected = true;
+			Blue_Selected = false;
+		}
+	}
+}
+
+void SceneText::UpdateEnemies(double dt)
+{
+	// =================================== UPDATE THE ENEMY ===================================
+
+	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	{
+		CEnemy *go = (CEnemy *)*it;
+		if(go->active)	
+		{
+			go->theStrategy->CurrentState;
+
+			if(go->currentStrat != CEnemy::STRAT_KILL)
+			{
+				go->ChangeStrategy(new CStrategy_Kill());
+				go->currentStrat = CEnemy::STRAT_KILL;
+			}
+
+			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
+
+			if(go->stunned && go->routeCounter == 0 && go->routeCounter2 == 0)
+			{
+			}
+			
+			else
+			{
+				go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
+
+				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
+				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
+				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
+			}
+
+			//If enemy is stunned
+			if(go->stunned)
+			{
+				go->stunTimer += dt;
+			}
+
+			if (go->stunTimer >= 2)
+			{
+				go->stunned = false;
+				go->stunTimer = 0;
+				go->theStrategy->isAttacking = true;
+			}
+
+			//Checking enemy attack status
+			if(go->attackStatus == true)
+			{
+				go->attackReactionTime += dt;
+				if(go->attackReactionTime >= 0.5)
+				{
+					hero.health--;
+					go->attackReactionTime = 0;
+					go->attackStatus = false;
+					go->attackAnimation = true;
+				}
+			}
+
+			else
+			{
+				go->attackReactionTime = 0;
+			}
+
+			for(std::vector<CGoodies *>::iterator it2 = BarrelList.begin(); it2!= BarrelList.end(); ++it2)
+			{
+				CGoodies *go2 = (CGoodies *)*it2;
+				if(go2->active)	
+				{
+					if(go->eneCurrTile == go2->tilePos)
+					{
+						go->attackAnimation = true;
+						go2->active = false;
+					}
+				}
+			}
+
+			//Attacking animation for enemy
+			if(go->attackAnimation == true)
+			{
+				go->attackAnimationTimer += dt;
+				if(go->attackAnimationTimer >= 0.7)
+				{
+					go->attackAnimationTimer = 0;
+					go->attackAnimation = false;
+				}
+			}
+
+			//Movement Sprite Animation
+			if(go->direction == Vector3(0, -1, 0))
+			{
+				//Sprite Animation
+				go->enemyTileID += 0.1;
+				if(go->enemyTileID < 0)
+				{
+					go->enemyTileID = 0;
+				}
+
+				else if(go->enemyTileID > 3)
+				{
+					go->enemyTileID = 0;
+				}
+			}
+
+			else if(go->direction == Vector3(-1, 0, 0))
+			{
+				//Sprite Animation
+				go->enemyTileID += 0.1;
+				if(go->enemyTileID < 5)
+				{
+					go->enemyTileID = 5;
+				}
+
+				else if(go->enemyTileID > 8)
+				{
+					go->enemyTileID = 5;
+				}
+			}
+
+			else if(go->direction == Vector3(1, 0, 0))
+			{
+				//Sprite Animation
+				go->enemyTileID += 0.1;
+				if(go->enemyTileID < 10)
+				{
+					go->enemyTileID = 10;
+				}
+
+				else if(go->enemyTileID > 13)
+				{
+					go->enemyTileID = 10;
+				}
+			}
+
+			else if(go->direction == Vector3(0, 1, 0))
+			{
+				//Sprite Animation
+				go->enemyTileID += 0.1;
+				if(go->enemyTileID < 15)
+				{
+					go->enemyTileID = 15;
+				}
+
+				else if(go->enemyTileID > 18)
+				{
+					go->enemyTileID = 15;
+				}
+			}
+		}
+	}
+}
+
+void SceneText::UpdateGoodies()
+{
+	// =================================== UPDATE THE GOODIES ===================================
+
+	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+	{
+		CGoodies *go = (CGoodies *)*it;
+		if(go->active)	
+		{
+			if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+			{
+				if(hero.GetAttackStatus() == true)
+				{
+					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
+
+					if(tempheroTile == go->tilePos)
+					{
+						hero.SetDaggerAcquired(true);
+						go->active = false;
+					}
+				}
+			}
+
+			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+			{
+				if(hero.GetPickUpWeapon() == true && Application::IsKeyPressed(VK_SPACE))
+				{
+					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
+					if(tempheroTile == go->tilePos)
+					{
+						hero.SetDaggerAcquired(true);
+						go->active = false;
+					}
+				}
+			}
+
+			else
+			{	
+				if(go->CalculateDistance(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony()) == true)
+				{
+					if(go->GoodiesType != CGoodies::Goodies_Type::DOOR)
+					{
+						if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
+						{
+							hero.SetKeyAcquired(true);
+							go->active = false;
+							keyCount++;
+						}
+						
+						else if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+						{
+							go->active = false;
+							diamondCount++;
+							PointSystem += 10;
+						}
+						
+						else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
+						{
+							if(hero.heroCurrTile == go->tilePos && hero.health < hero.full_health)
+							{
+								go->active = false;
+								hero.health++;
+							}
+						}
+						
+						else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
+						{
+							if(hero.heroCurrTile == go->tilePos)
+							{
+								if(hero.health == hero.full_health)
+								{
+									go->active = false;
+									hero.health++;
+									hero.full_health++;
+								}
+							}
+						}
+						
+						else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
+						{
+							if(hero.heroCurrTile == go->tilePos)
+							{				
+									go->active = false;
+									hero.NoOfScroll++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
+{
+	// =================================== BOSS LEVEL UPDATES ===================================
+
+	BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
+	bossCounter += 0.01f;
+
+	if(bossCounter < 2.0f)
+	{
+		BossTileID += 0.1f;
+		if(BossTileID > 2)
+		{
+			BossTileID = 0;
+			IsTurn = false;
+		}
+	}
+
+	else if(bossCounter > 2.0f && bossCounter < 4.0f)
+	{
+		BossTileID += 0.1f;
+		if(BossTileID > 5)
+		{
+			BossTileID = 3;
+			IsTurn = true;
+		}
+	}
+
+	else if(bossCounter > 4.0f)
+	{
+		bossCounter = 0;
+	}
+
+	if(hero.GetdoorOpened() == true)
+	{
+		derenderDoor = true;
+	}
+
+	if(stage == 7 && (CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS))
+	{
+		if(Application::IsKeyPressed(VK_SPACE))
+		{
+			if(GetKey == false)
+			{
+				keyCount++;
+			}
+
+			if(keyCount == 1)
+			{
+				hero.SetKeyAcquired(true);
+				GetKey = true;
+			}
+
+			for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+			{
+				CGoodies *go = (CGoodies *)*it;
+				if(go->active)
+				{
+					if(go->GoodiesType == CGoodies::Goodies_Type::DOOR)
+					{
+						go->active = false;
+					}
+				}
+			}
+		}
+	}
+
+	if(IsTurn == true)
+	{
+		for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
+		{
+			for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
+			{
+				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+				{
+					EnemiesRendered = true;
+				}
+			}
+		}
+	}
+
+	if(stage == 7)
+	{
+		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			CEnemy *go = (CEnemy *)*it;
+			if (EnemiesRendered == true && go->health > 0)
+			{
+				go->active = true;
+			}
+			else
+			{
+				go->active = false;
+			}
+			
+			if (EnemiesRendered == false)
+			{
+				go->stunned = true;
+			}
+		}
+	}
+
+	BossPointer->Set_SpawnGuards(IsTurn);
+}
+
+void SceneText::UpdateCustomisation(double dt)
+{
+	// =================================== Customisation Menu Updates ===================================
+
+	//Delay in closing and opening Menu
+	if(CheckCustomMenu == true)
+	{
+		CustomMenuDelay += dt;
+		if(CustomMenuDelay >= 0.2)
+		{
+			CustomMenuDelay = 0;
+			CheckCustomMenu = false;
+
+			if(CloseOpenCustomMenu == 1)
+			{
+				CloseOpenCustomMenu = 2;
+			}
+
+			else
+			{
+				CloseOpenCustomMenu = 1;
+			}			
+		}
+	}
+
+	//Open Menu
+	if(Application::IsKeyPressed('T'))
+	{
+		if(CloseOpenCustomMenu == 1)
+		{
+			CustomMenuRendered = true;
+			CustomMenuSelected = false;
+		}
+
+		else if(CloseOpenCustomMenu == 2)
+		{
+			CustomMenuRendered = false;
+		}
+
+		CheckCustomMenu = true;
+	}
+
+	//Set for starting
+	if(CustomMenuRendered == false)
+	{
+		Temp_Red_Selected = true;
+	}
+
+	//If a choice is selected
+	if((Red_Selected == true || Blue_Selected == true))
+	{
+		Temp_Red_Selected = false;
+	}
+
+	//If a choice is selected, menu close
+	if(CustomMenuSelected == true)
+	{
+		CustomMenuRendered = false;
+	}
+}
+
+void SceneText::UpdateGameOver()
+{
+	// =================================== Lose Screen UPDATES ===================================
+	
+	if(hero.health <= 0)
+	{
+		lose = true;
+	}
+
+	if(lose == true)
+	{
+		LoseTimer += 0.01f;
+		if(LoseTimer >= 2.0f)
+		{
+			bReset = true;
+		}
+	}
+}
+
+void SceneText::UpdateMouse()
+{
+	// ============================= MOUSE SECTION ====================================
+
+	//For Right Click Interaction
+	if(CustomMenuRendered == false)
+	{
+		static bool bLButtonState = false;
+		if (!bLButtonState && Application::IsMousePressed(0))
+		{
+			bLButtonState = true;
+			//std::cout << "LBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+		}
+
+		else if (bLButtonState && !Application::IsMousePressed(0))
+		{
+			bLButtonState = false;
+			//std::cout << "LBUTTON UP" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+		}
+
+		static bool bRButtonState = false;
+		if (!bRButtonState && Application::IsMousePressed(1))
+		{
+			bRButtonState = true;
+			std::cout << "RBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+
+			float posX = x / w * m_worldWidth;
+			float posY = (h - y) / h * m_worldHeight;
+			m_ghost->pos.Set(posX, posY, 0);
+
+			int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
+			int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+
+			if (Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
+			{
+				onHero = true;
+				for (int i = 0; i < 10; ++i)
+				{
+					GameObject *go = FetchGO();
+					go->type = GameObject::GO_AIM;
+					go->active = true;
+					go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
+					go->scale.Set(4, 4, 4);
+
+					if (i == 0)
+					{
+						go->isSet = true;
+					}
+				}
+
+				prevPos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
+				lockMovement = true;
+			}
+
+			else
+			{
+				onHero = false;
+			}
+		}
+
+		else if (bRButtonState && !Application::IsMousePressed(1))
+		{
+			bRButtonState = false;
+			std::cout << "RBUTTON UP" << std::endl;
+
+			if (onHero == true)
+			{
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active == false)
+					{
+						go->active = true;
+						go->type = GameObject::GO_BALL;
+						double x, y;
+						Application::GetCursorPos(&x, &y);
+						int w = Application::GetWindowWidth();
+						int h = Application::GetWindowHeight();
+						float worldX = x * m_worldWidth / w;
+						float worldY = (h - y) * m_worldHeight / h;
+
+						go->pos = Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0);
+						go->vel = Vector3(hero.gettheHeroPositionx()+ 16, hero.gettheHeroPositiony() + 16, 0) - Vector3(worldX, worldY, 0);
+						go->vel *= 2.5;
+						go->scale.Set(6, 6, 6);
+
+						if (go->vel.Length() > MAX_SPEED)
+						{
+							go->vel = go->vel.Normalize() * MAX_SPEED;
+						}
+
+						m_ghost->active = false;
+						hero.ammo -= 1;
+						break;
+					}
+				}
+
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active && go->type == GameObject::GO_AIM)
+					{
+						go->isSet = false;
+						go->active = false;
+					}
+				}
+			}
+
+			lockMovement = false;
+		}
+
+		if (bRButtonState == true)
+		{
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = x / w * m_worldWidth;
+			float posY = (h - y) / h * m_worldHeight;
+
+			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			{
+				GameObject *go = (GameObject *)*it;
+
+				if (go->active && go->type == GameObject::GO_AIM)
+				{
+					if (go->isSet == false)
+					{
+						if ((Vector3(posX, posY, 0) - prevPos).Length() >= 20)
+						{
+							Vector3 dis = (Vector3(posX, posY, 0) - prevPos).Normalize() * 20;
+							go->pos = prevPos + dis;
+							go->isSet = true;
+							prevPos = go->pos;
+							break;
+						}
+					}
+
+					else
+					{
+						Vector3 a = go->pos - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
+
+						if (a.IsZero())
+						{
+							continue;
+						}
+
+						float length = a.Length();
+						Vector3 b = Vector3(posX, posY, 0) - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
+
+						if (a.Length() > b.Length())
+						{
+							go->render = false;
+						}
+
+						else
+						{
+							go->render = true;
+						}
+
+						if (!b.IsZero())
+						{
+							go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0) + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//For Left Click Interaction
+	else
+	{
+		static bool bLButtonState = false;
+		if(!bLButtonState && Application::IsMousePressed(0))
+		{
+			bLButtonState = true;
+			//std::cout << "LBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth2();
+			int h = Application::GetWindowHeight2();
+
+			if(w <= 800 && h <= 600)
+			{
+				//For Red Hero
+				if((x > 123 && x < 278) && (y < 404 && y > 203) && Red_Selected == false)
+				{
+					cout << "HELLO RED WORLD" << endl;
+					
+					Red_Selected = true;
+					Blue_Selected = false;
+					hero.invisibleStatus = false;
+					hero.invisibleTimer = 0;
+				}
+				
+				//For Blue Hero
+				else if((x > 524 && x < 675) && (y < 404 && y > 203) && Blue_Selected == false)
+				{
+					cout << "HELLO BLUE WORLD" << endl;
+					
+					Red_Selected = false;
+					Blue_Selected = true;
+					hero.transform = true;
+				}
+			}
+
+			else
+			{
+				// For Red Hero
+				if ((x > 303 && x < 662) && (y < 684 && y > 349))
+				{
+					cout << "HELLO RED WORLD" << endl;
+
+					Red_Selected = true;
+					Blue_Selected = false;
+				}
+				// For Blue Hero
+				else if ((x > 1266 && x < 1622) && (y < 684 && y > 349))
+				{
+					cout << "HELLO BLUE WORLD" << endl;
+
+					Red_Selected = false;
+					Blue_Selected = true;
+				}
+			}
+
+			CustomMenuSelected = true;
+		}
+
+		else if(bLButtonState && !Application::IsMousePressed(0))
+		{
+			bLButtonState = false;
+			//std::cout << "LBUTTON UP" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth2();
+			int h = Application::GetWindowHeight2();
+		}
+
+		else if ((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
+		{
+			bLButtonState = true;
+			//std::cout << "LBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth2();
+			int h = Application::GetWindowHeight2();
+
+			if(w <= 800 && h <= 600)
+			{
+				// For Red Hero
+				if ((x > 123 && x < 278) && (y < 404 && y > 203))
+				{
+					Custom_HeroSize_Red = 30;
+				}
+
+				// For BLUE Hero
+				else if ((x > 524 && x < 675) && (y < 404 && y > 203))
+				{
+					Custom_HeroSize_Blue = 30;
+				}
+				
+				else
+				{
+					Custom_HeroSize_Red = 20;
+					Custom_HeroSize_Blue = 20;
+				}
+			}
+			
+			else
+			{
+				// For Red Hero
+				if ((x > 301 && x < 661) && (y < 677 && y > 353))
+				{
+					Custom_HeroSize_Red = 30;
+				}
+
+				// For BLUE Hero
+				else if ((x > 1281 && x < 1618) && (y < 677 && y > 353))
+				{
+					Custom_HeroSize_Blue = 30;
+				}
+				
+				else
+				{
+					Custom_HeroSize_Red = 20;
+					Custom_HeroSize_Blue = 20;
+				}
+			}
+		}
+		
+		else
+		{
+			bLButtonState = false;
+		}
+	}
+}
+
+void SceneText::UpdatePhysics(double dt)
+{
+	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			if(go->type == GameObject::GO_BALL)
+			{
+				Vector3 friction = -go->vel * 0.2f;
+				go->vel += friction * dt;
+				go->pos += go->vel * dt;
+				go->timer += dt;
+
+				if(go->vel.Length() <= 2.f)
+				{
+					go->vel.SetZero();
+				}
+
+				for(std::vector<GameObject *>::iterator it2 = m_goList.begin(); it2 != m_goList.end(); ++it2)
+				{
+					GameObject *go2 = (GameObject *)*it2;
+					if(go2->active)
+					{
+						if (checkCollision(go, go2, dt))
+						{
+							if (go2->ID == CMap::BARREL)
+							{
+								for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
+								{
+									CGoodies *go3 = (CGoodies *)*it3;
+
+									if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
+									{
+										collisionResponse(go, go2);	
+
+										if(go->timer < 3)
+											go3->active = false;
+									}
+								}
+							}
+
+							else if (go2->ID >= CMap::ENEMY_50)
+							{
+								for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
+								{
+									CEnemy *go4 = (CEnemy *)*it4;
+
+									if(go4->active && go4->ID == go2->ID)
+									{
+										collisionResponse(go, go2);	
+
+										if (go->timer < 3)
+											go4->stunned = true;
+									}
+								}
+							}
+
+							else
+								collisionResponse(go, go2);	
+						}
+					}
+				}
+
+				if(go->timer >= 3)
+				{
+					float combinedDist = (Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0) - go->pos).Length();
+					float combinedRad = 32;
+
+					if (combinedDist <= combinedRad)
+					{
+						go->active = false;
+						hero.ammo++;
+						go->timer = 0;
+					}					
+				}
+			}
+
+			if(go->type == GameObject::GO_PILLAR)
+			{
+				for(std::vector<CEnemy *>::iterator it2 = enemyList.begin(); it2 != enemyList.end(); ++it2)
+				{
+					CEnemy *go2 = (CEnemy *)*it2;
+					if(go2->active)
+					{
+						if(go2->ID == go->ID)
+						{
+							go->pos.x = go2->GetPos_x() + 16 /*+ CurrentMap->mapOffset_x*/;
+							go->pos.y = go2->GetPos_y() + 16;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
+{
+	// =================================== MAIN UPDATES ===================================
+
+	//Moving from screen stage to scrollnig stage conditions
+	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
+	{
+		if(hero.GetKeyAcquired() == true)
+		{
+			if(hero.GetdoorOpened() == false)
+			{
+				if(Application::IsKeyPressed(VK_SPACE))
+				{
+					hero.SetdoorOpened(true);
+					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+					{
+						CGoodies *go = (CGoodies *)*it;
+						if(go->active)	
+						{	
+							if(go->GoodiesType == CGoodies::Goodies_Type::DOOR)
+							{
+								go->active = false;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X] == CMap::DOOR)
+	{
+		if(hero.GetdoorOpened() == true)
+		{
+			if(stage == 1)
+			{
+				hero.SetKeyAcquired(false);	
+				hero.SetdoorOpened(false);
+				stage = 2;
+				hero.settheHeroPositionx(32);
+				hero.heroCurrTile.x = 1;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+					if(go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
+
+				//Set new map
+				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
+				CurrentMap = map.m_cScrollingMap;
+			}
+
+			else if(stage == 2)
+			{
+				stage = 3;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+					if(go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
+			}
+
+			else if(stage == 5)
+			{
+				hero.SetKeyAcquired(false);	
+				hero.SetdoorOpened(false);
+				stage = 6;
+				hero.settheHeroPositionx(32);
+				hero.heroCurrTile.x = 1;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
+
+				//Set new map
+				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
+				CurrentMap = map.m_cScrollingMap3;
+			}
+
+			else if(stage == 6)
+			{
+				stage = 7;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+					if(go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
+			}
+		}
+	}
+}
+
+// ================================== RENDERING APPLICATION FUNCTIONS ==================================
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
 {
@@ -2257,6 +2331,8 @@ void SceneText::RenderTilesMap(Mesh* mesh, int ID, const float size, const float
 	projectionStack.PopMatrix();
 }
 
+// ================================== RENDERING GAME PROJECT FUNCTIONS ==================================
+
 void SceneText::RenderInit()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -2305,41 +2381,41 @@ void SceneText::RenderText()
 
 void SceneText::RenderHero()
 {
-	if (Red_Selected == true || Temp_Red_Selected == true)
+	//For dislaying Hero's Health
+	if(hero.transform == false)
 	{
-		//For dislaying Hero's Health
-		if (hero.health >= 1)
+		if(hero.health >= 1)
 		{
-			for(int a = hero.health; a > 0; a--)
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
+
+			if(hero.health >= 2)
 			{
-				if(hero.health%2 == 1)
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
+
+				if(hero.health == 3)
 				{
-					if(hero.health == 1)
-						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
-					else
-						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15 + ((a - hero.health/2) * 21), hero.gettheHeroPositiony() + 33);
-				}
-				else
-				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15 + ((a - hero.health/2) * 21) + 11, hero.gettheHeroPositiony() + 33);
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
 				}
 			}
 		}
+	}
 
+	if(Red_Selected == true || Temp_Red_Selected == true || hero.invisibleTimer >= 10 && hero.invisibleTimer <= 11 || hero.invisibleTimer >= 13 && hero.invisibleTimer <= 14)
+	{
 		//Attacking
-		if (hero.GetAttackStatus() == true)
+		if(hero.GetAttackStatus() == true)
 		{
-			if (hero.heroTileID >= 0 && hero.heroTileID <= 2)
+			if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
 			{
 				RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 			}
 
-			else if (hero.heroTileID >= 4 && hero.heroTileID <= 6)
+			else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
 			{
 				RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 			}
 
-			else if (hero.heroTileID >= 8 && hero.heroTileID <= 10)
+			else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
 			{
 				RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 			}
@@ -2357,52 +2433,16 @@ void SceneText::RenderHero()
 		}
 	}
 
-	else if (Blue_Selected == true)
+	else if(Blue_Selected == true)
 	{
-		//For dislaying Hero's Health
-		if (hero.health >= 1)
+		if(hero.transform == true)
 		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
-
-			if (hero.health >= 2)
-			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
-
-				if (hero.health == 3)
-				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
-				}
-			}
+			RenderSprites(meshList[GEO_TRANSFORMATIONSHEET], hero.heroTransformID, 96, hero.gettheHeroPositionx() - 32, hero.gettheHeroPositiony() - 16);
 		}
 
-		//Attacking
-		if (hero.GetAttackStatus() == true)
+		else if(hero.transform == false)
 		{
-			if (hero.heroTileID >= 0 && hero.heroTileID <= 2)
-			{
-				RenderSprites(meshList[GEO_BLUE_SPRITE], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else if (hero.heroTileID >= 4 && hero.heroTileID <= 6)
-			{
-				RenderSprites(meshList[GEO_BLUE_SPRITE], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else if (hero.heroTileID >= 8 && hero.heroTileID <= 10)
-			{
-				RenderSprites(meshList[GEO_BLUE_SPRITE], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else
-			{
-				RenderSprites(meshList[GEO_BLUE_SPRITE], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-		}
-
-		//Walking
-		else
-		{
-			RenderSprites(meshList[GEO_BLUE_SPRITE], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET2], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 	}
 }
@@ -2636,11 +2676,6 @@ void SceneText::RenderTileMap()
 	}
 }
 
-void SceneText::RenderGameOver()
-{
-	RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
-}
-
 void SceneText::RenderGoodies()
 {
 	//Render the goodies
@@ -2760,26 +2795,21 @@ void SceneText::RenderHUD()
 		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.9, 25, 55.5, false);
 	}
 
+	//Render grey screen
 	if(RenderDim == true)
 	{
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 	}
 }
 
-void SceneText::RenderCustomMenu()
+void SceneText::RenderMinimap()
 {
-	if (CustomMenuRendered == true)
-	{
-		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 82, 62, 40, 30, false);
-
-		/*RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 15, 33, false);
-		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 65, 33, false);*/
-
-		RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 20, 30, false);
-		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 60, 30, false);
-	}
-
+	RenderQuadOnScreen(m_cMinimap->GetBackground(), 20, 13, 10, 50, false);
+	RenderQuadOnScreen(m_cMinimap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 48), (hero.gettheHeroPositiony() / 64) + 44, false);
+	RenderQuadOnScreen(m_cMinimap->GetBorder(), 20, 13, 10, 50, false);
 }
+
+// ================================== RENDERING MENUS ==================================
 
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 {
@@ -2834,12 +2864,24 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	}
 }
 
-void SceneText::RenderMinimap()
+void SceneText::RenderGameOver()
 {
-	RenderQuadOnScreen(m_cMinimap->GetBackground(), 20, 13, 10, 50, false);
-	RenderQuadOnScreen(m_cMinimap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 48), (hero.gettheHeroPositiony() / 64) + 44, false);
-	RenderQuadOnScreen(m_cMinimap->GetBorder(), 20, 13, 10, 50, false);
+	RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
 }
+
+void SceneText::RenderCustomMenu()
+{
+	if(CustomMenuRendered == true)
+	{
+		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 82, 62, 40, 30, false);
+
+		RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 20, 30, false);
+		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 60, 30, false);
+	}
+
+}
+
+// ================================== RENDER & EXIT ==================================
 
 void SceneText::Render()
 {
@@ -2851,9 +2893,19 @@ void SceneText::Render()
 
 	RenderInit();
 	RenderTileMap();
+	RenderBoss();
+	RenderEnemies();
+	RenderHero();
+	RenderGoodies();
+	RenderText();
+	RenderHUD();
+	RenderCustomMenu();
+	//RenderMinimap();
 
-	if (m_ghost->active)
+	if(m_ghost->active)
+	{
 		RenderGO(m_ghost);
+	}
 
 	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
@@ -2863,15 +2915,6 @@ void SceneText::Render()
 			RenderGO(go);
 		}
 	}
-
-	RenderBoss();
-	RenderEnemies();
-	RenderHero();
-	RenderGoodies();
-	RenderText();
-	RenderHUD();
-	RenderCustomMenu();
-	RenderMinimap();
 
 	if(lose == true)
 	{
