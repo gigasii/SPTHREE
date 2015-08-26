@@ -23,12 +23,18 @@ SceneText::SceneText()
 	, RenderDim(false)
 	, onHero(false)
 	, lockMovement(false)
+	, m_cMinimap(NULL)
 {
 	bReset = false;
 }
 
 SceneText::~SceneText()
 {
+	if (m_cMinimap)
+	{
+		delete m_cMinimap;
+		m_cMinimap = NULL;
+	}
 }
 
 void SceneText::Init()
@@ -284,7 +290,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 7;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -336,6 +342,27 @@ void SceneText::Init()
 
 	m_worldHeight = 800.f;
 	m_worldWidth = 1024.0f;
+
+	// ================================= Minimap =================================
+
+	if (stage == 1)
+	{
+		m_cMinimap = new CMinimap();
+		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		m_cMinimap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+		m_cMinimap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	}
+	else if (stage == 7)
+	{
+		m_cMinimap = new CMinimap();
+		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		m_cMinimap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+		m_cMinimap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	}
 
 	// ========================== Initializing Map Inits ==========================
 
@@ -2741,6 +2768,13 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	}
 }
 
+void SceneText::RenderMinimap()
+{
+	RenderQuadOnScreen(m_cMinimap->GetBackground(), 20, 13, 10, 50, false);
+	RenderQuadOnScreen(m_cMinimap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 48), (hero.gettheHeroPositiony() / 64) + 44, false);
+	RenderQuadOnScreen(m_cMinimap->GetBorder(), 20, 13, 10, 50, false);
+}
+
 void SceneText::Render()
 {
 	/*if(menu == true)
@@ -2771,6 +2805,7 @@ void SceneText::Render()
 	RenderText();
 	RenderHUD();
 	RenderCustomMenu();
+	RenderMinimap();
 
 	if(lose == true)
 	{
