@@ -72,6 +72,12 @@ class SceneText : public Scene
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
 
+		//Customisation Menu
+		GEO_HERO_RED,
+		GEO_HERO_BLUE,
+		GEO_BLUE_SPRITE,
+		GEO_CUSTOM_MENU,
+
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
 		GEO_TILEENEMYSHEET2,
@@ -144,6 +150,7 @@ public:
 	void RenderHUD();
 	void RenderGameOver();
 	void RenderBoss();
+	void RenderCustomMenu();
 	void RenderMenu(int &InteractHighLight, int max, int min);
 
 	//General tilemap renderer
@@ -185,7 +192,6 @@ private:
 	
 	//current map/map handler
 	CMap *CurrentMap;
-	CMap *CustomMap;
 	
 	//Boss handler
 	CBoss *BossPointer;
@@ -229,7 +235,10 @@ private:
 	string Text[2];
 
 	//Custom Menu Variables
-	bool RenderCustomMenu;
+	bool CustomMenuRendered, CustomMenuSelected;
+	bool Blue_Selected, Red_Selected, Temp_Red_Selected;
+
+	int Custom_HeroSize_Red, Custom_HeroSize_Blue;
 
 	//GameOver Variables
 	bool lose;
