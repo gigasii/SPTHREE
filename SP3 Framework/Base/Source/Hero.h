@@ -38,6 +38,8 @@ public:
 	int health;
 	bool hiding;
 
+	int ammo;
+
 	//Set the position x of the player
 	void settheHeroPositionx(int theHeroPositionx_);
 	//Get the position x of the player

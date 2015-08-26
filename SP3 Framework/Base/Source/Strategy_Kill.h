@@ -13,7 +13,7 @@ public:
 	CStrategy_Kill();
 	~CStrategy_Kill();
 
-	void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList);
+	void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2);
 	void SetDestination(const float x, const float y);
 	void SetEnemyPosition(const float x, const float y);
 	void GetEnemyPosition(float& x, float& y);
@@ -24,9 +24,7 @@ public:
 
 private:
 	string route, route2;
-	int routeCounter, routeCounter2;
 	Vector3 oldTile, currTile;
 	bool checkMoved;
-	bool isAttacking;
 };
 

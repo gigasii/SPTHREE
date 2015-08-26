@@ -151,13 +151,14 @@ void SceneText::Init()
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference");//, 1000, 1000, 1000);
 
-	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	meshList[GEO_QUAD]->textureID = LoadTGA("Image//Font//calibri.tga");
+	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("quad", Color(1, 0, 0), 1.f);
 
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//c.tga");
 
-	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 1.f);
+	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(0.5, 0.5, 0.5), 18, 36, 1.f);
+	meshList[GEO_SPHERE2] = MeshBuilder::GenerateSphere("sphere2", Color(0.5, 1, 0.5), 18, 36, 1.f);
+	meshList[GEO_AIM] = MeshBuilder::GenerateSphere("aim", Color(0.5, 0.5, 1), 18, 36, 1.f);
 
 	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube",Color(1, 0, 0),1.f);
 
@@ -283,7 +284,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 5;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -346,25 +347,25 @@ void SceneText::Init()
 
 	else if(stage == 2)
 	{
-		map.InitScrollingMap(enemyList, GoodiesList, BarrelList);
+		map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
 		CurrentMap = map.m_cScrollingMap;
 	}
 
 	else if(stage == 5)
 	{
-		map.InitScreenMap3(enemyList, GoodiesList, BarrelList);
+		map.InitScreenMap3(enemyList, GoodiesList, BarrelList, m_goList);
 		CurrentMap = map.m_cScreenMap3;
 	}
 
 	else if(stage == 6)
 	{
-		map.InitScrollingMap3(enemyList, GoodiesList, BarrelList);
+		map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
 		CurrentMap = map.m_cScrollingMap3;
 	}
 
 	else if(stage == 7)
 	{
-		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList);
+		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
 		CurrentMap = map.m_cBossMap;
 	}
 
@@ -403,15 +404,18 @@ void SceneText::RenderGO(GameObject *go)
 	{
 	case GameObject::GO_BALL:
 		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+		if (go->timer < 3)
+			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+		else
+			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x,go->pos.y);
 		modelStack.PopMatrix();
 		break;
 
 	case GameObject::GO_WALL:
 		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
-			modelStack.PopMatrix();
+	/*		modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_QUAD],false,go->scale.x,go->pos.x,go->pos.y);
+			modelStack.PopMatrix();*/
 		}
 		break;
 
@@ -428,7 +432,7 @@ void SceneText::RenderGO(GameObject *go)
 			if (go->render == true)
 			{
 				modelStack.PushMatrix();
-				Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+				Render2DMesh(meshList[GEO_AIM],false,go->scale.x,go->pos.x,go->pos.y);
 				modelStack.PopMatrix();
 			}
 			break;
@@ -533,7 +537,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 			{
 				Vector3 u = go->vel;
 				Vector3 v = u - 2 * u.Dot(NP) * NP;
-				go->vel = v * 0.8;
+				go->vel = v * 0.85;
 			}
 		}
 
@@ -544,7 +548,11 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 			Vector3 N = (go2->pos - go->pos).Normalize();
 			Vector3 u = go->vel;
 			Vector3 v = u - 2 * u.Dot(N) * N;
-			go->vel = v;
+
+			if (go2->ID == CMap::BARREL || go2->ID >= CMap::ENEMY_50)
+				go->vel = v * 0.6;
+			else
+				go->vel = v * 0.85;
 		}
 
 		break;
@@ -719,11 +727,28 @@ void SceneText::Update(double dt)
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
-			go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
 
-			int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
-			int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
-			CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
+			if (go->stunned && go->routeCounter == 0 && go->routeCounter2 == 0)
+			{
+			}
+			else
+			{
+				go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
+
+				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
+				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
+				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
+			}
+
+			if (go->stunned)
+				go->stunTimer += dt;
+
+			if (go->stunTimer >= 2)
+			{
+				go->stunned = false;
+				go->stunTimer = 0;
+				go->theStrategy->isAttacking = true;
+			}
 
 			//Checking enemy attack status
 			if(go->attackStatus == true)
@@ -1087,7 +1112,7 @@ void SceneText::Update(double dt)
 			int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
 			int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
-			if (Vector3(mouseX, mouseY, 0) == hero.heroCurrTile)
+			if (Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
 			{
 				onHero = true;
 				for (int i = 0; i < 10; ++i)
@@ -1139,7 +1164,7 @@ void SceneText::Update(double dt)
 						go->pos = m_ghost->pos;
 						go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
 						go->vel *= 2.5;
-						go->scale.Set(16, 16, 16);
+						go->scale.Set(6, 6, 6);
 
 						if (go->vel.Length() > MAX_SPEED)
 						{
@@ -1147,6 +1172,7 @@ void SceneText::Update(double dt)
 						}
 
 						m_ghost->active = false;
+						hero.ammo -= 1;
 						break;
 					}
 				}
@@ -1408,9 +1434,19 @@ void SceneText::Update(double dt)
 				hero.heroCurrTile.x = 1;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-				
+
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
+
 				//Set new map
-				map.InitScrollingMap(enemyList, GoodiesList, BarrelList);
+				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cScrollingMap;
 			}
 
@@ -1419,6 +1455,16 @@ void SceneText::Update(double dt)
 				stage = 3;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
 			}
 
 			else if(stage == 5)
@@ -1431,8 +1477,18 @@ void SceneText::Update(double dt)
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
+
 				//Set new map
-				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList);
+				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cScrollingMap3;
 			}
 
@@ -1441,6 +1497,16 @@ void SceneText::Update(double dt)
 				stage = 7;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 3;
 			}
 		}
 	}
@@ -1452,9 +1518,10 @@ void SceneText::Update(double dt)
 		{
 			if(go->type == GameObject::GO_BALL)
 			{
-				Vector3 friction = -go->vel * 0.5f;
+				Vector3 friction = -go->vel * 0.2f;
 				go->vel += friction * dt;
 				go->pos += go->vel * dt;
+				go->timer += dt;
 
 				if(go->vel.Length() <= 2.f)
 				{
@@ -1487,10 +1554,58 @@ void SceneText::Update(double dt)
 					{
 						if (checkCollision(go, go2, dt))
 						{
-							collisionResponse(go, go2);	
+							if (go2->ID == CMap::BARREL)
+							{
+								for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
+								{
+									CGoodies *go3 = (CGoodies *)*it3;
+
+									if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
+									{
+										collisionResponse(go, go2);	
+										go3->active = false;
+									}
+
+								}
+							}
+
+							if (go2->ID >= CMap::ENEMY_50)
+							{
+								for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
+								{
+									CEnemy *go4 = (CEnemy *)*it4;
+
+									if(go4->active && (go4->GetPos_x() == go2->pos.x - 16) && (go4->GetPos_y() == go2->pos.y - 16))
+									{
+										collisionResponse(go, go2);	
+
+										if (go2->timer < 3)
+											go4->stunned = true;
+									}
+
+								}
+							}
+
+							else
+								collisionResponse(go, go2);	
 						}
 					}
 				}
+
+				if (go->timer >= 3)
+				{
+					float combinedDist = (Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) - go->pos).Length();
+					float combinedRad = 32;
+
+					if (combinedDist <= combinedRad)
+					{
+						go->active = false;
+						hero.ammo++;
+						go->timer = 0;
+					}
+					
+				}
+
 			}
 
 			if(go->type == GameObject::GO_PILLAR)
