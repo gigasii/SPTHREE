@@ -854,7 +854,11 @@ void SceneText::Update(double dt)
 			{
 				if(hero.GetDaggerAcquired() == true)
 				{
-					go->active = false;
+					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
+					if(tempheroTile == go->tilePos)
+					{
+						go->active = false;
+					}
 				}
 			}
 
