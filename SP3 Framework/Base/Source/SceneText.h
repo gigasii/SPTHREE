@@ -237,9 +237,11 @@ private:
 	//Custom Menu Variables
 	bool CustomMenuRendered, CustomMenuSelected;
 	bool Blue_Selected, Red_Selected, Temp_Red_Selected;
-
+	bool CheckCustomMenu;
 	int Custom_HeroSize_Red, Custom_HeroSize_Blue;
-
+	int CloseOpenCustomMenu;
+	float CustomMenuDelay;
+	
 	//GameOver Variables
 	bool lose;
 	float LoseTimer;

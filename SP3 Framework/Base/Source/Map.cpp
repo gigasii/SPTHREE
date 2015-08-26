@@ -23,7 +23,6 @@ CMap::CMap(void)
 , m_cScrollingMap(NULL)
 , m_cScrollingMap3(NULL)
 , m_cBossMap(NULL)
-, m_cCustomMap(NULL)
 , scroll(false)
 {
 	theScreenMap.clear();
@@ -59,12 +58,6 @@ CMap::~CMap(void)
 	{
 		delete m_cBossMap;
 		m_cBossMap = NULL;
-	}
-
-	if(m_cCustomMap)
-	{
-		delete m_cCustomMap;
-		m_cCustomMap = NULL;
 	}
 
 	theScreenMap.clear();
@@ -549,14 +542,6 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 			}
 		}
 	}
-}
-
-void CMap::InitCustomMap()
-{
-	m_cCustomMap = new CMap();
-	m_cCustomMap->Init(800, 1024, 25, 32, 800, 1024, 32);
-	m_cCustomMap->LoadMap("Image//MapDesign_CustomMap.csv");
-	m_cCustomMap->scroll = false;
 }
 
 bool CMap::LoadMap(const string mapName)
