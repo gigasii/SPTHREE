@@ -1,6 +1,6 @@
 #include "Strategy_Kill.h"
 
-CStrategy_Kill::CStrategy_Kill() : routeCounter(0), routeCounter2(0), oldTile(0,0,0), currTile(0,0,0), checkMoved(true), isAttacking(false)
+CStrategy_Kill::CStrategy_Kill() : oldTile(0,0,0), currTile(0,0,0), checkMoved(true)
 {
 }
 
@@ -8,7 +8,7 @@ CStrategy_Kill::~CStrategy_Kill()
 {
 }
 
-void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList)
+void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2)
 {
 	//Decide which state to change to
 	int distanceHeroToEnemy = CalculateDistance();

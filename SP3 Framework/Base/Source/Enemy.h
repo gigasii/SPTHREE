@@ -43,6 +43,10 @@ public:
 	bool attackAnimation;
 	float attackAnimationTimer;
 	vector <Vector3> detectionGrid;
+	bool stunned;
+	double stunTimer;
+
+	int routeCounter, routeCounter2;
 
 	CStrategy *theStrategy;
 

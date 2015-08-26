@@ -60,6 +60,8 @@ class SceneText : public Scene
 	{
 		GEO_AXES,
 		GEO_SPHERE,
+		GEO_SPHERE2,
+		GEO_AIM,
 		GEO_CUBE,
 		GEO_QUAD,
 		GEO_TEXT,
