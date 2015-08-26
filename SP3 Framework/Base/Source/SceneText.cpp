@@ -23,12 +23,18 @@ SceneText::SceneText()
 	, RenderDim(false)
 	, onHero(false)
 	, lockMovement(false)
+	, m_cMinimap(NULL)
 {
 	bReset = false;
 }
 
 SceneText::~SceneText()
 {
+	if (m_cMinimap)
+	{
+		delete m_cMinimap;
+		m_cMinimap = NULL;
+	}
 }
 
 void SceneText::Init()
@@ -284,7 +290,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 7;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -336,6 +342,27 @@ void SceneText::Init()
 
 	m_worldHeight = 800.f;
 	m_worldWidth = 1024.0f;
+
+	// ================================= Minimap =================================
+
+	if (stage == 1)
+	{
+		m_cMinimap = new CMinimap();
+		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		m_cMinimap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+		m_cMinimap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	}
+	else if (stage == 7)
+	{
+		m_cMinimap = new CMinimap();
+		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		m_cMinimap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+		m_cMinimap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	}
 
 	// ========================== Initializing Map Inits ==========================
 
@@ -405,16 +432,16 @@ void SceneText::RenderGO(GameObject *go)
 	case GameObject::GO_BALL:
 		modelStack.PushMatrix();
 		if (go->timer < 3)
-			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
 		else
-			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x,go->pos.y);
+			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
 		modelStack.PopMatrix();
 		break;
 
 	case GameObject::GO_WALL:
 		{
-	/*		modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_QUAD],false,go->scale.x,go->pos.x,go->pos.y);
+			/*modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_QUAD],false,go->scale.x,go->pos.x ,go->pos.y);
 			modelStack.PopMatrix();*/
 		}
 		break;
@@ -422,7 +449,7 @@ void SceneText::RenderGO(GameObject *go)
 	case GameObject::GO_PILLAR:
 		{
 			//modelStack.PushMatrix();
-			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
 			//modelStack.PopMatrix();
 		}
 		break;
@@ -938,17 +965,6 @@ void SceneText::Update(double dt)
 		{
 			BossTileID = 3;
 			IsTurn = true;
-
-			for(int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
-			{
-				for(int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
-				{
-					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
-					{
-						EnemiesRendered = true;
-					}
-				}
-			}
 		}
 	}
 
@@ -991,18 +1007,37 @@ void SceneText::Update(double dt)
 		}
 	}
 
+	if (IsTurn == true)
+	{
+		for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
+		{
+			for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
+			{
+				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+				{
+					EnemiesRendered = true;
+				}
+			}
+		}
+	}
+
 	if(stage == 7)
 	{
 		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 		{
 			CEnemy *go = (CEnemy *)*it;
-			if (EnemiesRendered == true)
+			if (EnemiesRendered == true && go->health > 0)
 			{
 				go->active = true;
 			}
 			else
 			{
 				go->active = false;
+			}
+			
+			if (EnemiesRendered == false)
+			{
+				go->stunned = true;
 			}
 		}
 	}
@@ -1120,7 +1155,7 @@ void SceneText::Update(double dt)
 					GameObject *go = FetchGO();
 					go->type = GameObject::GO_AIM;
 					go->active = true;
-					go->pos.Set(posX, posY, 0);
+					go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
 					go->scale.Set(4, 4, 4);
 
 					if (i == 0)
@@ -1129,7 +1164,7 @@ void SceneText::Update(double dt)
 					}
 				}
 
-				prevPos = m_ghost->pos;
+				prevPos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
 				lockMovement = true;
 			}
 
@@ -1161,8 +1196,8 @@ void SceneText::Update(double dt)
 						float worldX = x * m_worldWidth / w;
 						float worldY = (h - y) * m_worldHeight / h;
 
-						go->pos = m_ghost->pos;
-						go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
+						go->pos = Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0);
+						go->vel = Vector3(hero.gettheHeroPositionx()+ 16, hero.gettheHeroPositiony() + 16, 0) - Vector3(worldX, worldY, 0);
 						go->vel *= 2.5;
 						go->scale.Set(6, 6, 6);
 
@@ -1221,7 +1256,7 @@ void SceneText::Update(double dt)
 
 					else
 					{
-						Vector3 a = go->pos - m_ghost->pos;
+						Vector3 a = go->pos - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
 
 						if (a.IsZero())
 						{
@@ -1229,7 +1264,7 @@ void SceneText::Update(double dt)
 						}
 
 						float length = a.Length();
-						Vector3 b = Vector3(posX, posY, 0) - m_ghost->pos;
+						Vector3 b = Vector3(posX, posY, 0) - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
 
 						if (a.Length() > b.Length())
 						{
@@ -1243,7 +1278,7 @@ void SceneText::Update(double dt)
 
 						if (!b.IsZero())
 						{
-							go->pos = m_ghost->pos + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
+							go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0) + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
 						}
 					}
 				}
@@ -1510,12 +1545,13 @@ void SceneText::Update(double dt)
 			}
 		}
 	}
-	
+
 	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
 		if(go->active)
 		{
+
 			if(go->type == GameObject::GO_BALL)
 			{
 				Vector3 friction = -go->vel * 0.2f;
@@ -1526,25 +1562,6 @@ void SceneText::Update(double dt)
 				if(go->vel.Length() <= 2.f)
 				{
 					go->vel.SetZero();
-				}
-
-				float radius = go->scale.x;
-
-				if(go->pos.x >= m_worldWidth - radius && go->vel.x > 0)
-					go->vel.x = -go->vel.x;
-				
-				else if(go->pos.x <= radius && go->vel.x < 0)
-					go->vel.x = -go->vel.x;
-
-				if(go->pos.y >= m_worldHeight - radius && go->vel.y > 0)
-					go->vel.y = -go->vel.y;
-				
-				else if(go->pos.y <= radius && go->vel.y < 0)
-					go->vel.y = -go->vel.y;
-
-				if(go->pos.x >= m_worldWidth || go->pos.x <= 0 || go->pos.y >= m_worldHeight || go->pos.y <= 0) 
-				{
-					go->active = false;
 				}
 
 				for(std::vector<GameObject *>::iterator it2 = m_goList.begin(); it2 != m_goList.end(); ++it2)
@@ -1563,7 +1580,9 @@ void SceneText::Update(double dt)
 									if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 									{
 										collisionResponse(go, go2);	
-										go3->active = false;
+
+										if (go->timer < 3)
+											go3->active = false;
 									}
 
 								}
@@ -1575,11 +1594,11 @@ void SceneText::Update(double dt)
 								{
 									CEnemy *go4 = (CEnemy *)*it4;
 
-									if(go4->active && (go4->GetPos_x() == go2->pos.x - 16) && (go4->GetPos_y() == go2->pos.y - 16))
+									if(go4->active && go4->ID == go2->ID)
 									{
 										collisionResponse(go, go2);	
 
-										if (go2->timer < 3)
+										if (go->timer < 3)
 											go4->stunned = true;
 									}
 
@@ -1594,7 +1613,7 @@ void SceneText::Update(double dt)
 
 				if (go->timer >= 3)
 				{
-					float combinedDist = (Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) - go->pos).Length();
+					float combinedDist = (Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0) - go->pos).Length();
 					float combinedRad = 32;
 
 					if (combinedDist <= combinedRad)
@@ -1617,7 +1636,7 @@ void SceneText::Update(double dt)
 					{
 						if (go2->ID == go->ID)
 						{
-							go->pos.x = go2->GetPos_x() + 16;
+							go->pos.x = go2->GetPos_x() + 16 /*+ CurrentMap->mapOffset_x*/;
 							go->pos.y = go2->GetPos_y() + 16;
 						}
 					}
@@ -2462,7 +2481,7 @@ void SceneText::RenderEnemies()
 		}
 
 		//Idling
-		else if (stage == 7)
+		else if (stage == 7 && go->health > 0)
 		{
 			if (go->ID >= 50 && go->ID < 80)
 			{
@@ -2757,6 +2776,13 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	}
 }
 
+void SceneText::RenderMinimap()
+{
+	RenderQuadOnScreen(m_cMinimap->GetBackground(), 20, 13, 10, 50, false);
+	RenderQuadOnScreen(m_cMinimap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 48), (hero.gettheHeroPositiony() / 64) + 44, false);
+	RenderQuadOnScreen(m_cMinimap->GetBorder(), 20, 13, 10, 50, false);
+}
+
 void SceneText::Render()
 {
 	/*if(menu == true)
@@ -2787,6 +2813,7 @@ void SceneText::Render()
 	RenderText();
 	RenderHUD();
 	RenderCustomMenu();
+	RenderMinimap();
 
 	if(lose == true)
 	{

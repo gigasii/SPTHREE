@@ -11,6 +11,7 @@
 #include "Enemy.h"
 #include "Boss.h"
 #include "GameObject.h"
+#include "Minimap.h"
 
 class SceneText : public Scene
 {
@@ -55,7 +56,6 @@ class SceneText : public Scene
 		U_TEXT_COLOR,
 		U_TOTAL,
 	};
-
 	enum GEOMETRY_TYPE
 	{
 		GEO_AXES,
@@ -153,6 +153,7 @@ public:
 	void RenderGameOver();
 	void RenderBoss();
 	void RenderCustomMenu();
+	void RenderMinimap();
 	void RenderMenu(int &InteractHighLight, int max, int min);
 
 	//General tilemap renderer
@@ -251,6 +252,9 @@ private:
 	//Storing Value
 	int a, b;
 	GameObject *m_ghost;
+
+	// For Minimap
+	CMinimap* m_cMinimap;
 
 	//Auditing
 	float m1, m2;

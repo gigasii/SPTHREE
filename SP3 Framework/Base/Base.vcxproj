@@ -25,6 +25,7 @@
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshBuilder.cpp" />
+    <ClCompile Include="Source\Minimap.cpp" />
     <ClCompile Include="Source\Node.cpp" />
     <ClCompile Include="Source\Pathing.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshBuilder.h" />
+    <ClInclude Include="Source\Minimap.h" />
     <ClInclude Include="Source\Node.h" />
     <ClInclude Include="Source\Pathfinding.h" />
     <ClInclude Include="Source\Pathing.h" />

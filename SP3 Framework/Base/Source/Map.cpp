@@ -319,7 +319,7 @@ void CMap::setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodi
 				go->active = true;
 				go->pos.Set(j * currMap->GetTileSize() + 16, currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) -  currMap->GetTileSize() + 16);
 				go->scale.Set(32,32,32);
-				go->normal.Set(1,0,0);
+				go->normal.Set(0,1,0);
 				go->ID = tempType;
 			}
 
