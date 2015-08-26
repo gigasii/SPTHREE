@@ -82,10 +82,20 @@ bool Application::GetMouseUpdate()
 
 int Application::GetWindowWidth()
 {
-	return m_width;
+	return m_window_width;
 }
 
 int Application::GetWindowHeight()
+{
+	return m_window_height;
+}
+
+int Application::GetWindowWidth2()
+{
+	return m_width;
+}
+
+int Application::GetWindowHeight2()
 {
 	return m_height;
 }

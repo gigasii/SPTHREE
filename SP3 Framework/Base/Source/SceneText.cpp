@@ -193,7 +193,6 @@ void SceneText::Init()
 	meshList[GEO_BLUE_SPRITE] = MeshBuilder::GenerateSprites("GEO_BLUE_SPRITE", 4, 4);
 	meshList[GEO_BLUE_SPRITE]->textureID = LoadTGA("Image//Hero//hero_blue.tga");
 
-
 	// ================================= Load Enemies =================================
 
 	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 5, 5);
@@ -272,9 +271,9 @@ void SceneText::Init()
 
 	// === Set hero's position ===
 
-	hero.settheHeroPositionx(888);
+	hero.settheHeroPositionx(896);
 	hero.settheHeroPositiony(640);
-	int tempHeroPosX = (int) ceil ((float)(888) / 32);
+	int tempHeroPosX = (int) ceil ((float)(896) / 32);
 	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
 	hero.heroCurrTile = Vector3(tempHeroPosX, tempHeroPosY, 0);
 
@@ -321,6 +320,8 @@ void SceneText::Init()
 	Red_Selected			= false;
 	Temp_Red_Selected		= false;
 	CustomMenuSelected		= false;
+	CloseOpenCustomMenu		= 1;
+	CustomMenuDelay			= 0;
 
 	Custom_HeroSize_Red		= 20;
 	Custom_HeroSize_Blue	= 20;
@@ -594,7 +595,7 @@ void SceneText::Update(double dt)
 
 	// =================================== UPDATE THE HERO ===================================
 
-	if (lockMovement == false)
+	if(lockMovement == false)
 	{
 		if(Application::IsKeyPressed('A'))
 		{
@@ -747,7 +748,7 @@ void SceneText::Update(double dt)
 				CGoodies *go2 = (CGoodies *)*it2;
 				if(go2->active)	
 				{
-					if (go->eneCurrTile == go2->tilePos)
+					if(go->eneCurrTile == go2->tilePos)
 					{
 						go->attackAnimation = true;
 						go2->active = false;
@@ -836,16 +837,24 @@ void SceneText::Update(double dt)
 		CGoodies *go = (CGoodies *)*it;
 		if(go->active)	
 		{
-			if(hero.GetAttackStatus())
+			if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
 			{
-				if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+				if(hero.GetAttackStatus() == true)
 				{
 					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
-			
-					if (tempheroTile == go->tilePos)
+
+					if(tempheroTile == go->tilePos)
 					{
 						go->active = false;
 					}
+				}
+			}
+
+			else if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
+			{
+				if(hero.GetDaggerAcquired() == true)
+				{
+					go->active = false;
 				}
 			}
 
@@ -869,13 +878,6 @@ void SceneText::Update(double dt)
 							PointSystem += 10;
 						}
 					}
-				}
-			}
-			if(go->GoodiesType == CGoodies::Goodies_Type::CHEST)
-			{
-				if(hero.GetDaggerAcquired() == true)
-				{
-					go->active = false;
 				}
 			}
 		}
@@ -978,37 +980,63 @@ void SceneText::Update(double dt)
 
 	BossPointer->Set_SpawnGuards(IsTurn);
 
-
 	// =================================== Customisation Menu Updates ===================================
-	if (Application::IsKeyPressed('T'))
+
+	if(CheckCustomMenu == true)
 	{
-		CustomMenuRendered = true;
-		CustomMenuSelected = false;
-	}
-	else if (Application::IsKeyPressed('Y'))
-	{
-		CustomMenuRendered = false;
+		CustomMenuDelay += dt;
+		if(CustomMenuDelay >= 0.2)
+		{
+			CustomMenuDelay = 0;
+			CheckCustomMenu = false;
+
+			if(CloseOpenCustomMenu == 1)
+			{
+				CloseOpenCustomMenu = 2;
+			}
+
+			else
+			{
+				CloseOpenCustomMenu = 1;
+			}			
+		}
 	}
 
-	if (CustomMenuRendered == false)
+	if(Application::IsKeyPressed('T'))
+	{
+		if(CloseOpenCustomMenu == 1)
+		{
+			CustomMenuRendered = true;
+			CustomMenuSelected = false;
+		}
+
+		else if(CloseOpenCustomMenu == 2)
+		{
+			CustomMenuRendered = false;
+		}
+
+		CheckCustomMenu = true;
+	}
+
+	if(CustomMenuRendered == false)
 	{
 		Temp_Red_Selected = true;
 	}
 
-	if ((Red_Selected == true || Blue_Selected == true))
+	if((Red_Selected == true || Blue_Selected == true))
 	{
 		Temp_Red_Selected = false;
 	}
 
-	if (CustomMenuSelected == true)
+	if(CustomMenuSelected == true)
 	{
 		CustomMenuRendered = false;
 	}
 
 	// ============================= MOUSE SECTION ====================================
 
-	// For Right Click Interaction
-	if (CustomMenuRendered == false)
+	//For Right Click Interaction
+	if(CustomMenuRendered == false)
 	{
 		static bool bLButtonState = false;
 		if (!bLButtonState && Application::IsMousePressed(0))
@@ -1204,8 +1232,8 @@ void SceneText::Update(double dt)
 
 			double x, y;
 			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
+			int w = Application::GetWindowWidth2();
+			int h = Application::GetWindowHeight2();
 
 			cout << "X: " << x << " Y: " << y << endl;
 
@@ -1258,8 +1286,8 @@ void SceneText::Update(double dt)
 
 			double x, y;
 			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
+			int w = Application::GetWindowWidth2();
+			int h = Application::GetWindowHeight2();
 		}
 
 
@@ -1271,8 +1299,8 @@ void SceneText::Update(double dt)
 
 			double x, y;
 			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
+			int w = Application::GetWindowWidth2();
+			int h = Application::GetWindowHeight2();
 
 			if (w <= 800 && h <= 600)
 			{
@@ -2528,12 +2556,12 @@ void SceneText::RenderHUD()
 	//Detection status
 	if(hero.hiding == false)
 	{
-		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.7, 25, 54.5, false);
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.9, 25, 55.5, false);
 	}
 
 	else
 	{
-		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.7, 25, 54.5, false);
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.9, 25, 55.5, false);
 	}
 
 	if(RenderDim == true)
