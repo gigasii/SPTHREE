@@ -22,6 +22,7 @@ Hero::Hero()
 	, health(3)
 	, hiding(false)
 	, direction(0,-1,0)
+	, ammo(3)
 {
 }
 

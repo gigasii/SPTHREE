@@ -17,6 +17,9 @@ CEnemy::CEnemy()
 	, attackReactionTime(0)
 	, attackAnimation(false)
 	, attackAnimationTimer(0)
+	, stunned (false)
+	, routeCounter(0)
+	, routeCounter2(0)
 {
 }
 
@@ -100,7 +103,7 @@ void CEnemy::Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList);
+		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 

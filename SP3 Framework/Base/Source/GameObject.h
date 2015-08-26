@@ -25,6 +25,7 @@ struct GameObject
 	bool render;
 	float rotate;
 	int ID;
+	float timer;
 
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();

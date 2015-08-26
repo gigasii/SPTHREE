@@ -10,7 +10,8 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	render(true),
 	rotate(0),
 	normal(0,1,0),
-	ID (0)
+	ID (0),
+	timer (0)
 {
 }
 
