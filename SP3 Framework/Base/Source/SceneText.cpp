@@ -965,17 +965,6 @@ void SceneText::Update(double dt)
 		{
 			BossTileID = 3;
 			IsTurn = true;
-
-			for(int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
-			{
-				for(int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
-				{
-					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
-					{
-						EnemiesRendered = true;
-					}
-				}
-			}
 		}
 	}
 
@@ -1018,18 +1007,37 @@ void SceneText::Update(double dt)
 		}
 	}
 
+	if (IsTurn == true)
+	{
+		for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
+		{
+			for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
+			{
+				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+				{
+					EnemiesRendered = true;
+				}
+			}
+		}
+	}
+
 	if(stage == 7)
 	{
 		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 		{
 			CEnemy *go = (CEnemy *)*it;
-			if (EnemiesRendered == true)
+			if (EnemiesRendered == true && go->health > 0)
 			{
 				go->active = true;
 			}
 			else
 			{
 				go->active = false;
+			}
+			
+			if (EnemiesRendered == false)
+			{
+				go->stunned = true;
 			}
 		}
 	}
@@ -2473,7 +2481,7 @@ void SceneText::RenderEnemies()
 		}
 
 		//Idling
-		else if (stage == 7)
+		else if (stage == 7 && go->health > 0)
 		{
 			if (go->ID >= 50 && go->ID < 80)
 			{
