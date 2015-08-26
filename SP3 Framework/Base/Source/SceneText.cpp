@@ -1563,7 +1563,7 @@ void SceneText::Update(double dt)
 									{
 										collisionResponse(go, go2);	
 
-										if (go2->timer < 3)
+										if (go->timer < 3)
 											go4->stunned = true;
 									}
 
