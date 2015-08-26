@@ -37,6 +37,8 @@ public:
 	float heroTileID;
 	int health;
 	bool hiding;
+	int full_health;
+	int NoOfScroll;
 
 	int ammo;
 

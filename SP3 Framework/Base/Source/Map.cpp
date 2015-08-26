@@ -86,6 +86,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
 	m_cScreenMap->LoadMap("Image//Level_1-1.csv");
+	//m_cScreenMap->LoadMap("Image//shop.csv");
 	m_cScreenMap->scroll = false;
 	setMap(m_cScreenMap, enemyList, GoodiesList, BarrelsList, goList);
 }
@@ -289,6 +290,39 @@ void CMap::setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodi
 				go->pos.Set(tempGoodies->GetPos_x() + 16,tempGoodies->GetPos_y() + 16,0);
 				go->scale.Set(16,16,16);
 				go->ID = tempType;
+			}
+
+			else if(tempType == CMap::HPPOT)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HPPOT;	
+				tempGoodies->tilePos.Set(j,i,0);
+				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::MAXHP)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::MAXHP;	
+				tempGoodies->tilePos.Set(j,i,0);
+				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::SCROLL)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::SCROLL;	
+				tempGoodies->tilePos.Set(j,i,0);
+				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
 			}
 
 			else if(tempType >= CMap::ENEMY_50)

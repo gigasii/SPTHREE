@@ -23,6 +23,8 @@ Hero::Hero()
 	, hiding(false)
 	, direction(0,-1,0)
 	, ammo(3)
+	, full_health(4)
+	, NoOfScroll(0)
 {
 }
 
@@ -236,7 +238,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 			pickUpWeapon = false;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] > 3)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] > 6)
 		{
 			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1]  >= 50)
 			{
@@ -319,7 +321,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 			pickUpWeapon = false;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] > 3)
+		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] > 6)
 		{
 			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1]  >= 50)
 			{
@@ -394,7 +396,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 			pickUpWeapon = false;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] > 3)
+		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] > 6)
 		{
 			if((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x]  >= 50)
 			{
@@ -469,7 +471,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 			pickUpWeapon = false;
 		}
 
-		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] > 3)
+		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] > 6)
 		{
 			if((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 50)
 			{

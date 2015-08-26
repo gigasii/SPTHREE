@@ -97,6 +97,10 @@ class SceneText : public Scene
 		GEO_BARREL_BROKEN,
 		GEO_HAY,
 		GEO_HOLE,
+		//shop items
+		GEO_HPPOT,
+		GEO_MAXHP,
+		GEO_SCROLL,
 
 		//HUD icons
 		GEO_HUD_HEART,

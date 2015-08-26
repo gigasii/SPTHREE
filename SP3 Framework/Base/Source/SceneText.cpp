@@ -239,6 +239,16 @@ void SceneText::Init()
 	meshList[GEO_HAY] = MeshBuilder::Generate2DMesh("GEO_HAY", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HAY]->textureID = LoadTGA("Image//Goodies//hay2.tga");
 
+	meshList[GEO_HPPOT] = MeshBuilder::Generate2DMesh("GEO_HPPOT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_HPPOT]->textureID = LoadTGA("Image//Goodies//potions.tga");
+
+	meshList[GEO_MAXHP] = MeshBuilder::Generate2DMesh("GEO_MAX	HP", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	meshList[GEO_MAXHP]->textureID = LoadTGA("Image//Goodies//maxhpup.tga");
+
+	meshList[GEO_SCROLL] = MeshBuilder::Generate2DMesh("GEO_SCROLL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
+	//meshList[GEO_SCROLL]->textureID = LoadTGA("Image//Goodies//scroll.tga");
+	meshList[GEO_SCROLL]->textureID = LoadTGA("Image//OldMan.tga");
+	
 	meshList[GEO_HOLE] = MeshBuilder::Generate2DMesh("GEO_HOLE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Goodies//hole.tga");
 
@@ -290,7 +300,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 7;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -932,6 +942,36 @@ void SceneText::Update(double dt)
 							go->active = false;
 							diamondCount++;
 							PointSystem += 10;
+						}
+						else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
+						{
+							if (hero.heroCurrTile == go->tilePos && hero.health < hero.full_health)
+							{
+								go->active = false;
+								hero.health++;
+							}
+						}
+						else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
+						{
+							if (hero.heroCurrTile == go->tilePos)
+							{
+								if(hero.health == hero.full_health)
+								{
+									go->active = false;
+									hero.health++;
+									hero.full_health++;
+								}
+							}
+						}
+						else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
+						{
+							if (hero.heroCurrTile == go->tilePos)
+							{
+					
+									go->active = false;
+									hero.NoOfScroll++;
+					
+							}
 						}
 					}
 				}
@@ -2270,15 +2310,18 @@ void SceneText::RenderHero()
 		//For dislaying Hero's Health
 		if (hero.health >= 1)
 		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
-
-			if (hero.health >= 2)
+			for(int a = hero.health; a > 0; a--)
 			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
-
-				if (hero.health == 3)
+				if(hero.health%2 == 1)
 				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
+					if(hero.health == 1)
+						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
+					else
+						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15 + ((a - hero.health/2) * 21), hero.gettheHeroPositiony() + 33);
+				}
+				else
+				{
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15 + ((a - hero.health/2) * 21) + 11, hero.gettheHeroPositiony() + 33);
 				}
 			}
 		}
@@ -2658,6 +2701,21 @@ void SceneText::RenderGoodies()
 		else if(go->GoodiesType == CGoodies::Goodies_Type::HOLE)
 		{
 			Render2DMesh(meshList[GEO_HOLE], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+		}
+		else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
+		{
+			if(go->active)
+				Render2DMesh(meshList[GEO_HPPOT], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+		}
+		else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
+		{
+			if(go->active)
+				Render2DMesh(meshList[GEO_MAXHP], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+		}
+		else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
+		{
+			if(go->active)
+				Render2DMesh(meshList[GEO_SCROLL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 		}
 	}
 }
