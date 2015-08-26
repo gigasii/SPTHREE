@@ -19,7 +19,6 @@ ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED 
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
-	, CustomMap(NULL)
 	, BossPointer(NULL)
 	, RenderDim(false)
 	, onHero(false)
@@ -181,6 +180,20 @@ void SceneText::Init()
 	meshList[GEO_TILEHEROSHEET] = MeshBuilder::GenerateSprites("GEO_TILEHEROSHEET", 4, 4);
 	meshList[GEO_TILEHEROSHEET]->textureID = LoadTGA("Image//Hero//hero.tga");
 
+	// ================================= Load Customisation Menu =================================
+	meshList[GEO_CUSTOM_MENU] = MeshBuilder::GenerateQuad("GEO_CUSTOM_MENU", Color(1, 1, 1), 1);
+	meshList[GEO_CUSTOM_MENU]->textureID = LoadTGA("Image//CustomMenu//menu.tga");
+
+	meshList[GEO_HERO_RED] = MeshBuilder::GenerateQuad("GEO_HERO_RED", Color(1, 1, 1), 1);
+	meshList[GEO_HERO_RED]->textureID = LoadTGA("Image//CustomMenu//Hero_Red.tga");
+
+	meshList[GEO_HERO_BLUE] = MeshBuilder::GenerateQuad("GEO_HERO_BLUE", Color(1, 1, 1), 1);
+	meshList[GEO_HERO_BLUE]->textureID = LoadTGA("Image//CustomMenu//Hero_Blue.tga");
+
+	meshList[GEO_BLUE_SPRITE] = MeshBuilder::GenerateSprites("GEO_BLUE_SPRITE", 4, 4);
+	meshList[GEO_BLUE_SPRITE]->textureID = LoadTGA("Image//Hero//hero_blue.tga");
+
+
 	// ================================= Load Enemies =================================
 
 	meshList[GEO_TILEENEMYSHEET] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET", 5, 5);
@@ -271,7 +284,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 5;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -303,7 +316,14 @@ void SceneText::Init()
 
 	// === Custom cMenu Variables ===
 	
-	RenderCustomMenu = false;
+	CustomMenuRendered		= false;
+	Blue_Selected			= false;
+	Red_Selected			= false;
+	Temp_Red_Selected		= false;
+	CustomMenuSelected		= false;
+
+	Custom_HeroSize_Red		= 20;
+	Custom_HeroSize_Blue	= 20;
 	
 	// === GameOver Variables ===
 	
@@ -345,12 +365,6 @@ void SceneText::Init()
 	{
 		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList);
 		CurrentMap = map.m_cBossMap;
-	}
-
-	if(stage >= 0)
-	{
-		map.InitCustomMap();
-		CustomMap = map.m_cCustomMap;
 	}
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
@@ -964,192 +978,344 @@ void SceneText::Update(double dt)
 
 	BossPointer->Set_SpawnGuards(IsTurn);
 
+
+	// =================================== Customisation Menu Updates ===================================
+	if (Application::IsKeyPressed('T'))
+	{
+		CustomMenuRendered = true;
+		CustomMenuSelected = false;
+	}
+	else if (Application::IsKeyPressed('Y'))
+	{
+		CustomMenuRendered = false;
+	}
+
+	if (CustomMenuRendered == false)
+	{
+		Temp_Red_Selected = true;
+	}
+
+	if ((Red_Selected == true || Blue_Selected == true))
+	{
+		Temp_Red_Selected = false;
+	}
+
+	if (CustomMenuSelected == true)
+	{
+		CustomMenuRendered = false;
+	}
+
 	// ============================= MOUSE SECTION ====================================
 
-	static bool bLButtonState = false;
-	if (!bLButtonState && Application::IsMousePressed(0))
+	// For Right Click Interaction
+	if (CustomMenuRendered == false)
 	{
-		bLButtonState = true;
-		//std::cout << "LBUTTON DOWN" << std::endl;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-
-		if(CustomMap->theScreenMap[CustomMap->GetNumOfTiles_Height() - (x / 32)][y / 32] == 1)
+		static bool bLButtonState = false;
+		if (!bLButtonState && Application::IsMousePressed(0))
 		{
-			std::cout << "This is the correct tile" << std::endl;
+			bLButtonState = true;
+			//std::cout << "LBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		}
-	}
 
-	else if (bLButtonState && !Application::IsMousePressed(0))
-	{
-		bLButtonState = false;
-		//std::cout << "LBUTTON UP" << std::endl;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-	}
-
-	static bool bRButtonState = false;
-	if(!bRButtonState && Application::IsMousePressed(1))
-	{
-		bRButtonState = true;
-		std::cout << "RBUTTON DOWN" << std::endl;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-
-		float posX = x / w * m_worldWidth;
-		float posY = (h - y) / h * m_worldHeight;
-		m_ghost->pos.Set(posX, posY, 0);
-
-		int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
-		int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
-
-		if(Vector3(mouseX,mouseY,0) == hero.heroCurrTile)
+		else if (bLButtonState && !Application::IsMousePressed(0))
 		{
-			onHero = true;
-			for (int i = 0; i < 10; ++i)
+			bLButtonState = false;
+			//std::cout << "LBUTTON UP" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+		}
+
+		static bool bRButtonState = false;
+		if (!bRButtonState && Application::IsMousePressed(1))
+		{
+			bRButtonState = true;
+			std::cout << "RBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+
+			float posX = x / w * m_worldWidth;
+			float posY = (h - y) / h * m_worldHeight;
+			m_ghost->pos.Set(posX, posY, 0);
+
+			int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
+			int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
+
+			if (Vector3(mouseX, mouseY, 0) == hero.heroCurrTile)
 			{
-				GameObject *go = FetchGO();
-				go->type = GameObject::GO_AIM;
-				go->active = true;
-				go->pos.Set(posX,posY,0);
-				go->scale.Set(4,4,4);
-
-				if (i == 0)
+				onHero = true;
+				for (int i = 0; i < 10; ++i)
 				{
-					go->isSet = true;
-				}
-			}
-
-			prevPos = m_ghost->pos;	
-			lockMovement = true;
-		}
-
-		else
-		{
-			onHero = false;
-		}
-	}
-
-	else if(bRButtonState && !Application::IsMousePressed(1))
-	{
-		bRButtonState = false;
-		std::cout << "RBUTTON UP" << std::endl;
-
-		if(onHero == true)
-		{
-			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-			{
-				GameObject *go = (GameObject *)*it;
-
-				if(go->active == false)
-				{
+					GameObject *go = FetchGO();
+					go->type = GameObject::GO_AIM;
 					go->active = true;
-					go->type = GameObject::GO_BALL;
-					double x, y;
-					Application::GetCursorPos(&x, &y);
-					int w = Application::GetWindowWidth();
-					int h = Application::GetWindowHeight();
-					float worldX = x * m_worldWidth / w;
-					float worldY = (h - y) * m_worldHeight / h;
+					go->pos.Set(posX, posY, 0);
+					go->scale.Set(4, 4, 4);
 
-					go->pos = m_ghost->pos;
-					go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
-					go->vel *= 2.5;
-					go->scale.Set(16,16,16);
-
-					if (go->vel.Length() > MAX_SPEED)
+					if (i == 0)
 					{
-						go->vel = go->vel.Normalize() * MAX_SPEED;
+						go->isSet = true;
 					}
-					
-					m_ghost->active = false;
-					break;
+				}
+
+				prevPos = m_ghost->pos;
+				lockMovement = true;
+			}
+
+			else
+			{
+				onHero = false;
+			}
+		}
+
+		else if (bRButtonState && !Application::IsMousePressed(1))
+		{
+			bRButtonState = false;
+			std::cout << "RBUTTON UP" << std::endl;
+
+			if (onHero == true)
+			{
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active == false)
+					{
+						go->active = true;
+						go->type = GameObject::GO_BALL;
+						double x, y;
+						Application::GetCursorPos(&x, &y);
+						int w = Application::GetWindowWidth();
+						int h = Application::GetWindowHeight();
+						float worldX = x * m_worldWidth / w;
+						float worldY = (h - y) * m_worldHeight / h;
+
+						go->pos = m_ghost->pos;
+						go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
+						go->vel *= 2.5;
+						go->scale.Set(16, 16, 16);
+
+						if (go->vel.Length() > MAX_SPEED)
+						{
+							go->vel = go->vel.Normalize() * MAX_SPEED;
+						}
+
+						m_ghost->active = false;
+						break;
+					}
+				}
+
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+
+					if (go->active && go->type == GameObject::GO_AIM)
+					{
+						go->isSet = false;
+						go->active = false;
+					}
 				}
 			}
 
-			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			lockMovement = false;
+		}
+
+		if (bRButtonState == true)
+		{
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = x / w * m_worldWidth;
+			float posY = (h - y) / h * m_worldHeight;
+
+			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
 				GameObject *go = (GameObject *)*it;
 
 				if (go->active && go->type == GameObject::GO_AIM)
 				{
-					go->isSet = false;
-					go->active = false;
+					if (go->isSet == false)
+					{
+						if ((Vector3(posX, posY, 0) - prevPos).Length() >= 20)
+						{
+							Vector3 dis = (Vector3(posX, posY, 0) - prevPos).Normalize() * 20;
+							go->pos = prevPos + dis;
+							go->isSet = true;
+							prevPos = go->pos;
+							break;
+						}
+					}
+
+					else
+					{
+						Vector3 a = go->pos - m_ghost->pos;
+
+						if (a.IsZero())
+						{
+							continue;
+						}
+
+						float length = a.Length();
+						Vector3 b = Vector3(posX, posY, 0) - m_ghost->pos;
+
+						if (a.Length() > b.Length())
+						{
+							go->render = false;
+						}
+
+						else
+						{
+							go->render = true;
+						}
+
+						if (!b.IsZero())
+						{
+							go->pos = m_ghost->pos + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
+						}
+					}
 				}
 			}
 		}
-
-		lockMovement = false;
 	}
 
-	if(bRButtonState == true)
+	// For Left Click Interaction
+	else
 	{
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = x / w * m_worldWidth;
-		float posY = (h - y) / h * m_worldHeight;
-
-		for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		static bool bLButtonState = false;
+		if (!bLButtonState && Application::IsMousePressed(0))
 		{
-			GameObject *go = (GameObject *)*it;
+			bLButtonState = true;
+			//std::cout << "LBUTTON DOWN" << std::endl;
 
-			if(go->active && go->type == GameObject::GO_AIM)
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+
+			cout << "X: " << x << " Y: " << y << endl;
+
+			if (w <= 800 && h <= 600)
 			{
-				if(go->isSet == false)
+				// For Red Hero
+				if ((x > 123 && x < 278) && (y < 404 && y > 203))
 				{
-					if((Vector3(posX,posY,0) - prevPos).Length() >= 20)
-					{
-						Vector3 dis = (Vector3(posX,posY,0) - prevPos).Normalize() * 20;
-						go->pos = prevPos + dis;
-						go->isSet = true;
-						prevPos = go->pos;
-						break;
-					}
+					cout << "HELLO RED WORLD" << endl;
+
+					Red_Selected = true;
+					Blue_Selected = false;
 				}
-
-				else
+				// For Blue Hero
+				else if ((x > 524 && x < 675) && (y < 404 && y > 203))
 				{
-					Vector3 a = go->pos - m_ghost->pos;
+					cout << "HELLO BLUE WORLD" << endl;
 
-					if(a.IsZero())
-					{
-						continue;
-					}
-
-					float length = a.Length();
-					Vector3 b =	Vector3(posX,posY,0) - m_ghost->pos;
-
-					if(a.Length() > b.Length())
-					{
-						go->render = false;
-					}
-					
-					else
-					{
-						go->render = true;
-					}
-
-					if(!b.IsZero())
-					{
-						go->pos = m_ghost->pos + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
-					}
+					Red_Selected = false;
+					Blue_Selected = true;
 				}
 			}
+			else
+			{
+				// For Red Hero
+				if ((x > 303 && x < 662) && (y < 684 && y > 349))
+				{
+					cout << "HELLO RED WORLD" << endl;
+
+					Red_Selected = true;
+					Blue_Selected = false;
+				}
+				// For Blue Hero
+				else if ((x > 1266 && x < 1622) && (y < 684 && y > 349))
+				{
+					cout << "HELLO BLUE WORLD" << endl;
+
+					Red_Selected = false;
+					Blue_Selected = true;
+				}
+			}
+
+			CustomMenuSelected = true;
+		}
+
+		else if (bLButtonState && !Application::IsMousePressed(0))
+		{
+			bLButtonState = false;
+			//std::cout << "LBUTTON UP" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+		}
+
+
+
+		else if ((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
+		{
+			bLButtonState = true;
+			//std::cout << "LBUTTON DOWN" << std::endl;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+
+			if (w <= 800 && h <= 600)
+			{
+				// For Red Hero
+				if ((x > 123 && x < 278) && (y < 404 && y > 203))
+				{
+					Custom_HeroSize_Red = 30;
+				}
+
+				// For BLUE Hero
+				else if ((x > 524 && x < 675) && (y < 404 && y > 203))
+				{
+					Custom_HeroSize_Blue = 30;
+				}
+				else
+				{
+					Custom_HeroSize_Red = 20;
+					Custom_HeroSize_Blue = 20;
+				}
+			}
+			else
+			{
+				// For Red Hero
+				if ((x > 301 && x < 661) && (y < 677 && y > 353))
+				{
+					Custom_HeroSize_Red = 30;
+				}
+
+				// For BLUE Hero
+				else if ((x > 1281 && x < 1618) && (y < 677 && y > 353))
+				{
+					Custom_HeroSize_Blue = 30;
+				}
+				else
+				{
+					Custom_HeroSize_Red = 20;
+					Custom_HeroSize_Blue = 20;
+				}
+			}
+		}
+		else
+		{
+			bLButtonState = false;
 		}
 	}
 
@@ -1933,50 +2099,102 @@ void SceneText::RenderText()
 
 void SceneText::RenderHero()
 {
-	//For dislaying Hero's Health
-	if(hero.health >= 1)
+	if (Red_Selected == true || Temp_Red_Selected == true)
 	{
-		Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
-
-		if(hero.health >= 2)
+		//For dislaying Hero's Health
+		if (hero.health >= 1)
 		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);	
-			
-			if(hero.health == 3)
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
+
+			if (hero.health >= 2)
 			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
+
+				if (hero.health == 3)
+				{
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
+				}
 			}
 		}
-	}
 
-	//Attacking
-	if(hero.GetAttackStatus() == true)
-	{
-		if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
+		//Attacking
+		if (hero.GetAttackStatus() == true)
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			if (hero.heroTileID >= 0 && hero.heroTileID <= 2)
+			{
+				RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+
+			else if (hero.heroTileID >= 4 && hero.heroTileID <= 6)
+			{
+				RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+
+			else if (hero.heroTileID >= 8 && hero.heroTileID <= 10)
+			{
+				RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+
+			else
+			{
+				RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
 		}
 
-		else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
-		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-		}
-
-		else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
-		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-		}
-
+		//Walking
 		else
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
 	}
 
-	//Walking
-	else
+	else if (Blue_Selected == true)
 	{
-		RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+		//For dislaying Hero's Health
+		if (hero.health >= 1)
+		{
+			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
+
+			if (hero.health >= 2)
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
+
+				if (hero.health == 3)
+				{
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
+				}
+			}
+		}
+
+		//Attacking
+		if (hero.GetAttackStatus() == true)
+		{
+			if (hero.heroTileID >= 0 && hero.heroTileID <= 2)
+			{
+				RenderSprites(meshList[GEO_BLUE_SPRITE], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+
+			else if (hero.heroTileID >= 4 && hero.heroTileID <= 6)
+			{
+				RenderSprites(meshList[GEO_BLUE_SPRITE], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+
+			else if (hero.heroTileID >= 8 && hero.heroTileID <= 10)
+			{
+				RenderSprites(meshList[GEO_BLUE_SPRITE], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+
+			else
+			{
+				RenderSprites(meshList[GEO_BLUE_SPRITE], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
+		}
+
+		//Walking
+		else
+		{
+			RenderSprites(meshList[GEO_BLUE_SPRITE], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+		}
 	}
 }
 
@@ -2324,6 +2542,21 @@ void SceneText::RenderHUD()
 	}
 }
 
+void SceneText::RenderCustomMenu()
+{
+	if (CustomMenuRendered == true)
+	{
+		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 82, 62, 40, 30, false);
+
+		/*RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 15, 33, false);
+		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 65, 33, false);*/
+
+		RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 20, 30, false);
+		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 60, 30, false);
+	}
+
+}
+
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 {
 	if(Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max)
@@ -2406,6 +2639,7 @@ void SceneText::Render()
 	RenderGoodies();
 	RenderText();
 	RenderHUD();
+	RenderCustomMenu();
 
 	if(lose == true)
 	{
