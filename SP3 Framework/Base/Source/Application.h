@@ -22,6 +22,8 @@ public:
 	static void GetCursorPos(double *xpos, double *ypos);
 	static int GetWindowWidth();
 	static int GetWindowHeight();
+	static int GetWindowWidth2();
+	static int GetWindowHeight2();
 	bool GetMouseUpdate();
 	bool GetKeyboardUpdate();
 	

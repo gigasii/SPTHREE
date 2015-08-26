@@ -17,6 +17,7 @@ double				Application::mouse_last_x = 0.0, Application::mouse_last_y = 0.0,
 					Application::mouse_current_x = 0.0, Application::mouse_current_y = 0.0,
 					Application::mouse_diff_x = 0.0, Application::mouse_diff_y = 0.0;
 double				Application::camera_yaw = 0.0, Application::camera_pitch = 0.0;
+int m_width, m_height;
 
 //Define an error callback
 static void error_callback(int error, const char* description)
@@ -34,6 +35,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 void resize_callback(GLFWwindow* window, int w, int h)
 {
+	m_width = w;
+	m_height = h;
 	glViewport(0, 0, w, h);
 }
 
@@ -85,6 +88,16 @@ int Application::GetWindowWidth()
 int Application::GetWindowHeight()
 {
 	return m_window_height;
+}
+
+int Application::GetWindowWidth2()
+{
+	return m_width;
+}
+
+int Application::GetWindowHeight2()
+{
+	return m_height;
 }
 
 bool Application::GetKeyboardUpdate()

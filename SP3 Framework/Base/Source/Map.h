@@ -52,6 +52,11 @@ public:
 		ENEMYAMOURED_80 = 80, WAYPOINT_121 = -121, WAYPOINT_122 = -122,
 		ENEMYAMOURED_81 = 81, WAYPOINT_123 = -123, WAYPOINT_124 = -124,
 		ENEMYAMOURED_82 = 82, WAYPOINT_125 = -125, WAYPOINT_126 = -126,
+		ENEMYAMOURED_83 = 83, WAYPOINT_127 = -127, WAYPOINT_128 = -128,
+		ENEMYAMOURED_84 = 84, WAYPOINT_129 = -129, WAYPOINT_130 = -130, WAYPOINT_131 = -131,
+		ENEMYAMOURED_85 = 85, WAYPOINT_132 = -132, WAYPOINT_133 = -133, WAYPOINT_134 = -134,
+		ENEMYAMOURED_86 = 86, WAYPOINT_135 = -135, WAYPOINT_136 = -136, WAYPOINT_137 = -137, WAYPOINT_138 = -138,
+		ENEMYAMOURED_87 = 87, WAYPOINT_139 = -139, WAYPOINT_140 = -140, WAYPOINT_141 = -141, WAYPOINT_142 = -142,
 
 		TILE_TOTAL
 	};
@@ -67,10 +72,10 @@ public:
 
 	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
-	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList);
-	void InitCustomMap();
 	void InitScreenMap3(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
-
+	void InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList);
+	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList);
+	
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
 	int tileOffset_x, tileOffset_y;
@@ -86,8 +91,8 @@ public:
 	CMap *m_cScreenMap;
 	CMap *m_cScreenMap3;
 	CMap *m_cScrollingMap;
+	CMap *m_cScrollingMap3;
 	CMap *m_cBossMap;
-	CMap *m_cCustomMap;
 
 	vector<vector<int> > theScreenMap;
 	bool scroll;
