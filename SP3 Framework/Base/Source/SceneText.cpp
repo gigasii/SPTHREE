@@ -1569,7 +1569,7 @@ void SceneText::Update(double dt)
 								}
 							}
 
-							if (go2->ID >= CMap::ENEMY_50)
+							else if (go2->ID >= CMap::ENEMY_50)
 							{
 								for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
 								{
