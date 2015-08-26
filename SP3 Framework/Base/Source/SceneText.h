@@ -235,9 +235,6 @@ private:
 	bool lose;
 	float LoseTimer;
 
-	//Last key pressed
-	char LastKeyPressed;
-
 	//Storing Value
 	int a, b;
 	GameObject *m_ghost;
@@ -245,9 +242,7 @@ private:
 	//Auditing
 	float m1, m2;
 	Vector3 u1, u2, v1, v2;
-
 	Vector3 prevPos;
-
 	bool onHero;
 	bool lockMovement;
 

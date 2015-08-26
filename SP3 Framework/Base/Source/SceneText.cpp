@@ -310,9 +310,10 @@ void SceneText::Init()
 	lose = false;
 	LoseTimer = 0.0f;
 
-	// === LastKeyPressed Variables ===
-	
-	LastKeyPressed = NULL;
+	// === Screen Dimensions ===
+
+	m_worldHeight = 800.f;
+	m_worldWidth = 1024.0f;
 
 	// ========================== Initializing Map Inits ==========================
 
@@ -334,6 +335,12 @@ void SceneText::Init()
 		CurrentMap = map.m_cScreenMap3;
 	}
 
+	else if(stage == 6)
+	{
+		map.InitScrollingMap3(enemyList, GoodiesList, BarrelList);
+		CurrentMap = map.m_cScrollingMap3;
+	}
+
 	else if(stage == 7)
 	{
 		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList);
@@ -348,9 +355,6 @@ void SceneText::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 	m_ghost->active = false;
-
-	m_worldHeight = 800.f;
-	m_worldWidth = 1024.0f;
 }
 
 GameObject* SceneText::FetchGO()
@@ -376,6 +380,45 @@ GameObject* SceneText::FetchGO()
 	GameObject *go = m_goList.back();
 	go->active = true;
 	return go;
+}
+
+void SceneText::RenderGO(GameObject *go)
+{
+	switch(go->type)
+	{
+	case GameObject::GO_BALL:
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+		modelStack.PopMatrix();
+		break;
+
+	case GameObject::GO_WALL:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			modelStack.PopMatrix();
+		}
+		break;
+
+	case GameObject::GO_PILLAR:
+		{
+			//modelStack.PushMatrix();
+			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			//modelStack.PopMatrix();
+		}
+		break;
+
+	case GameObject::GO_AIM:
+		{
+			if (go->render == true)
+			{
+				modelStack.PushMatrix();
+				Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+				modelStack.PopMatrix();
+			}
+			break;
+		}
+	}
 }
 
 bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
@@ -632,6 +675,19 @@ void SceneText::Update(double dt)
 		hero.SetDaggerAcquired(true);
 	}
 
+	//Check if player is hiding
+	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY)
+	{
+		hero.hiding = true;
+		RenderDim = true;
+	}
+	
+	else
+	{
+		hero.hiding = false;
+		RenderDim = false;
+	}
+
 	// =================================== UPDATE THE ENEMY ===================================
 
 	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
@@ -758,29 +814,6 @@ void SceneText::Update(double dt)
 			}
 		}
 	}
-
-	// =================================== Update LastKeyPressed ===================================
-
-	if(Application::IsKeyPressed('W'))
-	{
-		LastKeyPressed = 'w';
-	}
-	
-	else if(Application::IsKeyPressed('S'))
-	{
-		LastKeyPressed = 's';
-	}
-	
-	else if(Application::IsKeyPressed('A'))
-	{
-		LastKeyPressed = 'a';
-	}
-	
-	else if(Application::IsKeyPressed('D'))
-	{
-		LastKeyPressed = 'd';
-	}
-
 
 	// =================================== UPDATE THE GOODIES ===================================
 
@@ -995,7 +1028,9 @@ void SceneText::Update(double dt)
 				go->scale.Set(4,4,4);
 
 				if (i == 0)
+				{
 					go->isSet = true;
+				}
 			}
 
 			prevPos = m_ghost->pos;	
@@ -1003,7 +1038,9 @@ void SceneText::Update(double dt)
 		}
 
 		else
+		{
 			onHero = false;
+		}
 	}
 
 	else if(bRButtonState && !Application::IsMousePressed(1))
@@ -1011,7 +1048,7 @@ void SceneText::Update(double dt)
 		bRButtonState = false;
 		std::cout << "RBUTTON UP" << std::endl;
 
-		if (onHero == true)
+		if(onHero == true)
 		{
 			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
@@ -1029,15 +1066,15 @@ void SceneText::Update(double dt)
 					float worldY = (h - y) * m_worldHeight / h;
 
 					go->pos = m_ghost->pos;
-
 					go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
 					go->vel *= 2.5;
-
-					if (go->vel.Length() > MAX_SPEED)
-						go->vel = go->vel.Normalize() * MAX_SPEED;
-
 					go->scale.Set(16,16,16);
 
+					if (go->vel.Length() > MAX_SPEED)
+					{
+						go->vel = go->vel.Normalize() * MAX_SPEED;
+					}
+					
 					m_ghost->active = false;
 					break;
 				}
@@ -1058,7 +1095,7 @@ void SceneText::Update(double dt)
 		lockMovement = false;
 	}
 
-	if (bRButtonState == true)
+	if(bRButtonState == true)
 	{
 		double x, y;
 		Application::GetCursorPos(&x, &y);
@@ -1073,9 +1110,9 @@ void SceneText::Update(double dt)
 
 			if(go->active && go->type == GameObject::GO_AIM)
 			{
-				if  (go->isSet == false)
+				if(go->isSet == false)
 				{
-					if ((Vector3(posX,posY,0) - prevPos).Length() >= 20)
+					if((Vector3(posX,posY,0) - prevPos).Length() >= 20)
 					{
 						Vector3 dis = (Vector3(posX,posY,0) - prevPos).Normalize() * 20;
 						go->pos = prevPos + dis;
@@ -1089,19 +1126,28 @@ void SceneText::Update(double dt)
 				{
 					Vector3 a = go->pos - m_ghost->pos;
 
-					if (a.IsZero())
+					if(a.IsZero())
+					{
 						continue;
+					}
 
 					float length = a.Length();
 					Vector3 b =	Vector3(posX,posY,0) - m_ghost->pos;
 
-					if (a.Length() > b.Length())
+					if(a.Length() > b.Length())
+					{
 						go->render = false;
+					}
+					
 					else
+					{
 						go->render = true;
+					}
 
-					if (!b.IsZero())
+					if(!b.IsZero())
+					{
 						go->pos = m_ghost->pos + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
+					}
 				}
 			}
 		}
@@ -1164,6 +1210,8 @@ void SceneText::Update(double dt)
 				hero.heroCurrTile.x = 1;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+				
+				//Set new map
 				map.InitScrollingMap(enemyList, GoodiesList, BarrelList);
 				CurrentMap = map.m_cScrollingMap;
 			}
@@ -1171,51 +1219,65 @@ void SceneText::Update(double dt)
 			else if(stage == 2)
 			{
 				stage = 3;
-				hero.settheHeroPositionx(1024 - 32);
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+			}
+
+			else if(stage == 5)
+			{
+				hero.SetKeyAcquired(false);	
+				hero.SetdoorOpened(false);
+				stage = 6;
+				hero.settheHeroPositionx(32);
+				hero.heroCurrTile.x = 1;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				//Set new map
+				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList);
+				CurrentMap = map.m_cScrollingMap3;
+			}
+
+			else if(stage == 6)
+			{
+				stage = 7;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 			}
 		}
 	}
-
-	if(CurrentMap->theScreenMap[hero.heroCurrTile.y][hero.heroCurrTile.x] == CMap::HAY)
-	{
-		RenderDim = true;
-	}
-	
-	else
-	{
-		RenderDim = false;
-	}
-
 	
 	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
 		if(go->active)
 		{
-			if (go->type == GameObject::GO_BALL)
+			if(go->type == GameObject::GO_BALL)
 			{
 				Vector3 friction = -go->vel * 0.5f;
 				go->vel += friction * dt;
 				go->pos += go->vel * dt;
 
-				if (go->vel.Length() <= 2.f)
+				if(go->vel.Length() <= 2.f)
+				{
 					go->vel.SetZero();
+				}
 
 				float radius = go->scale.x;
 
-				if (go->pos.x >= m_worldWidth - radius && go->vel.x > 0)
+				if(go->pos.x >= m_worldWidth - radius && go->vel.x > 0)
 					go->vel.x = -go->vel.x;
-				else if (go->pos.x <= radius && go->vel.x < 0)
+				
+				else if(go->pos.x <= radius && go->vel.x < 0)
 					go->vel.x = -go->vel.x;
 
-				if (go->pos.y >= m_worldHeight - radius && go->vel.y > 0)
+				if(go->pos.y >= m_worldHeight - radius && go->vel.y > 0)
 					go->vel.y = -go->vel.y;
-				else if (go->pos.y <= radius && go->vel.y < 0)
+				
+				else if(go->pos.y <= radius && go->vel.y < 0)
 					go->vel.y = -go->vel.y;
 
-				if (go->pos.x >= m_worldWidth || go->pos.x <= 0 || go->pos.y >= m_worldHeight || go->pos.y <= 0) 
+				if(go->pos.x >= m_worldWidth || go->pos.x <= 0 || go->pos.y >= m_worldHeight || go->pos.y <= 0) 
 				{
 					go->active = false;
 				}
@@ -1233,7 +1295,7 @@ void SceneText::Update(double dt)
 				}
 			}
 
-			if (go->type == GameObject::GO_PILLAR)
+			if(go->type == GameObject::GO_PILLAR)
 			{
 				for(std::vector<CEnemy *>::iterator it2 = enemyList.begin(); it2 != enemyList.end(); ++it2)
 				{
@@ -1413,7 +1475,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 			{
 				if(hero.GetAttackStatus() == true && stabOnce == false)
 				{
-					if((DistanceFromEnemyX >= -4 && DistanceFromEnemyX <= 4) && (DistanceFromEnemyY >= -50 && DistanceFromEnemyY <= 50) || (DistanceFromEnemyY >= -4 && DistanceFromEnemyY <= 4) && (DistanceFromEnemyX >= -50 && DistanceFromEnemyX <= 50))
+					if((DistanceFromEnemyX >= -32 && DistanceFromEnemyX <= 32) && (DistanceFromEnemyY >= -50 && DistanceFromEnemyY <= 50) || (DistanceFromEnemyY >= -4 && DistanceFromEnemyY <= 4) && (DistanceFromEnemyX >= -50 && DistanceFromEnemyX <= 50))
 					{
 						if(go->theStrategy->CurrentState == CStrategy::PATROL)
 						{
@@ -1452,8 +1514,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-
-	if (go->eneCurrTile == hero.heroCurrTile)
+	if(go->eneCurrTile == hero.heroCurrTile)
 	{
 		go->attackStatus = true;
 	}
@@ -2312,45 +2373,6 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 			{
 				a = 0;
 			}
-		}
-	}
-}
-
-void SceneText::RenderGO(GameObject *go)
-{
-	switch(go->type)
-	{
-	case GameObject::GO_BALL:
-		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
-		modelStack.PopMatrix();
-		break;
-
-	case GameObject::GO_WALL:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
-			modelStack.PopMatrix();
-		}
-		break;
-
-	case GameObject::GO_PILLAR:
-		{
-			//modelStack.PushMatrix();
-			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
-			//modelStack.PopMatrix();
-		}
-		break;
-
-	case GameObject::GO_AIM:
-		{
-			if (go->render == true)
-			{
-				modelStack.PushMatrix();
-				Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
-				modelStack.PopMatrix();
-			}
-			break;
 		}
 	}
 }
