@@ -405,16 +405,16 @@ void SceneText::RenderGO(GameObject *go)
 	case GameObject::GO_BALL:
 		modelStack.PushMatrix();
 		if (go->timer < 3)
-			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
 		else
-			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x,go->pos.y);
+			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
 		modelStack.PopMatrix();
 		break;
 
 	case GameObject::GO_WALL:
 		{
-	/*		modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_QUAD],false,go->scale.x,go->pos.x,go->pos.y);
+			/*modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_QUAD],false,go->scale.x,go->pos.x ,go->pos.y);
 			modelStack.PopMatrix();*/
 		}
 		break;
@@ -422,7 +422,7 @@ void SceneText::RenderGO(GameObject *go)
 	case GameObject::GO_PILLAR:
 		{
 			//modelStack.PushMatrix();
-			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x,go->pos.y);
+			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
 			//modelStack.PopMatrix();
 		}
 		break;
@@ -1120,7 +1120,7 @@ void SceneText::Update(double dt)
 					GameObject *go = FetchGO();
 					go->type = GameObject::GO_AIM;
 					go->active = true;
-					go->pos.Set(posX, posY, 0);
+					go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
 					go->scale.Set(4, 4, 4);
 
 					if (i == 0)
@@ -1129,7 +1129,7 @@ void SceneText::Update(double dt)
 					}
 				}
 
-				prevPos = m_ghost->pos;
+				prevPos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
 				lockMovement = true;
 			}
 
@@ -1161,8 +1161,8 @@ void SceneText::Update(double dt)
 						float worldX = x * m_worldWidth / w;
 						float worldY = (h - y) * m_worldHeight / h;
 
-						go->pos = m_ghost->pos;
-						go->vel = m_ghost->pos - Vector3(worldX, worldY, 0);
+						go->pos = Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0);
+						go->vel = Vector3(hero.gettheHeroPositionx()+ 16, hero.gettheHeroPositiony() + 16, 0) - Vector3(worldX, worldY, 0);
 						go->vel *= 2.5;
 						go->scale.Set(6, 6, 6);
 
@@ -1221,7 +1221,7 @@ void SceneText::Update(double dt)
 
 					else
 					{
-						Vector3 a = go->pos - m_ghost->pos;
+						Vector3 a = go->pos - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
 
 						if (a.IsZero())
 						{
@@ -1229,7 +1229,7 @@ void SceneText::Update(double dt)
 						}
 
 						float length = a.Length();
-						Vector3 b = Vector3(posX, posY, 0) - m_ghost->pos;
+						Vector3 b = Vector3(posX, posY, 0) - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
 
 						if (a.Length() > b.Length())
 						{
@@ -1243,7 +1243,7 @@ void SceneText::Update(double dt)
 
 						if (!b.IsZero())
 						{
-							go->pos = m_ghost->pos + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
+							go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0) + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
 						}
 					}
 				}
@@ -1510,12 +1510,13 @@ void SceneText::Update(double dt)
 			}
 		}
 	}
-	
+
 	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
 		if(go->active)
 		{
+
 			if(go->type == GameObject::GO_BALL)
 			{
 				Vector3 friction = -go->vel * 0.2f;
@@ -1526,25 +1527,6 @@ void SceneText::Update(double dt)
 				if(go->vel.Length() <= 2.f)
 				{
 					go->vel.SetZero();
-				}
-
-				float radius = go->scale.x;
-
-				if(go->pos.x >= m_worldWidth - radius && go->vel.x > 0)
-					go->vel.x = -go->vel.x;
-				
-				else if(go->pos.x <= radius && go->vel.x < 0)
-					go->vel.x = -go->vel.x;
-
-				if(go->pos.y >= m_worldHeight - radius && go->vel.y > 0)
-					go->vel.y = -go->vel.y;
-				
-				else if(go->pos.y <= radius && go->vel.y < 0)
-					go->vel.y = -go->vel.y;
-
-				if(go->pos.x >= m_worldWidth || go->pos.x <= 0 || go->pos.y >= m_worldHeight || go->pos.y <= 0) 
-				{
-					go->active = false;
 				}
 
 				for(std::vector<GameObject *>::iterator it2 = m_goList.begin(); it2 != m_goList.end(); ++it2)
@@ -1563,7 +1545,9 @@ void SceneText::Update(double dt)
 									if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 									{
 										collisionResponse(go, go2);	
-										go3->active = false;
+
+										if (go->timer < 3)
+											go3->active = false;
 									}
 
 								}
@@ -1575,7 +1559,7 @@ void SceneText::Update(double dt)
 								{
 									CEnemy *go4 = (CEnemy *)*it4;
 
-									if(go4->active && (go4->GetPos_x() == go2->pos.x - 16) && (go4->GetPos_y() == go2->pos.y - 16))
+									if(go4->active && go4->ID == go2->ID)
 									{
 										collisionResponse(go, go2);	
 
@@ -1594,7 +1578,7 @@ void SceneText::Update(double dt)
 
 				if (go->timer >= 3)
 				{
-					float combinedDist = (Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) - go->pos).Length();
+					float combinedDist = (Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0) - go->pos).Length();
 					float combinedRad = 32;
 
 					if (combinedDist <= combinedRad)
@@ -1617,7 +1601,7 @@ void SceneText::Update(double dt)
 					{
 						if (go2->ID == go->ID)
 						{
-							go->pos.x = go2->GetPos_x() + 16;
+							go->pos.x = go2->GetPos_x() + 16 /*+ CurrentMap->mapOffset_x*/;
 							go->pos.y = go2->GetPos_y() + 16;
 						}
 					}
