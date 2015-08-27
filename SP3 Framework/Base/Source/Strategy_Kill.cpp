@@ -50,10 +50,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 		else if (routeCounter2 == 0)
 			CurrentState = ATTACK;
 
-		if (distanceHeroToEnemy < 49729.0f && distanceHeroToEnemy >= 29729.0f && eneHit == true)
-		{
-		}
-		else if (distanceHeroToEnemy < 29729.0f && eneHit == true)
+		if (distanceHeroToEnemy < 29729.0f && eneHit == true)
 			eneHit = false;
 
 		if(distanceHeroToEnemy > 29729.0f && routeCounter2 == 0 && eneHit == false)

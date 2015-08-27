@@ -304,7 +304,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 5;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -633,7 +633,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 			Vector3 v = u - 2 * u.Dot(N) * N;
 
 			if (go2->ID == CMap::BARREL || go2->ID >= CMap::ENEMY_50)
-				go->vel = v * 0.6;
+				go->vel = v * 0.5;
 			else
 				go->vel = v * 0.85;
 		}
@@ -1085,7 +1085,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer += dt;
 			}
 
-			if(go->stunTimer >= 2)
+			if(go->stunTimer >= 3)
 			{
 				go->stunned = false;
 				go->stunTimer = 0;
@@ -1874,8 +1874,14 @@ void SceneText::UpdatePhysics(double dt)
 									{
 										collisionResponse(go, go2);	
 
+										if(go->timer < 3 && go4->ID >= 50 && go4->stunned == false)
+											go4->health--;
+
 										if(go->timer < 3 && go4->ID < 80)
+										{
 											go4->stunned = true;
+											go4->isHit = true;
+										}
 
 										else if (go4->ID >= 80)
 											go4->isHit = true;
@@ -1971,7 +1977,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
 
 				//Set new map
 				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
@@ -2002,7 +2008,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
 
 				// Set New Minimap
 				minimap.InitMiniMap_2();
@@ -2049,7 +2055,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
 
 				//Set new map
 				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
@@ -2080,7 +2086,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
 
 				// Set New Minimap
 				minimap.InitMiniMap_7();
@@ -2516,8 +2522,6 @@ void SceneText::RenderHero()
 		angle -= 180;
 	else
 		angle += 180;
-
-	cout << angle << endl;
 
 	//For dislaying Hero's Health
 	if(hero.transform == false)
