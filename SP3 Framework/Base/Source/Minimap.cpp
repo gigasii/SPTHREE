@@ -9,14 +9,101 @@ CMinimap::CMinimap()
 	, y(0)
 	, size_x(0)
 	, size_y(0)
+	, m_cMiniMap1(NULL)
+	, m_cMiniMap2(NULL)
+	, m_cMiniMap3(NULL)
+	, m_cMiniMap4(NULL)
+	, m_cMiniMap5(NULL)
+	, m_cMiniMap6(NULL)
+	, m_cMiniMap7(NULL)
 {
 }
 
 
 CMinimap::~CMinimap(void)
 {
+	if (m_cMiniMap1)
+	{
+		delete m_cMiniMap1;
+		m_cMiniMap1 = NULL;
+	}
+
+	if (m_cMiniMap2)
+	{
+		delete m_cMiniMap2;
+		m_cMiniMap2 = NULL;
+	}
+
+	if (m_cMiniMap3)
+	{
+		delete m_cMiniMap3;
+		m_cMiniMap3 = NULL;
+	}
+
+	if (m_cMiniMap4)
+	{
+		delete m_cMiniMap4;
+		m_cMiniMap4 = NULL;
+	}
+
+	if (m_cMiniMap5)
+	{
+		delete m_cMiniMap5;
+		m_cMiniMap5 = NULL;
+	}
+
+	if (m_cMiniMap6)
+	{
+		delete m_cMiniMap6;
+		m_cMiniMap6 = NULL;
+	}
+
+	if (m_cMiniMap7)
+	{
+		delete m_cMiniMap7;
+		m_cMiniMap7 = NULL;
+	}
 }
 
+// ========================== Initializing MiniMap Inits ==========================
+void CMinimap::InitMiniMap_1()
+{
+	m_cMiniMap1 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_2()
+{
+	m_cMiniMap2 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_3()
+{
+	m_cMiniMap3 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_4()
+{
+	m_cMiniMap4 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_5()
+{
+	m_cMiniMap5 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_6()
+{
+	m_cMiniMap6 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_7()
+{
+	m_cMiniMap7 = new CMinimap();
+}
+
+
+
+// ========================== Set Functions ==========================
 bool CMinimap::SetBackground(Mesh* aBackground)			// Set the Background Mesh to this Class
 {
 	if (aBackground != NULL)
@@ -44,6 +131,18 @@ bool CMinimap::SetAvatar(Mesh* anAvatar)
 		m_cMinimap_Avatar = anAvatar;
 		return true;
 	}
+
+	return false;
+}
+
+bool CMinimap::SetEnemyAvatar(Mesh* anEnemyAvatar)
+{
+	if (anEnemyAvatar != NULL)
+	{
+		m_cMinimap_EnemyAvatar = anEnemyAvatar;
+		return true;
+	}
+
 	return false;
 }
 
@@ -68,6 +167,7 @@ bool CMinimap::SetSize(const int size_x, const int size_y)
 }
 
 
+// ========================== Get Functions ==========================
 Mesh* CMinimap::GetBackground(void)
 {
 	return m_cMinimap_Background;
@@ -81,6 +181,11 @@ Mesh* CMinimap::GetBorder(void)
 Mesh* CMinimap::GetAvatar(void)
 {
 	return m_cMinimap_Avatar;
+}
+
+Mesh* CMinimap::GetEnemyAvatar(void)
+{
+	return m_cMinimap_EnemyAvatar;
 }
 
 int CMinimap::GetAngle(void)

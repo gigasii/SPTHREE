@@ -203,10 +203,14 @@ private:
 	Light lights[2];
 	Hero hero;
 	CMap map;
-	
+	CMinimap minimap;
+
 	//current map/map handler
 	CMap *CurrentMap;
 	
+	// Current Minimap Handler
+	CMinimap *CurrentMiniMap;
+
 	//Boss handler
 	CBoss *BossPointer;
 
@@ -263,9 +267,6 @@ private:
 	//Storing Value
 	int a, b;
 	GameObject *m_ghost;
-
-	// For Minimap
-	CMinimap* m_cMinimap;
 
 	//Auditing
 	float m1, m2;
