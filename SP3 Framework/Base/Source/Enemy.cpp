@@ -120,35 +120,35 @@ void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, b
 	{
 		switch (i)
 		{
-			case 0:
+		case 0:
 			tempTile = eneCurrTile + eneDir;
 			break;
-			
-			case 1:
+
+		case 1:
 			tempTile = eneCurrTile + enemyRight;
 			break;
-			
-			case 2:
+
+		case 2:
 			tempTile = eneCurrTile - enemyRight;
 			break;
-			
-			case 3:
+
+		case 3:
 			tempTile = eneCurrTile + eneDir + enemyRight;
 			break;
-			
-			case 4:
+
+		case 4:
 			tempTile = eneCurrTile + eneDir - enemyRight;
 			break;
-			
-			case 5:
+
+		case 5:
 			tempTile = eneCurrTile + eneDir * 2;
 			break;
-			
-			case 6:
+
+		case 6:
 			tempTile = eneCurrTile + enemyRight * 2;
 			break;
-			
-			case 7:
+
+		case 7:
 			tempTile = eneCurrTile - enemyRight * 2;
 			break;
 		}
@@ -171,12 +171,12 @@ void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, b
 			{
 				renderFront = false;
 			}
-			
+
 			else if (i == 1 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
 			{
 				renderUp = false;
 			}
-			
+
 			else if (i == 2 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
 			{
 				renderDown = false;
@@ -211,57 +211,57 @@ void CEnemy::setWayPoints(CMap* map)
 	switch(ID)
 	{
 		//BRANDON'S ENEMIES
-		case CMap::ENEMY_50:
+	case CMap::ENEMY_50:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_1, CMap::WAYPOINT_2, CMap::WAYPOINT_3, CMap::WAYPOINT_4);
 		break;
-		
-		case CMap::ENEMY_51:
+
+	case CMap::ENEMY_51:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_5, CMap::WAYPOINT_6, CMap::WAYPOINT_7, CMap::WAYPOINT_8);
 		break;
-		
-		case CMap::ENEMY_52:
+
+	case CMap::ENEMY_52:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_9, CMap::WAYPOINT_10, CMap::WAYPOINT_11, CMap::WAYPOINT_12);
 		break;
 
-		case CMap::ENEMY_53:
+	case CMap::ENEMY_53:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_13, CMap::WAYPOINT_14, CMap::WAYPOINT_15, CMap::WAYPOINT_16);
 		break;
 
-		case CMap::ENEMY_54:
+	case CMap::ENEMY_54:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_17, CMap::WAYPOINT_18, CMap::WAYPOINT_19, CMap::WAYPOINT_20);
 		break;
 
-		case CMap::ENEMY_55:
+	case CMap::ENEMY_55:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_21, CMap::WAYPOINT_22, CMap::WAYPOINT_23, CMap::WAYPOINT_24);
 		break;
 
-		case CMap::ENEMY_56:
+	case CMap::ENEMY_56:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_25, CMap::WAYPOINT_26, CMap::WAYPOINT_27, CMap::WAYPOINT_28);
 		break;
 
 		//SEAN's ENEMIES
-		case CMap::ENEMY_60:
+	case CMap::ENEMY_60:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_41, CMap::WAYPOINT_42, CMap::WAYPOINT_43, CMap::WAYPOINT_44);
 		break;
 
-		case CMap::ENEMY_61:
+	case CMap::ENEMY_61:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_45, CMap::WAYPOINT_46, CMap::WAYPOINT_47, CMap::WAYPOINT_48);
 		break;
 
 		//GIGGS' ENEMIES
-		case CMap::ENEMY_57:
+	case CMap::ENEMY_57:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_29, CMap::WAYPOINT_30);
 		break;
-		
-		case CMap::ENEMY_58:
+
+	case CMap::ENEMY_58:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_31, CMap::WAYPOINT_32, CMap::WAYPOINT_33, CMap::WAYPOINT_34);
 		break;
 
-		case CMap::ENEMY_59:
+	case CMap::ENEMY_59:
 		path.setWayPoints(map, 4, CMap::WAYPOINT_35, CMap::WAYPOINT_36, CMap::WAYPOINT_37, CMap::WAYPOINT_38);
 		break;
 
-		case CMap::ENEMYAMOURED_80:
+	case CMap::ENEMYAMOURED_80:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_121, CMap::WAYPOINT_122);
 		break;
 
@@ -269,20 +269,53 @@ void CEnemy::setWayPoints(CMap* map)
 		path.setWayPoints(map, 2, CMap::WAYPOINT_123, CMap::WAYPOINT_124);
 		break;*/
 
-		case CMap::ENEMYAMOURED_82:
+	case CMap::ENEMYAMOURED_82:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_125, CMap::WAYPOINT_126);
 		break;
 
-		case CMap::ENEMYAMOURED_83:
+	case CMap::ENEMYAMOURED_83:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_127, CMap::WAYPOINT_128);
 		break;
 
-		case CMap::ENEMYAMOURED_84:
+	case CMap::ENEMYAMOURED_84:
 		path.setWayPoints(map, 3, CMap::WAYPOINT_129, CMap::WAYPOINT_130, CMap::WAYPOINT_131);
 		break;
 
-		case CMap::ENEMYAMOURED_85:
+	case CMap::ENEMYAMOURED_85:
 		path.setWayPoints(map, 3, CMap::WAYPOINT_132, CMap::WAYPOINT_133, CMap::WAYPOINT_134);
+		break;
+
+		//WEI HENG'S ENEMIES
+	case CMap::ENEMY_70:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_81, CMap::WAYPOINT_82, CMap::WAYPOINT_83, CMap::WAYPOINT_84);
+		break;
+
+	case CMap::ENEMY_71:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_85, CMap::WAYPOINT_86, CMap::WAYPOINT_87, CMap::WAYPOINT_88);
+		break;
+
+	case CMap::ENEMY_72:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_87, CMap::WAYPOINT_88, CMap::WAYPOINT_85, CMap::WAYPOINT_86);
+		break;
+
+	case CMap::ENEMY_73:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_89, CMap::WAYPOINT_90);
+		break;
+
+	case CMap::ENEMY_74:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_91, CMap::WAYPOINT_92);
+		break;
+
+	case CMap::ENEMY_75:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_93, CMap::WAYPOINT_94);
+		break;
+
+	case CMap::ENEMY_76:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_95, CMap::WAYPOINT_96);
+		break;
+
+	case CMap::ENEMY_77:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_97, CMap::WAYPOINT_98);
 		break;
 	}
 }
