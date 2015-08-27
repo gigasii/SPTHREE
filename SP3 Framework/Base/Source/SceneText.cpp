@@ -30,7 +30,7 @@ SceneText::SceneText()
 
 SceneText::~SceneText()
 {
-	if (m_cMinimap)
+	if(m_cMinimap)
 	{
 		delete m_cMinimap;
 		m_cMinimap = NULL;
@@ -306,7 +306,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 7;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -663,8 +663,6 @@ void SceneText::Update(double dt)
 	UpdatePhysics(dt);
 	MainUpdates(checkPosition_X, checkPosition_Y);
 
-	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
-	CHAR_HEROKEY = NULL;
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
 }
@@ -877,8 +875,6 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 
 void SceneText::UpdateHero(double dt)
 {
-	// =================================== UPDATE THE HERO ===================================
-
 	if(lockMovement == false)
 	{
 		if(Application::IsKeyPressed('A') && hero.transform == false)
@@ -1002,12 +998,13 @@ void SceneText::UpdateHero(double dt)
 			Blue_Selected = false;
 		}
 	}
+
+	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
+	CHAR_HEROKEY = NULL;
 }
 
 void SceneText::UpdateEnemies(double dt)
 {
-	// =================================== UPDATE THE ENEMY ===================================
-
 	for(std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		CEnemy *go = (CEnemy *)*it;
@@ -1157,8 +1154,6 @@ void SceneText::UpdateEnemies(double dt)
 
 void SceneText::UpdateGoodies()
 {
-	// =================================== UPDATE THE GOODIES ===================================
-
 	for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
@@ -1250,8 +1245,6 @@ void SceneText::UpdateGoodies()
 
 void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 {
-	// =================================== BOSS LEVEL UPDATES ===================================
-
 	BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
 	bossCounter += 0.01f;
 
@@ -1354,8 +1347,6 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 
 void SceneText::UpdateCustomisation(double dt)
 {
-	// =================================== Customisation Menu Updates ===================================
-
 	//Delay in closing and opening Menu
 	if(CheckCustomMenu == true)
 	{
@@ -1415,8 +1406,6 @@ void SceneText::UpdateCustomisation(double dt)
 
 void SceneText::UpdateGameOver()
 {
-	// =================================== Lose Screen UPDATES ===================================
-	
 	if(hero.health <= 0)
 	{
 		lose = true;
@@ -1434,13 +1423,12 @@ void SceneText::UpdateGameOver()
 
 void SceneText::UpdateMouse()
 {
-	// ============================= MOUSE SECTION ====================================
-
-	//For Right Click Interaction
+	// =================================== For Right Click Interaction ===================================
+	
 	if(CustomMenuRendered == false)
 	{
 		static bool bLButtonState = false;
-		if (!bLButtonState && Application::IsMousePressed(0))
+		if(!bLButtonState && Application::IsMousePressed(0))
 		{
 			bLButtonState = true;
 			//std::cout << "LBUTTON DOWN" << std::endl;
@@ -1453,7 +1441,7 @@ void SceneText::UpdateMouse()
 			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		}
 
-		else if (bLButtonState && !Application::IsMousePressed(0))
+		else if(bLButtonState && !Application::IsMousePressed(0))
 		{
 			bLButtonState = false;
 			//std::cout << "LBUTTON UP" << std::endl;
@@ -1467,7 +1455,7 @@ void SceneText::UpdateMouse()
 		}
 
 		static bool bRButtonState = false;
-		if (!bRButtonState && Application::IsMousePressed(1))
+		if(!bRButtonState && Application::IsMousePressed(1))
 		{
 			bRButtonState = true;
 			std::cout << "RBUTTON DOWN" << std::endl;
@@ -1484,10 +1472,10 @@ void SceneText::UpdateMouse()
 			int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
 			int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
-			if (Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
+			if(Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
 			{
 				onHero = true;
-				for (int i = 0; i < 10; ++i)
+				for(int i = 0; i < 10; ++i)
 				{
 					GameObject *go = FetchGO();
 					go->type = GameObject::GO_AIM;
@@ -1495,7 +1483,7 @@ void SceneText::UpdateMouse()
 					go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);
 					go->scale.Set(4, 4, 4);
 
-					if (i == 0)
+					if(i == 0)
 					{
 						go->isSet = true;
 					}
@@ -1511,18 +1499,18 @@ void SceneText::UpdateMouse()
 			}
 		}
 
-		else if (bRButtonState && !Application::IsMousePressed(1))
+		else if(bRButtonState && !Application::IsMousePressed(1))
 		{
 			bRButtonState = false;
 			std::cout << "RBUTTON UP" << std::endl;
 
-			if (onHero == true)
+			if(onHero == true)
 			{
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
 
-					if (go->active == false)
+					if(go->active == false)
 					{
 						go->active = true;
 						go->type = GameObject::GO_BALL;
@@ -1549,11 +1537,11 @@ void SceneText::UpdateMouse()
 					}
 				}
 
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
 
-					if (go->active && go->type == GameObject::GO_AIM)
+					if(go->active && go->type == GameObject::GO_AIM)
 					{
 						go->isSet = false;
 						go->active = false;
@@ -1564,7 +1552,7 @@ void SceneText::UpdateMouse()
 			lockMovement = false;
 		}
 
-		if (bRButtonState == true)
+		if(bRButtonState == true)
 		{
 			double x, y;
 			Application::GetCursorPos(&x, &y);
@@ -1573,15 +1561,15 @@ void SceneText::UpdateMouse()
 			float posX = x / w * m_worldWidth;
 			float posY = (h - y) / h * m_worldHeight;
 
-			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
 				GameObject *go = (GameObject *)*it;
 
-				if (go->active && go->type == GameObject::GO_AIM)
+				if(go->active && go->type == GameObject::GO_AIM)
 				{
-					if (go->isSet == false)
+					if(go->isSet == false)
 					{
-						if ((Vector3(posX, posY, 0) - prevPos).Length() >= 20)
+						if((Vector3(posX, posY, 0) - prevPos).Length() >= 20)
 						{
 							Vector3 dis = (Vector3(posX, posY, 0) - prevPos).Normalize() * 20;
 							go->pos = prevPos + dis;
@@ -1595,7 +1583,7 @@ void SceneText::UpdateMouse()
 					{
 						Vector3 a = go->pos - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
 
-						if (a.IsZero())
+						if(a.IsZero())
 						{
 							continue;
 						}
@@ -1603,7 +1591,7 @@ void SceneText::UpdateMouse()
 						float length = a.Length();
 						Vector3 b = Vector3(posX, posY, 0) - Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0);;
 
-						if (a.Length() > b.Length())
+						if(a.Length() > b.Length())
 						{
 							go->render = false;
 						}
@@ -1613,7 +1601,7 @@ void SceneText::UpdateMouse()
 							go->render = true;
 						}
 
-						if (!b.IsZero())
+						if(!b.IsZero())
 						{
 							go->pos = Vector3(hero.gettheHeroPositionx() + 16,hero.gettheHeroPositiony() + 16,0) + ((a.Dot(b.Normalize())) * b.Normalize()).Normalize() * length;
 						}
@@ -1623,7 +1611,8 @@ void SceneText::UpdateMouse()
 		}
 	}
 
-	//For Left Click Interaction
+	// =================================== For Left Click Interaction ===================================
+	
 	else
 	{
 		static bool bLButtonState = false;
@@ -1663,16 +1652,17 @@ void SceneText::UpdateMouse()
 
 			else
 			{
-				// For Red Hero
-				if ((x > 303 && x < 662) && (y < 684 && y > 349))
+				//For Red Hero
+				if((x > 303 && x < 662) && (y < 684 && y > 349))
 				{
 					cout << "HELLO RED WORLD" << endl;
 
 					Red_Selected = true;
 					Blue_Selected = false;
 				}
-				// For Blue Hero
-				else if ((x > 1266 && x < 1622) && (y < 684 && y > 349))
+				
+				//For Blue Hero
+				else if((x > 1266 && x < 1622) && (y < 684 && y > 349))
 				{
 					cout << "HELLO BLUE WORLD" << endl;
 
@@ -1695,7 +1685,7 @@ void SceneText::UpdateMouse()
 			int h = Application::GetWindowHeight2();
 		}
 
-		else if ((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
+		else if((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
 		{
 			bLButtonState = true;
 			//std::cout << "LBUTTON DOWN" << std::endl;
@@ -1714,7 +1704,7 @@ void SceneText::UpdateMouse()
 				}
 
 				// For BLUE Hero
-				else if ((x > 524 && x < 675) && (y < 404 && y > 203))
+				else if((x > 524 && x < 675) && (y < 404 && y > 203))
 				{
 					Custom_HeroSize_Blue = 30;
 				}
@@ -1728,14 +1718,14 @@ void SceneText::UpdateMouse()
 			
 			else
 			{
-				// For Red Hero
-				if ((x > 301 && x < 661) && (y < 677 && y > 353))
+				//For Red Hero
+				if((x > 301 && x < 661) && (y < 677 && y > 353))
 				{
 					Custom_HeroSize_Red = 30;
 				}
 
-				// For BLUE Hero
-				else if ((x > 1281 && x < 1618) && (y < 677 && y > 353))
+				//For BLUE Hero
+				else if((x > 1281 && x < 1618) && (y < 677 && y > 353))
 				{
 					Custom_HeroSize_Blue = 30;
 				}
@@ -1779,9 +1769,9 @@ void SceneText::UpdatePhysics(double dt)
 					GameObject *go2 = (GameObject *)*it2;
 					if(go2->active)
 					{
-						if (checkCollision(go, go2, dt))
+						if(checkCollision(go, go2, dt))
 						{
-							if (go2->ID == CMap::BARREL)
+							if(go2->ID == CMap::BARREL)
 							{
 								for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 								{
@@ -1797,7 +1787,7 @@ void SceneText::UpdatePhysics(double dt)
 								}
 							}
 
-							else if (go2->ID >= CMap::ENEMY_50)
+							else if(go2->ID >= CMap::ENEMY_50)
 							{
 								for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
 								{
@@ -1807,7 +1797,7 @@ void SceneText::UpdatePhysics(double dt)
 									{
 										collisionResponse(go, go2);	
 
-										if (go->timer < 3)
+										if(go->timer < 3)
 											go4->stunned = true;
 									}
 								}
@@ -1824,7 +1814,7 @@ void SceneText::UpdatePhysics(double dt)
 					float combinedDist = (Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0) - go->pos).Length();
 					float combinedRad = 32;
 
-					if (combinedDist <= combinedRad)
+					if(combinedDist <= combinedRad)
 					{
 						go->active = false;
 						hero.ammo++;
@@ -1854,8 +1844,6 @@ void SceneText::UpdatePhysics(double dt)
 
 void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 {
-	// =================================== MAIN UPDATES ===================================
-
 	//Moving from screen stage to scrollnig stage conditions
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
 	{
@@ -2737,16 +2725,19 @@ void SceneText::RenderGoodies()
 		{
 			Render2DMesh(meshList[GEO_HOLE], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 		}
+		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
 		{
 			if(go->active)
 				Render2DMesh(meshList[GEO_HPPOT], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 		}
+		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
 		{
 			if(go->active)
 				Render2DMesh(meshList[GEO_MAXHP], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
 		}
+		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
 		{
 			if(go->active)

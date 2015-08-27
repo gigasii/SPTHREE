@@ -295,33 +295,40 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 			else if(tempType == CMap::HPPOT)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HPPOT;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 
 			else if(tempType == CMap::MAXHP)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::MAXHP;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 
 			else if(tempType == CMap::SCROLL)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::SCROLL;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType == CMap::HOLE)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HOLE;	
+				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
 

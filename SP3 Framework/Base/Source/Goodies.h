@@ -27,7 +27,8 @@ public:
 		HPPOT,
 		MAXHP,
 		SCROLL,
-		HOLE,
+		HOLE = 11,
+		
 		GOODIES_TOTAL
 	};
 
