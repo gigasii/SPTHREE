@@ -398,8 +398,8 @@ void SceneText::Init()
 	meshList[GEO_MAXHP]->textureID = LoadTGA("Image//Goodies//maxhpup.tga");
 
 	meshList[GEO_SCROLL] = MeshBuilder::Generate2DMesh("GEO_SCROLL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	//meshList[GEO_SCROLL]->textureID = LoadTGA("Image//Goodies//scroll.tga");
-	meshList[GEO_SCROLL]->textureID = LoadTGA("Image//OldMan.tga");
+	meshList[GEO_SCROLL]->textureID = LoadTGA("Image//Goodies//scroll.tga");
+	//meshList[GEO_SCROLL]->textureID = LoadTGA("Image//OldMan.tga");
 	
 	meshList[GEO_HOLE] = MeshBuilder::Generate2DMesh("GEO_HOLE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Goodies//hole.tga");
@@ -478,7 +478,7 @@ void SceneText::Init()
 
 	// === HUD Variables ===
 
-	diamondCount = 0;
+	diamondCount = 11;
 	keyCount = 0;
 	PointSystem = 0;
 
@@ -1399,8 +1399,12 @@ void SceneText::UpdateGoodies()
 						{
 							if(hero.heroCurrTile == go->tilePos && hero.health < hero.full_health)
 							{
-								go->active = false;
-								hero.health++;
+								if(diamondCount >= 3)
+								{
+									go->active = false;
+									hero.health++;
+									diamondCount -= 3;
+								}
 							}
 						}
 						
@@ -1410,9 +1414,13 @@ void SceneText::UpdateGoodies()
 							{
 								if(hero.health == hero.full_health)
 								{
-									go->active = false;
-									hero.health++;
-									hero.full_health++;
+									if(diamondCount >= 5)
+									{
+										go->active = false;
+										hero.health++;
+										hero.full_health++;
+										diamondCount -= 5;
+									}
 								}
 							}
 						}
@@ -1420,9 +1428,13 @@ void SceneText::UpdateGoodies()
 						else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
 						{
 							if(hero.heroCurrTile == go->tilePos)
-							{				
+							{
+								if(diamondCount >= 3)
+								{
 									go->active = false;
 									hero.NoOfScroll++;
+									diamondCount -= 3;
+								}
 							}
 						}
 					}
@@ -2653,18 +2665,18 @@ void SceneText::RenderHero()
 	//For dislaying Hero's Health
 	if(hero.transform == false)
 	{
-		if(hero.health >= 1)
+		for(int a = hero.health; a > 0; a--)
 		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15, hero.gettheHeroPositiony() + 33);
-
-			if(hero.health >= 2)
+			if(hero.health%2 == 1)
 			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
-
-				if(hero.health == 3)
-				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 27, hero.gettheHeroPositiony() + 33);
-				}
+				if(hero.health == 1)
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() + 6, hero.gettheHeroPositiony() + 33);
+				else
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15 + ((a - hero.health/2) * 21), hero.gettheHeroPositiony() + 33);
+			}
+			else
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, hero.gettheHeroPositionx() - 15 + ((a - hero.health/2) * 21) + 11, hero.gettheHeroPositiony() + 33);
 			}
 		}
 	}
