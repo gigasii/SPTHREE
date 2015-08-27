@@ -23,7 +23,6 @@ CMinimap::CMinimap()
 {
 }
 
-
 CMinimap::~CMinimap(void)
 {
 	if (m_cMiniMap1)
@@ -70,6 +69,7 @@ CMinimap::~CMinimap(void)
 }
 
 // ========================== Initializing MiniMap Inits ==========================
+
 void CMinimap::InitMiniMap_1()
 {
 	m_cMiniMap1 = new CMinimap();
@@ -105,9 +105,8 @@ void CMinimap::InitMiniMap_7()
 	m_cMiniMap7 = new CMinimap();
 }
 
-
-
 // ========================== Set Functions ==========================
+
 bool CMinimap::SetBackground(Mesh* aBackground)			// Set the Background Mesh to this Class
 {
 	if (aBackground != NULL)
@@ -203,8 +202,8 @@ bool CMinimap::SetSize(const int size_x, const int size_y)
 	return true;
 }
 
-
 // ========================== Get Functions ==========================
+
 Mesh* CMinimap::GetBackground(void)
 {
 	return m_cMinimap_Background;
