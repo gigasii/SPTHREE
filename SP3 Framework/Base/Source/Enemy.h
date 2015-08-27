@@ -44,6 +44,7 @@ public:
 	vector <Vector3>detectionGrid;
 	bool stunned;
 	double stunTimer;
+	bool isHit;
 
 	int routeCounter, routeCounter2;
 

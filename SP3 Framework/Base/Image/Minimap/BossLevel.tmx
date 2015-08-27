@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="25" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="desert_tile" tilewidth="32" tileheight="32">
+  <image source="../../../../../My Stuff/SPTHREE/SP3 Framework/Base/Image/Desert/desert_tile.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="ground" tilewidth="32" tileheight="32">
+  <image source="../../../../../ground.png" width="32" height="32"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="32" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztlUkKgDAMRXMJBXXjPIDzDbz/pYyoUEqxaaWpCxcPumh4NPykAQAEnsmQlJlO8OdIxEwt+WNkuxiEsyue/OPvd+5v4cyhL/+Nyj9Jd448zshCZAV6hlV+GZt+UGsofrkfFKg1FH9v4dfVNEhJ9Lvgaf443m/it9nHuhoTv4v8m/w/R5ZN51+Xf9/79/d/12+zb9/6QyRhRPQXcO5iTirB75MdH4eeaA==
+  </data>
+ </layer>
+</map>
