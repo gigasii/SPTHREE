@@ -3034,12 +3034,27 @@ void SceneText::RenderCustomMenu()
 {
 	if(CustomMenuRendered == true)
 	{
-		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 82, 62, 40, 30, false);
+		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 80, 60, 40, 30, false);
 
 		RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 20, 30, false);
 		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 60, 30, false);
-	}
 
+		if (Custom_HeroSize_Blue == 30)
+		{
+			std::ostringstream ss1;
+			ss1.precision(5);
+			ss1 << "STEALTH";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(1, 1, 0), 2.3, 55, 11);
+		}
+
+		else if (Custom_HeroSize_Red == 30)
+		{
+			std::ostringstream ss2;
+			ss2.precision(5);
+			ss2 << "UNSTEALTH";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 13, 11);
+		}
+	}
 }
 
 // ================================== RENDER & EXIT ==================================
