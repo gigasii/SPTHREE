@@ -34,6 +34,153 @@ SceneText::~SceneText()
 
 // =============================== INITIALIZING OF VARIABLES/FUNCTIONS ===============================
 
+void SceneText::InitMiniMap_Level1()
+{
+	// Set New Minimap
+	minimap.InitMiniMap_1();
+	CurrentMiniMap = minimap.m_cMiniMap1;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+void SceneText::InitMiniMap_Level2()
+{
+	minimap.InitMiniMap_2();
+	CurrentMiniMap = minimap.m_cMiniMap2;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+void SceneText::InitMiniMap_Level3()
+{
+	// Set New Minimap
+	minimap.InitMiniMap_3();
+	CurrentMiniMap = minimap.m_cMiniMap3;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+void SceneText::InitMiniMap_Level4()
+{
+	// Set New Minimap
+	minimap.InitMiniMap_4();
+	CurrentMiniMap = minimap.m_cMiniMap4;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+void SceneText::InitMiniMap_Level5()
+{
+	// Set New Minimap
+	minimap.InitMiniMap_5();
+	CurrentMiniMap = minimap.m_cMiniMap5;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+void SceneText::InitMiniMap_Level6()
+{
+	// Set New Minimap
+	minimap.InitMiniMap_6();
+	CurrentMiniMap = minimap.m_cMiniMap6;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+void SceneText::InitMiniMap_Level7()
+{
+	// Set New Minimap
+	minimap.InitMiniMap_7();
+	CurrentMiniMap = minimap.m_cMiniMap7;
+
+	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
+	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+	CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	CurrentMiniMap->SetDiamondAvatar(MeshBuilder::GenerateMinimapAvatar("DIAMONDAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetDiamondAvatar()->textureID = LoadTGA("Image//Goodies//diamond.tga");
+	CurrentMiniMap->SetKeyAvatar(MeshBuilder::GenerateMinimapAvatar("KEYAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
+	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+}
+
+
 void SceneText::Init()
 {
 	//Screen background
@@ -305,6 +452,11 @@ void SceneText::Init()
 	
 	rotateAngle = 0;
 
+	// === MiniMap Variables ===
+	MiniMapRendered = false;
+	OpenCloseMiniMap = 0;
+	MiniMapDelay = 0;
+
 	// === Game variables ===	
 	
 	stage = 1;
@@ -364,61 +516,31 @@ void SceneText::Init()
 
 	if (stage == 1)
 	{
-		minimap.InitMiniMap_1();
-		CurrentMiniMap = minimap.m_cMiniMap1;
-
-		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
-		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-
-
-		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
-
+		InitMiniMap_Level1();
 	}
 	else if (stage == 2)
 	{
-		minimap.InitMiniMap_2();
-		CurrentMiniMap = minimap.m_cMiniMap2;
-
-		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-
-		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+		InitMiniMap_Level2();
+	}
+	else if (stage == 3)
+	{
+		InitMiniMap_Level3();
+	}
+	else if (stage == 4)
+	{
+		InitMiniMap_Level4();
 	}
 	else if (stage == 5)
 	{
-		minimap.InitMiniMap_5();
-		CurrentMiniMap = minimap.m_cMiniMap5;
-
-		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
-		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-
-		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+		InitMiniMap_Level5();
+	}
+	else if (stage == 6)
+	{
+		InitMiniMap_Level6();
 	}
 	else if (stage == 7)
 	{
-		minimap.InitMiniMap_7();
-		CurrentMiniMap = minimap.m_cMiniMap7;
-
-		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-
-		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+		InitMiniMap_Level7();
 	}
 
 	// ========================== Initializing Map Inits ==========================
@@ -702,6 +824,7 @@ void SceneText::Update(double dt)
 	UpdateMouse();
 	UpdatePhysics(dt);
 	MainUpdates(checkPosition_X, checkPosition_Y);
+	UpdateMiniMap(dt);
 
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -1113,10 +1236,10 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Checking enemy attack status
-			if(go->attackStatus == true)
+			if(go->attackStatus == true && go->attackAnimation == false)
 			{
 				go->attackReactionTime += dt;
-				if(go->attackReactionTime >= 0.5)
+				if(go->attackReactionTime >= 0.2)
 				{
 					hero.health--;
 					go->attackReactionTime = 0;
@@ -1130,6 +1253,17 @@ void SceneText::UpdateEnemies(double dt)
 				go->attackReactionTime = 0;
 			}
 
+			//Attacking animation for enemy
+			if (go->attackAnimation == true)
+			{
+				go->attackAnimationTimer += dt;
+				if (go->attackAnimationTimer >= 1)
+				{
+					go->attackAnimationTimer = 0;
+					go->attackAnimation = false;
+				}
+			}
+
 			for(std::vector<CGoodies *>::iterator it2 = BarrelList.begin(); it2!= BarrelList.end(); ++it2)
 			{
 				CGoodies *go2 = (CGoodies *)*it2;
@@ -1140,17 +1274,6 @@ void SceneText::UpdateEnemies(double dt)
 						go->attackAnimation = true;
 						go2->active = false;
 					}
-				}
-			}
-
-			//Attacking animation for enemy
-			if(go->attackAnimation == true)
-			{
-				go->attackAnimationTimer += dt;
-				if(go->attackAnimationTimer >= 0.7)
-				{
-					go->attackAnimationTimer = 0;
-					go->attackAnimation = false;
 				}
 			}
 
@@ -1942,6 +2065,31 @@ void SceneText::UpdatePhysics(double dt)
 	}
 }
 
+void SceneText::UpdateMiniMap(double dt)
+{
+
+	MiniMapDelay += dt;
+
+	if (MiniMapDelay >= 1.5)
+	{
+		MiniMapDelay = 0;
+	}
+
+	cout << MiniMapDelay << endl;
+
+	if (Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.5)
+	{
+		MiniMapRendered = true;
+		OpenCloseMiniMap = 1;
+	}
+
+	else if (Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 1)
+	{
+		MiniMapRendered = false;
+		OpenCloseMiniMap = 0;
+	}
+}
+
 void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 {
 	//Moving from screen stage to scrollnig stage conditions
@@ -1997,16 +2145,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cScrollingMap;
 
-				// Set New Minimap
-				minimap.InitMiniMap_1();
-				CurrentMiniMap = minimap.m_cMiniMap1;
-				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+				InitMiniMap_Level2();
 			}
 
 			else if(stage == 2)
@@ -2024,32 +2163,21 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 
 				hero.ammo = 2;
 
-				// Set New Minimap
-				minimap.InitMiniMap_2();
-				CurrentMiniMap = minimap.m_cMiniMap2;
-				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+				InitMiniMap_Level3();
+			}
+
+			else if (stage == 3)
+			{
+				stage = 4;
+
+				InitMiniMap_Level4();
 			}
 
 			else if (stage == 4)
 			{
 				stage = 5;
 
-				// Set New Minimap
-				minimap.InitMiniMap_5();
-				CurrentMiniMap = minimap.m_cMiniMap5;
-				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
-				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+				InitMiniMap_Level5();
 			}
 
 			else if(stage == 5)
@@ -2075,16 +2203,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cScrollingMap3;
 
-				// Set New Minimap
-				minimap.InitMiniMap_6();
-				CurrentMiniMap = minimap.m_cMiniMap6;
-				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
-				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+				InitMiniMap_Level6();
 			}
 
 			else if(stage == 6)
@@ -2102,16 +2221,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 
 				hero.ammo = 2;
 
-				// Set New Minimap
-				minimap.InitMiniMap_7();
-				CurrentMiniMap = minimap.m_cMiniMap7;
-				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
-				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+				InitMiniMap_Level7();
 			}
 		}
 	}
@@ -2983,17 +3093,53 @@ void SceneText::RenderHUD()
 
 void SceneText::RenderMinimap()
 {
-	if (CustomMenuRendered == false)
+	if (MiniMapRendered == true)
 	{
-		// For Representing Player on Minimap
-		RenderQuadOnScreen(CurrentMiniMap->GetBackground(), 20, 13, 10, 50, false);
-		RenderQuadOnScreen(CurrentMiniMap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 50) + 0.5, (hero.gettheHeroPositiony() / 66) + 45, false);
-		RenderQuadOnScreen(CurrentMiniMap->GetBorder(), 20, 13, 10, 50, false);
-
-		for (int i = 0; i < enemyList.size(); ++i)
+		if (CustomMenuRendered == false)
 		{
-			// For Representing Enemy on Minimap
-			RenderQuadOnScreen(CurrentMiniMap->GetEnemyAvatar(), 1, 1, (enemyList[i]->GetPos_x() / 50) + 0.5, (enemyList[i]->GetPos_y() / 66) + 45, false);
+			Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+			Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+
+			// For Representing Player on Minimap
+			RenderQuadOnScreen(CurrentMiniMap->GetBackground(), 50, 33, 40, 30, false);
+			RenderQuadOnScreen(CurrentMiniMap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 20) + 15.3, (hero.gettheHeroPositiony() / 24) + 14.5, false);
+
+			for (int i = 0; i < enemyList.size(); ++i)
+			{
+				// For Representing Enemy on Minimap
+				RenderQuadOnScreen(CurrentMiniMap->GetEnemyAvatar(), 1, 1, (enemyList[i]->GetPos_x() / 20) + 15.3, (enemyList[i]->GetPos_y() / 24) + 14.5, false);
+			}
+
+			for (vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+			{
+				CGoodies *go = (CGoodies *)*it;
+				int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
+				int theGoodies_y = go->GetPos_y();
+
+				if (go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+				{
+					if (go->active == true)
+					{
+						RenderQuadOnScreen(CurrentMiniMap->GetDiamondAvatar(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
+					}
+				}
+
+				else if (go->GoodiesType == CGoodies::Goodies_Type::KEY)
+				{
+					if (go->active == true)
+					{
+						RenderQuadOnScreen(CurrentMiniMap->GetKeyAvatar(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
+					}
+				}
+
+				else if (go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+				{
+					if (go->active == true)
+					{
+						RenderQuadOnScreen(CurrentMiniMap->GetBarrelAvater(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
+					}
+				}
+			}
 		}
 	}
 }
@@ -3119,7 +3265,7 @@ void SceneText::Render()
 	RenderGoodies();
 	RenderHUD();
 	RenderCustomMenu();
-	//RenderMinimap();
+	RenderMinimap();
 
 	if(lose == true)
 	{

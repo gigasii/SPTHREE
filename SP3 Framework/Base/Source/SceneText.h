@@ -134,6 +134,15 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
+
+	//Minimap Init Functions
+	void InitMiniMap_Level1();
+	void InitMiniMap_Level2();
+	void InitMiniMap_Level3();
+	void InitMiniMap_Level4();
+	void InitMiniMap_Level5();
+	void InitMiniMap_Level6();
+	void InitMiniMap_Level7();
 	
 	//General functions to run the program
 	void RenderText(Mesh* mesh, std::string text, Color color);
@@ -157,6 +166,7 @@ public:
 	void UpdateGameOver();
 	void UpdateMouse();
 	void UpdatePhysics(double dt);
+	void UpdateMiniMap(double dt);
 	void MainUpdates(int checkPosition_X, int checkPosition_Y);
 	
 	//Game project functions
@@ -252,6 +262,11 @@ private:
 	int InteractHighLight;
 	bool menu;
 	string Text[2];
+
+	//Minimap Variables
+	bool MiniMapRendered;
+	int OpenCloseMiniMap;
+	float MiniMapDelay;
 
 	//Custom Menu Variables
 	bool CustomMenuRendered, CustomMenuSelected;
