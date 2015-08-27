@@ -86,7 +86,7 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
 	m_cScreenMap->LoadMap("Image//Level_1-1.csv");
-	//m_cScreenMap->LoadMap("Image//shop.csv");
+	//m_cScreenMap->LoadMap("Image//Level_Shop.csv");
 	m_cScreenMap->scroll = false;
 	setMap(m_cScreenMap, enemyList, GoodiesList, BarrelsList, goList);
 }
@@ -216,7 +216,7 @@ int CMap::getNumOfTiles_MapWidth(void)
 	return theNumOfTiles_MapWidth;
 }
 
-void CMap::setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
+void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
 {
 	int tempType;
 	CEnemy* tempEnemy;
@@ -295,42 +295,49 @@ void CMap::setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodi
 			else if(tempType == CMap::HPPOT)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HPPOT;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 
 			else if(tempType == CMap::MAXHP)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::MAXHP;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 
 			else if(tempType == CMap::SCROLL)
 			{
 				tempGoodies = new CGoodies();
-				tempGoodies->SetPos(j * m_cScreenMap->GetTileSize(), m_cScreenMap->GetTileSize() * (m_cScreenMap->GetNumOfTiles_Height() - i) -  m_cScreenMap->GetTileSize());
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
 				tempGoodies->GoodiesType = CGoodies::Goodies_Type::SCROLL;	
 				tempGoodies->tilePos.Set(j,i,0);
-				//BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if(tempType >= CMap::ENEMY_50)
+			else if(tempType == CMap::HOLE)
+			{
+				tempGoodies = new CGoodies();
+				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
+				tempGoodies->active = true;
+				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HOLE;	
+				tempGoodies->tilePos.Set(j,i,0);
+				GoodiesList.push_back(tempGoodies);
+			}
+
+			else if(tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
 				tempEnemy->SetPos_x(j * currMap->GetTileSize());
-				tempEnemy->SetPos_y(currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) -  currMap->GetTileSize());
+				tempEnemy->SetPos_y(currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempEnemy->active = true;
 				tempEnemy->ID = tempType;
 				tempEnemy->health = 2;
@@ -346,7 +353,28 @@ void CMap::setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodi
 				go->ID = tempType;
 			}
 
-			else if ((tempType >= 29 && tempType <= 42) || (tempType >= 44 && tempType <= 49))
+			else if(tempType >= CMap::ENEMYAMOURED_80)
+			{
+				tempEnemy = new CEnemy();
+				tempEnemy->ChangeStrategy(NULL,false);
+				tempEnemy->SetPos_x(j * currMap->GetTileSize());
+				tempEnemy->SetPos_y(currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
+				tempEnemy->active = true;
+				tempEnemy->ID = tempType;
+				tempEnemy->health = 3;
+				tempEnemy->setWayPoints(currMap);
+				tempEnemy->eneCurrTile = Vector3(j,i,0);	
+				enemyList.push_back(tempEnemy);
+
+				GameObject* go = new GameObject(GameObject::GO_PILLAR);
+				goList.push_back(go);
+				go->active = true;
+				go->pos.Set(tempEnemy->GetPos_x(),tempEnemy->GetPos_y(),0);
+				go->scale.Set(16,16,16);
+				go->ID = tempType;
+			}
+
+			else if((tempType >= 29 && tempType <= 42) || (tempType >= 44 && tempType <= 49))
 			{
 				GameObject* go = new GameObject(GameObject::GO_WALL);
 				goList.push_back(go);
@@ -357,7 +385,7 @@ void CMap::setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodi
 				go->ID = tempType;
 			}
 
-			else if (tempType == CMap::DOOR)
+			else if(tempType == CMap::DOOR)
 			{
 				GameObject* go = new GameObject(GameObject::GO_WALL);
 				goList.push_back(go);

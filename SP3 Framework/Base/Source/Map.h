@@ -112,6 +112,5 @@ private:
 	int theNumOfTiles_MapHeight;		//Number of tiles in the map's height
 
 	bool LoadFile(const string mapName);
-
-	void setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 };
