@@ -100,6 +100,15 @@ void CMap::InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodi
 	setMap(m_cScrollingMap, enemyList, GoodiesList, BarrelsList, goList);
 }
 
+void CMap::InitScreenMap2(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
+{
+	m_cScreenMap2 = new CMap();
+	m_cScreenMap2->Init(800, 1024, 25, 32, 800, 1024, 32);
+	m_cScreenMap2->LoadMap("Image//Level_2-1.csv");
+	m_cScreenMap2->scroll = false;
+	setMap(m_cScreenMap2, enemyList, GoodiesList, BarrelsList, goList);
+}
+
 void CMap::InitScreenMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
 {
 	m_cScreenMap3 = new CMap();
@@ -108,6 +117,16 @@ void CMap::InitScreenMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies
 	m_cScreenMap3->scroll = false;
 	setMap(m_cScreenMap3, enemyList, GoodiesList, BarrelsList, goList);
 }
+
+void CMap::InitScrollingMap2(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
+{
+	m_cScrollingMap2 = new CMap();
+	m_cScrollingMap2->Init(800, 1024, 25, 32, 800, 2048, 32);
+	m_cScrollingMap2->LoadMap("Image//Level_2-2.csv");
+	m_cScrollingMap2->scroll = true;	
+	setMap(m_cScrollingMap2, enemyList, GoodiesList, BarrelsList, goList);
+}
+
 
 void CMap::InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
 {

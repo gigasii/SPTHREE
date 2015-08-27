@@ -64,6 +64,21 @@ public:
 		ENEMYAMOURED_84 = 84, WAYPOINT_129 = -129, WAYPOINT_130 = -130, WAYPOINT_131 = -131,
 		ENEMYAMOURED_85 = 85, WAYPOINT_132 = -132, WAYPOINT_133 = -133, WAYPOINT_134 = -134,
 
+		//WEI HENG'S ENEMIES
+		ENEMY_70 = 70, WAYPOINT_81 = -81, WAYPOINT_82 = -82, WAYPOINT_83 = -83, WAYPOINT_84 = -84,
+		ENEMY_71 = 71, WAYPOINT_85 = -85, WAYPOINT_86 = -86, WAYPOINT_87 = -87, WAYPOINT_88 = -88,
+		ENEMY_72 = 72, 
+		
+		ENEMY_73 = 73, WAYPOINT_89 = -89, WAYPOINT_90 = -90, 
+		
+		ENEMY_74 = 74, WAYPOINT_91 = -91, WAYPOINT_92 = -92,
+
+		ENEMY_75 = 75, WAYPOINT_93 = -93, WAYPOINT_94 = -94,
+
+		ENEMY_76 = 76, WAYPOINT_95 = -95, WAYPOINT_96 = -96,
+
+		ENEMY_77 = 77, WAYPOINT_97 = -97, WAYPOINT_98 = -98,
+
 		TILE_TOTAL
 	};
 
@@ -77,8 +92,10 @@ public:
 	int getNumOfTiles_MapWidth(void);		//Get the number of tiles for width of the map
 
 	void InitScreenMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
-	void InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void InitScreenMap2(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitScreenMap3(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void InitScrollingMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void InitScrollingMap2(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
 	
@@ -95,8 +112,10 @@ public:
 
 	//Map Inits
 	CMap *m_cScreenMap;
+	CMap *m_cScreenMap2;
 	CMap *m_cScreenMap3;
 	CMap *m_cScrollingMap;
+	CMap *m_cScrollingMap2;
 	CMap *m_cScrollingMap3;
 	CMap *m_cBossMap;
 

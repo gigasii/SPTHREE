@@ -460,7 +460,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 5;
+	stage = 3;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -556,6 +556,18 @@ void SceneText::Init()
 	{
 		map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
 		CurrentMap = map.m_cScrollingMap;
+	}
+
+	else if (stage == 3)
+	{
+		map.InitScreenMap2(enemyList, GoodiesList, BarrelList, m_goList);
+		CurrentMap = map.m_cScreenMap2;
+	}
+
+	else if(stage == 4)
+	{
+		map.InitScrollingMap2(enemyList, GoodiesList, BarrelList, m_goList);
+		CurrentMap = map.m_cScrollingMap2;
 	}
 
 	else if(stage == 5)
@@ -2174,12 +2186,40 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 
 				hero.ammo = 2;
 
+				//Set new map
+				map.InitScreenMap2(enemyList, GoodiesList, BarrelList, m_goList);
+				CurrentMap = map.m_cScreenMap2;
+
+
 				InitMiniMap_Level3();
 			}
 
 			else if (stage == 3)
 			{
 				stage = 4;
+
+				hero.SetKeyAcquired(false);	
+				hero.SetdoorOpened(false);
+				stage = 4;
+				hero.settheHeroPositionx(64);
+				hero.settheHeroPositiony(128);
+				hero.heroCurrTile.x = 2;
+				hero.heroCurrTile.y = 20;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 2;
+
+				//Set new map
+				map.InitScrollingMap2(enemyList, GoodiesList, BarrelList, m_goList);
+				CurrentMap = map.m_cScrollingMap2;
 
 				InitMiniMap_Level4();
 			}
