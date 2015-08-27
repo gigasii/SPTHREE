@@ -16,9 +16,12 @@ CMinimap::CMinimap()
 	, m_cMiniMap5(NULL)
 	, m_cMiniMap6(NULL)
 	, m_cMiniMap7(NULL)
+	, m_cMinimap_EnemyAvatar(NULL)
+	, m_cMinimap_DiamondAvatar(NULL)
+	, m_cMinimap_KeyAvatar(NULL)
+	, m_cMinimap_BarrelAvatar(NULL)
 {
 }
-
 
 CMinimap::~CMinimap(void)
 {
@@ -66,6 +69,7 @@ CMinimap::~CMinimap(void)
 }
 
 // ========================== Initializing MiniMap Inits ==========================
+
 void CMinimap::InitMiniMap_1()
 {
 	m_cMiniMap1 = new CMinimap();
@@ -101,9 +105,8 @@ void CMinimap::InitMiniMap_7()
 	m_cMiniMap7 = new CMinimap();
 }
 
-
-
 // ========================== Set Functions ==========================
+
 bool CMinimap::SetBackground(Mesh* aBackground)			// Set the Background Mesh to this Class
 {
 	if (aBackground != NULL)
@@ -146,6 +149,39 @@ bool CMinimap::SetEnemyAvatar(Mesh* anEnemyAvatar)
 	return false;
 }
 
+bool CMinimap::SetKeyAvatar(Mesh* aKeyAvatar)
+{
+	if (aKeyAvatar != NULL)
+	{
+		m_cMinimap_KeyAvatar = aKeyAvatar;
+		return true;
+	}
+
+	return false;
+}
+
+bool CMinimap::SetBarrelAvatar(Mesh* BarrelAvatar)
+{
+	if (BarrelAvatar != NULL)
+	{
+		m_cMinimap_BarrelAvatar = BarrelAvatar;
+		return true;
+	}
+
+	return false;
+}
+
+bool CMinimap::SetDiamondAvatar(Mesh* DiamondAvatar)
+{
+	if (DiamondAvatar != NULL)
+	{
+		m_cMinimap_DiamondAvatar = DiamondAvatar;
+		return true;
+	}
+
+	return false;
+}
+
 bool CMinimap::SetAngle(const int angle)
 {
 	this->angle = angle;
@@ -166,8 +202,8 @@ bool CMinimap::SetSize(const int size_x, const int size_y)
 	return true;
 }
 
-
 // ========================== Get Functions ==========================
+
 Mesh* CMinimap::GetBackground(void)
 {
 	return m_cMinimap_Background;
@@ -183,9 +219,24 @@ Mesh* CMinimap::GetAvatar(void)
 	return m_cMinimap_Avatar;
 }
 
+Mesh* CMinimap::GetDiamondAvatar(void)
+{
+	return m_cMinimap_DiamondAvatar;
+}
+
 Mesh* CMinimap::GetEnemyAvatar(void)
 {
 	return m_cMinimap_EnemyAvatar;
+}
+
+Mesh* CMinimap::GetBarrelAvater(void)
+{
+	return m_cMinimap_BarrelAvatar;
+}
+
+Mesh* CMinimap::GetKeyAvatar(void)
+{
+	return m_cMinimap_KeyAvatar;
 }
 
 int CMinimap::GetAngle(void)

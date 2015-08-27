@@ -13,6 +13,7 @@ CEnemy::CEnemy()
 	, eneCurrTile(0, 0, 0)
 	, direction(0, 0, 0)
 	, enemyTileID(0)
+	, stunTileID(0)
 	, attackStatus(false)
 	, attackReactionTime(0)
 	, attackAnimation(false)
@@ -248,13 +249,25 @@ void CEnemy::setWayPoints(CMap* map)
 		break;
 
 		//GIGGS' ENEMIES
+		case CMap::ENEMY_57:
+		path.setWayPoints(map, 2, CMap::WAYPOINT_29, CMap::WAYPOINT_30);
+		break;
+		
+		case CMap::ENEMY_58:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_31, CMap::WAYPOINT_32, CMap::WAYPOINT_33, CMap::WAYPOINT_34);
+		break;
+
+		case CMap::ENEMY_59:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_35, CMap::WAYPOINT_36, CMap::WAYPOINT_37, CMap::WAYPOINT_38);
+		break;
+
 		case CMap::ENEMYAMOURED_80:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_121, CMap::WAYPOINT_122);
 		break;
 
-		case CMap::ENEMYAMOURED_81:
+		/*case CMap::ENEMYAMOURED_81:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_123, CMap::WAYPOINT_124);
-		break;
+		break;*/
 
 		case CMap::ENEMYAMOURED_82:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_125, CMap::WAYPOINT_126);
@@ -270,14 +283,6 @@ void CEnemy::setWayPoints(CMap* map)
 
 		case CMap::ENEMYAMOURED_85:
 		path.setWayPoints(map, 3, CMap::WAYPOINT_132, CMap::WAYPOINT_133, CMap::WAYPOINT_134);
-		break;
-
-		case CMap::ENEMYAMOURED_86:
-		path.setWayPoints(map, 4, CMap::WAYPOINT_135, CMap::WAYPOINT_136, CMap::WAYPOINT_137, CMap::WAYPOINT_138);
-		break;
-
-		case CMap::ENEMYAMOURED_87:
-		path.setWayPoints(map, 4, CMap::WAYPOINT_139, CMap::WAYPOINT_140, CMap::WAYPOINT_141, CMap::WAYPOINT_142);
 		break;
 	}
 }
