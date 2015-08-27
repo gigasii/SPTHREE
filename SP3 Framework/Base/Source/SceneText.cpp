@@ -23,18 +23,13 @@ SceneText::SceneText()
 	, RenderDim(false)
 	, onHero(false)
 	, lockMovement(false)
-	, m_cMinimap(NULL)
+	, CurrentMiniMap(NULL)
 {
 	bReset = false;
 }
 
 SceneText::~SceneText()
 {
-	if(m_cMinimap)
-	{
-		delete m_cMinimap;
-		m_cMinimap = NULL;
-	}
 }
 
 // =============================== INITIALIZING OF VARIABLES/FUNCTIONS ===============================
@@ -217,6 +212,9 @@ void SceneText::Init()
 	meshList[GEO_EXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_EXCLAMATIONMARK]->textureID = LoadTGA("Image//Enemy//exclamationmark.tga");
 
+	meshList[GEO_STUNSHEET] = MeshBuilder::GenerateSprites("GEO_STUNSHEET", 3, 3);
+	meshList[GEO_STUNSHEET]->textureID = LoadTGA("Image//Enemy//stun.tga");
+
 	// ================================= Load Boss =================================
 
 	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
@@ -269,6 +267,9 @@ void SceneText::Init()
 	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
 
+	meshList[GEO_HUD_SLINGSHOT] = MeshBuilder::Generate2DMesh("GEO_HUD_SLINGSHOT", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HUD_SLINGSHOT]->textureID = LoadTGA("Image//HUD//slingshot.tga");
+
 	meshList[GEO_DETECTIONEYE] = MeshBuilder::Generate2DMesh("GEO_DETECTIONEYE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_DETECTIONEYE]->textureID = LoadTGA("Image//HUD//detectioneye.tga");
 
@@ -306,7 +307,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 7;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -361,24 +362,63 @@ void SceneText::Init()
 
 	// ================================= Minimap =================================
 
-	if(stage == 1)
+	if (stage == 1)
 	{
-		m_cMinimap = new CMinimap();
-		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-		m_cMinimap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-		m_cMinimap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+		minimap.InitMiniMap_1();
+		CurrentMiniMap = minimap.m_cMiniMap1;
+
+		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
+		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+
+
+		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+
 	}
-	
-	else if(stage == 7)
+	else if (stage == 2)
 	{
-		m_cMinimap = new CMinimap();
-		m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-		m_cMinimap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
-		m_cMinimap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
-		m_cMinimap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
-		m_cMinimap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+		minimap.InitMiniMap_2();
+		CurrentMiniMap = minimap.m_cMiniMap2;
+
+		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+
+		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	}
+	else if (stage == 5)
+	{
+		minimap.InitMiniMap_5();
+		CurrentMiniMap = minimap.m_cMiniMap5;
+
+		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
+		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+
+		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+	}
+	else if (stage == 7)
+	{
+		minimap.InitMiniMap_7();
+		CurrentMiniMap = minimap.m_cMiniMap7;
+
+		CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+		CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+		CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+		CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+
+		CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+		CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
 	}
 
 	// ========================== Initializing Map Inits ==========================
@@ -596,7 +636,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 			Vector3 v = u - 2 * u.Dot(N) * N;
 
 			if (go2->ID == CMap::BARREL || go2->ID >= CMap::ENEMY_50)
-				go->vel = v * 0.6;
+				go->vel = v * 0.5;
 			else
 				go->vel = v * 0.85;
 		}
@@ -982,7 +1022,25 @@ void SceneText::UpdateHero(double dt)
 		{
 			hero.heroTransformID = 0;
 			hero.transform = false;
-			hero.invisibleStatus = true;
+
+			if(Blue_Selected == true && hero.invisibleTimer < 15)
+			{
+				hero.invisibleStatus = true;
+			}
+
+			else if(Red_Selected == true && hero.invisibleTimer < 15)
+			{
+				hero.invisibleStatus = false;
+				hero.invisibleTimer = 0;
+			}
+
+			if(hero.invisibleTimer >= 15)
+			{
+				hero.invisibleStatus = false;
+				hero.invisibleTimer = 0;
+				Red_Selected = true;
+				Blue_Selected = false;
+			}
 		}
 	}
 
@@ -992,10 +1050,7 @@ void SceneText::UpdateHero(double dt)
 		hero.invisibleTimer += dt;
 		if(hero.invisibleTimer >= 15)
 		{
-			hero.invisibleStatus = false;
-			hero.invisibleTimer = 0;
-			Red_Selected = true;
-			Blue_Selected = false;
+			hero.transform = true;
 		}
 	}
 
@@ -1026,8 +1081,8 @@ void SceneText::UpdateEnemies(double dt)
 			
 			else
 			{
-				go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
-
+				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus);
+				
 				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
@@ -1037,12 +1092,23 @@ void SceneText::UpdateEnemies(double dt)
 			if(go->stunned)
 			{
 				go->stunTimer += dt;
+				go->stunTileID += 0.2;
+				if(go->stunTileID >= 4)
+				{
+					go->stunTileID = 0;
+				}
 			}
 
-			if (go->stunTimer >= 2)
+			if(go->stunTimer >= 3)
 			{
 				go->stunned = false;
 				go->stunTimer = 0;
+				go->stunTileID = 0;
+				go->theStrategy->isAttacking = true;
+			}
+
+			if (go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
+			{
 				go->theStrategy->isAttacking = true;
 			}
 
@@ -1428,7 +1494,7 @@ void SceneText::UpdateMouse()
 	if(CustomMenuRendered == false)
 	{
 		static bool bLButtonState = false;
-		if(!bLButtonState && Application::IsMousePressed(0))
+		if(!bLButtonState && Application::IsMousePressed(0) && hero.invisibleStatus == false)
 		{
 			bLButtonState = true;
 			//std::cout << "LBUTTON DOWN" << std::endl;
@@ -1441,7 +1507,7 @@ void SceneText::UpdateMouse()
 			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		}
 
-		else if(bLButtonState && !Application::IsMousePressed(0))
+		else if(bLButtonState && !Application::IsMousePressed(0) && hero.invisibleStatus == false)
 		{
 			bLButtonState = false;
 			//std::cout << "LBUTTON UP" << std::endl;
@@ -1455,10 +1521,10 @@ void SceneText::UpdateMouse()
 		}
 
 		static bool bRButtonState = false;
-		if(!bRButtonState && Application::IsMousePressed(1))
+		if(!bRButtonState && Application::IsMousePressed(1) && hero.invisibleStatus == false)
 		{
 			bRButtonState = true;
-			std::cout << "RBUTTON DOWN" << std::endl;
+			//std::cout << "RBUTTON DOWN" << std::endl;
 
 			double x, y;
 			Application::GetCursorPos(&x, &y);
@@ -1475,6 +1541,8 @@ void SceneText::UpdateMouse()
 			if(Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
 			{
 				onHero = true;
+				hero.rotation = hero.direction;
+
 				for(int i = 0; i < 10; ++i)
 				{
 					GameObject *go = FetchGO();
@@ -1499,17 +1567,16 @@ void SceneText::UpdateMouse()
 			}
 		}
 
-		else if(bRButtonState && !Application::IsMousePressed(1))
+		else if(bRButtonState && !Application::IsMousePressed(1) && hero.invisibleStatus == false)
 		{
 			bRButtonState = false;
-			std::cout << "RBUTTON UP" << std::endl;
+			//std::cout << "RBUTTON UP" << std::endl;
 
 			if(onHero == true)
 			{
 				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
-
 					if(go->active == false)
 					{
 						go->active = true;
@@ -1540,7 +1607,6 @@ void SceneText::UpdateMouse()
 				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
-
 					if(go->active && go->type == GameObject::GO_AIM)
 					{
 						go->isSet = false;
@@ -1561,10 +1627,36 @@ void SceneText::UpdateMouse()
 			float posX = x / w * m_worldWidth;
 			float posY = (h - y) / h * m_worldHeight;
 
+			if(onHero == true)
+			{
+				Vector3 posXY (posX,posY,0);
+				Vector3 mousePos = -Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + posXY;
+
+				float angle;
+
+				angle = Math::RadianToDegree(atan2((hero.rotation.Cross(mousePos)).Length(),hero.rotation.Dot(mousePos)));
+
+				Vector3 pointB = Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + hero.rotation;
+
+				if((pointB.x - hero.gettheHeroPositionx()) * (posY - hero.gettheHeroPositiony()) - 
+					(pointB.y - hero.gettheHeroPositiony()) * (posX - hero.gettheHeroPositionx()) > 0)
+				{
+					Mtx44 rot;
+					rot.SetToRotation(angle,0,0,1);
+					hero.rotation = rot * hero.rotation;
+				}
+				
+				else
+				{
+					Mtx44 rot;
+					rot.SetToRotation(-angle,0,0,1);
+					hero.rotation = rot * hero.rotation;
+				}
+			}
+
 			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
 				GameObject *go = (GameObject *)*it;
-
 				if(go->active && go->type == GameObject::GO_AIM)
 				{
 					if(go->isSet == false)
@@ -1613,6 +1705,7 @@ void SceneText::UpdateMouse()
 
 	// =================================== For Left Click Interaction ===================================
 	
+	//Selecting options on menu
 	else
 	{
 		static bool bLButtonState = false;
@@ -1635,8 +1728,7 @@ void SceneText::UpdateMouse()
 					
 					Red_Selected = true;
 					Blue_Selected = false;
-					hero.invisibleStatus = false;
-					hero.invisibleTimer = 0;
+					hero.transform = true;
 				}
 				
 				//For Blue Hero
@@ -1685,6 +1777,7 @@ void SceneText::UpdateMouse()
 			int h = Application::GetWindowHeight2();
 		}
 
+		//Hover over image to make it big
 		else if((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
 		{
 			bLButtonState = true;
@@ -1797,8 +1890,15 @@ void SceneText::UpdatePhysics(double dt)
 									{
 										collisionResponse(go, go2);	
 
-										if(go->timer < 3)
+										if(go->timer < 3 && go4->ID < 80 && go4->stunned == false)
+										{
 											go4->stunned = true;
+											go4->isHit = true;
+											go4->health--;
+										}
+
+										else if (go4->ID >= 80)
+											go4->isHit = true;
 									}
 								}
 							}
@@ -1891,11 +1991,22 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
 
 				//Set new map
 				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cScrollingMap;
+
+				// Set New Minimap
+				minimap.InitMiniMap_1();
+				CurrentMiniMap = minimap.m_cMiniMap1;
+				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
 			}
 
 			else if(stage == 2)
@@ -1911,7 +2022,34 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
+
+				// Set New Minimap
+				minimap.InitMiniMap_2();
+				CurrentMiniMap = minimap.m_cMiniMap2;
+				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
+			}
+
+			else if (stage == 4)
+			{
+				stage = 5;
+
+				// Set New Minimap
+				minimap.InitMiniMap_5();
+				CurrentMiniMap = minimap.m_cMiniMap5;
+				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level5_minimap.tga");
+				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
 			}
 
 			else if(stage == 5)
@@ -1931,11 +2069,22 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
 
 				//Set new map
 				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cScrollingMap3;
+
+				// Set New Minimap
+				minimap.InitMiniMap_6();
+				CurrentMiniMap = minimap.m_cMiniMap6;
+				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
+				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
 			}
 
 			else if(stage == 6)
@@ -1951,7 +2100,18 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 3;
+				hero.ammo = 2;
+
+				// Set New Minimap
+				minimap.InitMiniMap_7();
+				CurrentMiniMap = minimap.m_cMiniMap7;
+				CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+				CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
+				CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
+				CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
+				CurrentMiniMap->SetEnemyAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
+				CurrentMiniMap->GetEnemyAvatar()->textureID = LoadTGA("Image//Minimap//enemy.tga");
 			}
 		}
 	}
@@ -2369,6 +2529,18 @@ void SceneText::RenderText()
 
 void SceneText::RenderHero()
 {
+	//Slingshot rotation angle
+	float angle = Math::RadianToDegree(atan2(hero.rotation.y, hero.rotation.x));
+	if(angle > 180)
+	{
+		angle -= 180;
+	}
+	
+	else
+	{
+		angle += 180;
+	}
+
 	//For dislaying Hero's Health
 	if(hero.transform == false)
 	{
@@ -2390,34 +2562,42 @@ void SceneText::RenderHero()
 
 	if(Red_Selected == true || Temp_Red_Selected == true || hero.invisibleTimer >= 10 && hero.invisibleTimer <= 11 || hero.invisibleTimer >= 13 && hero.invisibleTimer <= 14)
 	{
-		//Attacking
-		if(hero.GetAttackStatus() == true)
+		if(hero.transform == true)
 		{
-			if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
+			RenderSprites(meshList[GEO_TRANSFORMATIONSHEET], hero.heroTransformID, 96, hero.gettheHeroPositionx() - 32, hero.gettheHeroPositiony() - 16);
 		}
 
-		//Walking
 		else
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			//Attacking
+			if(hero.GetAttackStatus() == true)
+			{
+				if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+
+				else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+
+				else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+
+				else
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+			}
+
+			//Walking
+			else
+			{
+				RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
 		}
 	}
 
@@ -2428,7 +2608,7 @@ void SceneText::RenderHero()
 			RenderSprites(meshList[GEO_TRANSFORMATIONSHEET], hero.heroTransformID, 96, hero.gettheHeroPositionx() - 32, hero.gettheHeroPositiony() - 16);
 		}
 
-		else if(hero.transform == false)
+		else
 		{
 			RenderSprites(meshList[GEO_TILEHEROSHEET2], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
@@ -2464,11 +2644,17 @@ void SceneText::RenderEnemies()
 		Vector3 theEnemyPos (theEnemy_x,theEnemy_y,0);
 
 		if(go->active)	
-		{	
+		{
+			//Stunned
+			if(go->stunned == true)
+			{
+				RenderSprites(meshList[GEO_STUNSHEET], go->stunTileID, 48, theEnemy_x - 10, theEnemy_y + 18);
+			}
+
 			//Detection radius
 			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
 			{
-				if(go->theStrategy->CurrentState == CStrategy::PATROL)
+				if(go->theStrategy->CurrentState == CStrategy::PATROL && go->stunned == false)
 				{
 					Vector3 go2 = (Vector3)*it2;
 					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
@@ -2755,17 +2941,13 @@ void SceneText::RenderHUD()
 {
 	//For indicating number of diamonds collected
 	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
-
 	std::ostringstream ss1;
-	ss1.precision(5);
 	ss1 << "x " << diamondCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
 
 	//For indicating number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56.5, false);
-
 	std::ostringstream ss2;
-	ss2.precision(5);
 	ss2 << "x " << keyCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
 
@@ -2775,15 +2957,21 @@ void SceneText::RenderHUD()
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
 
+	//For indicating number of stones left
+	RenderQuadOnScreen(meshList[GEO_HUD_SLINGSHOT], 3.6, 3, 23, 56.2, false);
+	std::ostringstream ss4;
+	ss4 << "x " << hero.ammo;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0.54, 0.27, 0.07), 2.3, 27, 57);
+
 	//Detection status
 	if(hero.hiding == false)
 	{
-		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.9, 25, 55.5, false);
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.9, 35, 55.5, false);
 	}
 
 	else
 	{
-		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.9, 25, 55.5, false);
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.9, 35, 55.5, false);
 	}
 
 	//Render grey screen
@@ -2795,9 +2983,19 @@ void SceneText::RenderHUD()
 
 void SceneText::RenderMinimap()
 {
-	RenderQuadOnScreen(m_cMinimap->GetBackground(), 20, 13, 10, 50, false);
-	RenderQuadOnScreen(m_cMinimap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 48), (hero.gettheHeroPositiony() / 64) + 44, false);
-	RenderQuadOnScreen(m_cMinimap->GetBorder(), 20, 13, 10, 50, false);
+	if (CustomMenuRendered == false)
+	{
+		// For Representing Player on Minimap
+		RenderQuadOnScreen(CurrentMiniMap->GetBackground(), 20, 13, 10, 50, false);
+		RenderQuadOnScreen(CurrentMiniMap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 50) + 0.5, (hero.gettheHeroPositiony() / 66) + 45, false);
+		RenderQuadOnScreen(CurrentMiniMap->GetBorder(), 20, 13, 10, 50, false);
+
+		for (int i = 0; i < enemyList.size(); ++i)
+		{
+			// For Representing Enemy on Minimap
+			RenderQuadOnScreen(CurrentMiniMap->GetEnemyAvatar(), 1, 1, (enemyList[i]->GetPos_x() / 50) + 0.5, (enemyList[i]->GetPos_y() / 66) + 45, false);
+		}
+	}
 }
 
 // ================================== RENDERING MENUS ==================================
@@ -2864,12 +3062,27 @@ void SceneText::RenderCustomMenu()
 {
 	if(CustomMenuRendered == true)
 	{
-		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 82, 62, 40, 30, false);
+		RenderQuadOnScreen(meshList[GEO_CUSTOM_MENU], 80, 60, 40, 30, false);
 
 		RenderQuadOnScreen(meshList[GEO_HERO_RED], Custom_HeroSize_Red, Custom_HeroSize_Red, 20, 30, false);
 		RenderQuadOnScreen(meshList[GEO_HERO_BLUE], Custom_HeroSize_Blue, Custom_HeroSize_Blue, 60, 30, false);
-	}
 
+		if (Custom_HeroSize_Blue == 30)
+		{
+			std::ostringstream ss1;
+			ss1.precision(5);
+			ss1 << "STEALTH";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(1, 1, 0), 2.3, 55, 11);
+		}
+
+		else if (Custom_HeroSize_Red == 30)
+		{
+			std::ostringstream ss2;
+			ss2.precision(5);
+			ss2 << "UNSTEALTH";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 13, 11);
+		}
+	}
 }
 
 // ================================== RENDER & EXIT ==================================
@@ -2886,12 +3099,7 @@ void SceneText::Render()
 	RenderTileMap();
 	RenderBoss();
 	RenderEnemies();
-	RenderHero();
-	RenderGoodies();
 	RenderText();
-	RenderHUD();
-	RenderCustomMenu();
-	//RenderMinimap();
 
 	if(m_ghost->active)
 	{
@@ -2906,6 +3114,12 @@ void SceneText::Render()
 			RenderGO(go);
 		}
 	}
+
+	RenderHero();
+	RenderGoodies();
+	RenderHUD();
+	RenderCustomMenu();
+	//RenderMinimap();
 
 	if(lose == true)
 	{

@@ -47,6 +47,9 @@ public:
 	int NoOfScroll;
 	int ammo;
 
+	//Slingshot rotation
+	Vector3 rotation;
+
 	//Set the position x of the player
 	void settheHeroPositionx(int theHeroPositionx_);
 	//Get the position x of the player

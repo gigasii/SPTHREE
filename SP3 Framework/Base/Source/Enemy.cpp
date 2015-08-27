@@ -13,6 +13,7 @@ CEnemy::CEnemy()
 	, eneCurrTile(0, 0, 0)
 	, direction(0, 0, 0)
 	, enemyTileID(0)
+	, stunTileID(0)
 	, attackStatus(false)
 	, attackReactionTime(0)
 	, attackAnimation(false)
@@ -20,6 +21,7 @@ CEnemy::CEnemy()
 	, stunned (false)
 	, routeCounter(0)
 	, routeCounter2(0)
+	, isHit(false)
 {
 }
 
@@ -99,11 +101,11 @@ bool CEnemy::GetAnimationFlip()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList)
+void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2);
+		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2, heroInvis, isHit);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 

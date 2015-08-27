@@ -86,6 +86,7 @@ class SceneText : public Scene
 		GEO_TILEENEMYSHEET,
 		GEO_TILEENEMYSHEET2,
 		GEO_EXCLAMATIONMARK,
+		GEO_STUNSHEET,
 
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
@@ -109,10 +110,11 @@ class SceneText : public Scene
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
+		GEO_HUD_SLINGSHOT,
 		GEO_DETECTIONEYE,
 		GEO_DETECTIONEYE2,
 		GEO_DIM,
-
+		
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
@@ -202,10 +204,14 @@ private:
 	Light lights[2];
 	Hero hero;
 	CMap map;
-	
+	CMinimap minimap;
+
 	//current map/map handler
 	CMap *CurrentMap;
 	
+	// Current Minimap Handler
+	CMinimap *CurrentMiniMap;
+
 	//Boss handler
 	CBoss *BossPointer;
 
@@ -262,9 +268,6 @@ private:
 	//Storing Value
 	int a, b;
 	GameObject *m_ghost;
-
-	// For Minimap
-	CMinimap* m_cMinimap;
 
 	//Auditing
 	float m1, m2;

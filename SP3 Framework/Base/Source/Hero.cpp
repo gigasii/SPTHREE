@@ -26,9 +26,10 @@ Hero::Hero()
 	, transform(false)
 	, invisibleStatus(false)
 	, invisibleTimer(0)
-	, ammo(3)
+	, ammo(2)
 	, full_health(4)
 	, NoOfScroll(0)
+	, rotation (0,-1,0)
 {
 }
 
