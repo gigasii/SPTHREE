@@ -109,10 +109,11 @@ class SceneText : public Scene
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
+		GEO_HUD_SLINGSHOT,
 		GEO_DETECTIONEYE,
 		GEO_DETECTIONEYE2,
 		GEO_DIM,
-
+		
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,

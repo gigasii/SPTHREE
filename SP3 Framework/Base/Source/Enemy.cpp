@@ -99,7 +99,7 @@ bool CEnemy::GetAnimationFlip()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList)
+void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList)
 {
 	if(theStrategy != NULL)
 	{

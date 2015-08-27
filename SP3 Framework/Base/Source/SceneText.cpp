@@ -269,6 +269,9 @@ void SceneText::Init()
 	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
 
+	meshList[GEO_HUD_SLINGSHOT] = MeshBuilder::Generate2DMesh("GEO_HUD_SLINGSHOT", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HUD_SLINGSHOT]->textureID = LoadTGA("Image//HUD//slingshot.tga");
+
 	meshList[GEO_DETECTIONEYE] = MeshBuilder::Generate2DMesh("GEO_DETECTIONEYE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_DETECTIONEYE]->textureID = LoadTGA("Image//HUD//detectioneye.tga");
 
@@ -306,7 +309,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 7;
+	stage = 5;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -982,7 +985,17 @@ void SceneText::UpdateHero(double dt)
 		{
 			hero.heroTransformID = 0;
 			hero.transform = false;
-			hero.invisibleStatus = true;
+
+			if(Blue_Selected == true)
+			{
+				hero.invisibleStatus = true;
+			}
+
+			else if(Red_Selected == true)
+			{
+				hero.invisibleStatus = false;
+				hero.invisibleTimer = 0;
+			}
 		}
 	}
 
@@ -1027,7 +1040,6 @@ void SceneText::UpdateEnemies(double dt)
 			else
 			{
 				go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
-
 				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
@@ -1039,7 +1051,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer += dt;
 			}
 
-			if (go->stunTimer >= 2)
+			if(go->stunTimer >= 2)
 			{
 				go->stunned = false;
 				go->stunTimer = 0;
@@ -1458,7 +1470,7 @@ void SceneText::UpdateMouse()
 		if(!bRButtonState && Application::IsMousePressed(1))
 		{
 			bRButtonState = true;
-			std::cout << "RBUTTON DOWN" << std::endl;
+			//std::cout << "RBUTTON DOWN" << std::endl;
 
 			double x, y;
 			Application::GetCursorPos(&x, &y);
@@ -1502,14 +1514,13 @@ void SceneText::UpdateMouse()
 		else if(bRButtonState && !Application::IsMousePressed(1))
 		{
 			bRButtonState = false;
-			std::cout << "RBUTTON UP" << std::endl;
+			//std::cout << "RBUTTON UP" << std::endl;
 
 			if(onHero == true)
 			{
 				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
-
 					if(go->active == false)
 					{
 						go->active = true;
@@ -1540,7 +1551,6 @@ void SceneText::UpdateMouse()
 				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
-
 					if(go->active && go->type == GameObject::GO_AIM)
 					{
 						go->isSet = false;
@@ -1564,7 +1574,6 @@ void SceneText::UpdateMouse()
 			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
 				GameObject *go = (GameObject *)*it;
-
 				if(go->active && go->type == GameObject::GO_AIM)
 				{
 					if(go->isSet == false)
@@ -1613,6 +1622,7 @@ void SceneText::UpdateMouse()
 
 	// =================================== For Left Click Interaction ===================================
 	
+	//Selecting options on menu
 	else
 	{
 		static bool bLButtonState = false;
@@ -1634,9 +1644,7 @@ void SceneText::UpdateMouse()
 					cout << "HELLO RED WORLD" << endl;
 					
 					Red_Selected = true;
-					Blue_Selected = false;
-					hero.invisibleStatus = false;
-					hero.invisibleTimer = 0;
+					Blue_Selected = false;				
 				}
 				
 				//For Blue Hero
@@ -1646,8 +1654,9 @@ void SceneText::UpdateMouse()
 					
 					Red_Selected = false;
 					Blue_Selected = true;
-					hero.transform = true;
 				}
+
+				hero.transform = true;
 			}
 
 			else
@@ -1685,6 +1694,7 @@ void SceneText::UpdateMouse()
 			int h = Application::GetWindowHeight2();
 		}
 
+		//Hover over image to make it big
 		else if((!bLButtonState && !Application::IsMousePressed(0) && CustomMenuRendered == true))
 		{
 			bLButtonState = true;
@@ -2390,34 +2400,42 @@ void SceneText::RenderHero()
 
 	if(Red_Selected == true || Temp_Red_Selected == true || hero.invisibleTimer >= 10 && hero.invisibleTimer <= 11 || hero.invisibleTimer >= 13 && hero.invisibleTimer <= 14)
 	{
-		//Attacking
-		if(hero.GetAttackStatus() == true)
+		if(hero.transform == true)
 		{
-			if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
-
-			else
-			{
-				RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
-			}
+			RenderSprites(meshList[GEO_TRANSFORMATIONSHEET], hero.heroTransformID, 96, hero.gettheHeroPositionx() - 32, hero.gettheHeroPositiony() - 16);
 		}
 
-		//Walking
 		else
 		{
-			RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			//Attacking
+			if(hero.GetAttackStatus() == true)
+			{
+				if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 3, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+
+				else if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 7, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+
+				else if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 11, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+
+				else
+				{
+					RenderSprites(meshList[GEO_TILEHEROSHEET], 15, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+				}
+			}
+
+			//Walking
+			else
+			{
+				RenderSprites(meshList[GEO_TILEHEROSHEET], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
+			}
 		}
 	}
 
@@ -2428,7 +2446,7 @@ void SceneText::RenderHero()
 			RenderSprites(meshList[GEO_TRANSFORMATIONSHEET], hero.heroTransformID, 96, hero.gettheHeroPositionx() - 32, hero.gettheHeroPositiony() - 16);
 		}
 
-		else if(hero.transform == false)
+		else
 		{
 			RenderSprites(meshList[GEO_TILEHEROSHEET2], hero.heroTileID, 32, hero.gettheHeroPositionx(), hero.gettheHeroPositiony());
 		}
@@ -2755,17 +2773,13 @@ void SceneText::RenderHUD()
 {
 	//For indicating number of diamonds collected
 	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
-
 	std::ostringstream ss1;
-	ss1.precision(5);
 	ss1 << "x " << diamondCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(0, 0, 1), 2.3, 5, 57);
 
 	//For indicating number of keys collected
 	RenderQuadOnScreen(meshList[GEO_HUD_KEY], 3.4, 3, 12, 56.5, false);
-
 	std::ostringstream ss2;
-	ss2.precision(5);
 	ss2 << "x " << keyCount;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
 
@@ -2775,15 +2789,21 @@ void SceneText::RenderHUD()
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
 
+	//For indicating number of stones left
+	RenderQuadOnScreen(meshList[GEO_HUD_SLINGSHOT], 3.6, 3, 23, 56.2, false);
+	std::ostringstream ss4;
+	ss4 << "x " << hero.ammo;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0.54, 0.27, 0.07), 2.3, 27, 57);
+
 	//Detection status
 	if(hero.hiding == false)
 	{
-		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.9, 25, 55.5, false);
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.9, 35, 55.5, false);
 	}
 
 	else
 	{
-		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.9, 25, 55.5, false);
+		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE2], 4.7, 4.9, 35, 55.5, false);
 	}
 
 	//Render grey screen
