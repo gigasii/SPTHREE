@@ -305,11 +305,14 @@ void SceneText::Init()
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//c.tga");
 
-	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(0.5, 0.5, 0.5), 18, 36, 1.f);
-	
+	//meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(0.5, 0.5, 0.5), 18, 36, 1.f);
+	meshList[GEO_SPHERE] = MeshBuilder::GenerateSprites("GEO_SHURIKEN", 3, 3);
+	meshList[GEO_SPHERE]->textureID = LoadTGA("Image//shuriken.tga");
+
 	meshList[GEO_SPHERE2] = MeshBuilder::GenerateSphere("sphere2", Color(0.5, 1, 0.5), 18, 36, 1.f);
 	
-	meshList[GEO_AIM] = MeshBuilder::GenerateSphere("aim", Color(0.5, 0.5, 1), 18, 36, 1.f);
+	meshList[GEO_AIM] = MeshBuilder::GenerateQuad("GEO_AIM", Color(1, 0, 0), 3.f);
+	meshList[GEO_AIM]->textureID = LoadTGA("Image//aim.tga");
 
 	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube",Color(1, 0, 0),1.f);
 
@@ -415,8 +418,8 @@ void SceneText::Init()
 	meshList[GEO_HUD_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_HUD_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HUD_DIAMOND]->textureID = LoadTGA("Image//HUD//diamond.tga");
 
-	meshList[GEO_HUD_SLINGSHOT] = MeshBuilder::Generate2DMesh("GEO_HUD_SLINGSHOT", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_HUD_SLINGSHOT]->textureID = LoadTGA("Image//HUD//slingshot.tga");
+	meshList[GEO_HUD_SHURIKEN] = MeshBuilder::Generate2DMesh("GEO_HUD_SLINGSHOT", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HUD_SHURIKEN]->textureID = LoadTGA("Image//HUD//shurikenHUD.tga");
 
 	meshList[GEO_DETECTIONEYE] = MeshBuilder::Generate2DMesh("GEO_DETECTIONEYE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_DETECTIONEYE]->textureID = LoadTGA("Image//HUD//detectioneye.tga");
@@ -464,6 +467,7 @@ void SceneText::Init()
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
+	shurikenTileID = 0;
 
 	// === Boss's Variables and Pointers ===
 
@@ -515,31 +519,37 @@ void SceneText::Init()
 
 	// ================================= Minimap =================================
 
-	if (stage == 1)
+	if(stage == 1)
 	{
 		InitMiniMap_Level1();
 	}
-	else if (stage == 2)
+	
+	else if(stage == 2)
 	{
 		InitMiniMap_Level2();
 	}
-	else if (stage == 3)
+	
+	else if(stage == 3)
 	{
 		InitMiniMap_Level3();
 	}
-	else if (stage == 4)
+	
+	else if(stage == 4)
 	{
 		InitMiniMap_Level4();
 	}
-	else if (stage == 5)
+	
+	else if(stage == 5)
 	{
 		InitMiniMap_Level5();
 	}
-	else if (stage == 6)
+	
+	else if(stage == 6)
 	{
 		InitMiniMap_Level6();
 	}
-	else if (stage == 7)
+	
+	else if(stage == 7)
 	{
 		InitMiniMap_Level7();
 	}
@@ -627,12 +637,14 @@ void SceneText::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		if(go->timer < 3)
 		{
-			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
+			//Render2DMesh(meshList[GEO_SPHERE], false, go->scale.x, go->pos.x - CurrentMap->mapOffset_x, go->pos.y);
+			RenderSprites(meshList[GEO_SPHERE], shurikenTileID, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
 		}
 		
 		else
 		{
-			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
+			//Render2DMesh(meshList[GEO_SPHERE2], false, go->scale.x, go->pos.x - CurrentMap->mapOffset_x, go->pos.y);
+			RenderSprites(meshList[GEO_SPHERE], 0, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
 		}
 		modelStack.PopMatrix();
 		break;
@@ -652,7 +664,7 @@ void SceneText::RenderGO(GameObject *go)
 			if(go->render == true)
 			{
 				modelStack.PushMatrix();
-				Render2DMesh(meshList[GEO_AIM],false,go->scale.x,go->pos.x,go->pos.y);
+				Render2DMesh(meshList[GEO_AIM], false, go->scale.x, go->pos.x, go->pos.y);
 				modelStack.PopMatrix();
 			}
 			break;
@@ -1129,7 +1141,7 @@ void SceneText::UpdateHero(double dt)
 	if(hero.GetAttackStatus() == true)
 	{
 		attackSpeed += dt;
-		if(attackSpeed >= 0.7)
+		if(attackSpeed >= 0.5)
 		{
 			attackSpeed = 0;
 			hero.SetAttackStatus(false);
@@ -1999,6 +2011,12 @@ void SceneText::UpdatePhysics(double dt)
 				go->pos += go->vel * dt;
 				go->timer += dt;
 
+				shurikenTileID += 1;
+				if(shurikenTileID >= 5)
+				{
+					shurikenTileID = 0;
+				}
+
 				if(go->vel.Length() <= 2.f)
 				{
 					go->vel.SetZero();
@@ -2066,6 +2084,7 @@ void SceneText::UpdatePhysics(double dt)
 						go->active = false;
 						hero.ammo++;
 						go->timer = 0;
+						shurikenTileID = 0;
 					}					
 				}
 			}
@@ -3118,11 +3137,11 @@ void SceneText::RenderHUD()
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
 
-	//For indicating number of stones left
-	RenderQuadOnScreen(meshList[GEO_HUD_SLINGSHOT], 3.6, 3, 23, 56.2, false);
+	//For indicating number of shurikens left
+	RenderQuadOnScreen(meshList[GEO_HUD_SHURIKEN], 3.9, 3, 22, 56.6, false);
 	std::ostringstream ss4;
 	ss4 << "x " << hero.ammo;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0.54, 0.27, 0.07), 2.3, 27, 57);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0, 0, 0), 2.3, 26.5, 57);
 
 	//Detection status
 	if(hero.hiding == false)
