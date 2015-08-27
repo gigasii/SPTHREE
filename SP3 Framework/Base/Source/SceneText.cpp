@@ -180,7 +180,6 @@ void SceneText::InitMiniMap_Level7()
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
 }
 
-
 void SceneText::Init()
 {
 	//Screen background
@@ -307,7 +306,9 @@ void SceneText::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//c.tga");
 
 	meshList[GEO_SPHERE] = MeshBuilder::GenerateSphere("sphere", Color(0.5, 0.5, 0.5), 18, 36, 1.f);
+	
 	meshList[GEO_SPHERE2] = MeshBuilder::GenerateSphere("sphere2", Color(0.5, 1, 0.5), 18, 36, 1.f);
+	
 	meshList[GEO_AIM] = MeshBuilder::GenerateSphere("aim", Color(0.5, 0.5, 1), 18, 36, 1.f);
 
 	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube",Color(1, 0, 0),1.f);
@@ -459,7 +460,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 1;
+	stage = 5;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -610,34 +611,33 @@ void SceneText::RenderGO(GameObject *go)
 {
 	switch(go->type)
 	{
-	case GameObject::GO_BALL:
+		case GameObject::GO_BALL:
 		modelStack.PushMatrix();
-		if (go->timer < 3)
+		if(go->timer < 3)
+		{
 			Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
+		}
+		
 		else
+		{
 			Render2DMesh(meshList[GEO_SPHERE2],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
+		}
 		modelStack.PopMatrix();
 		break;
 
-	case GameObject::GO_WALL:
+		case GameObject::GO_WALL:
 		{
-			/*modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_QUAD],false,go->scale.x,go->pos.x ,go->pos.y);
-			modelStack.PopMatrix();*/
 		}
 		break;
 
-	case GameObject::GO_PILLAR:
+		case GameObject::GO_PILLAR:
 		{
-			//modelStack.PushMatrix();
-			//Render2DMesh(meshList[GEO_SPHERE],false,go->scale.x,go->pos.x - CurrentMap->mapOffset_x,go->pos.y);
-			//modelStack.PopMatrix();
 		}
 		break;
 
-	case GameObject::GO_AIM:
+		case GameObject::GO_AIM:
 		{
-			if (go->render == true)
+			if(go->render == true)
 			{
 				modelStack.PushMatrix();
 				Render2DMesh(meshList[GEO_AIM],false,go->scale.x,go->pos.x,go->pos.y);
@@ -653,7 +653,7 @@ bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
 	switch (go2->type)
 	{
 
-	case GameObject::GO_WALL:
+		case GameObject::GO_WALL:
 		{
 			Vector3 w0 = go2->pos;
 			Vector3 b1 = go->pos + go->vel * dt;
@@ -663,7 +663,7 @@ bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
 			float h = go2->scale.x;
 			float l = go2->scale.y;
 
-			if ( (abs((w0 - b1).Dot(N)) < r + h * 0.5f) &&
+			if ((abs((w0 - b1).Dot(N)) < r + h * 0.5f) &&
 				(abs((w0 - b1).Dot(NP)) < r + l * 0.5f) )
 				return true;
 
@@ -684,7 +684,7 @@ bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
 			float distanceSquared = (go->pos - go2->pos).LengthSquared();
 			float combinedRadius = go->scale.x + go2->scale.x;
 
-			if (distanceSquared <= combinedRadius * combinedRadius && c.Dot(d) > 0)
+			if(distanceSquared <= combinedRadius * combinedRadius && c.Dot(d) > 0)
 			{
 				return true;
 			}
@@ -702,7 +702,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 {
 	switch(go2->type)
 	{
-	case GameObject::GO_BALL:
+		case GameObject::GO_BALL:
 		{
 			m1 = go->mass;
 			m2 = go2->mass;
@@ -724,7 +724,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 
 		break;
 
-	case GameObject::GO_WALL:
+		case GameObject::GO_WALL:
 		{
 			Vector3 w0 = go2->pos;
 			Vector3 b1 = go->pos;
@@ -751,7 +751,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 
 		break;
 
-	case GameObject::GO_PILLAR:
+		case GameObject::GO_PILLAR:
 		{
 			Vector3 N = (go2->pos - go->pos).Normalize();
 			Vector3 u = go->vel;
@@ -2079,23 +2079,22 @@ void SceneText::UpdatePhysics(double dt)
 
 void SceneText::UpdateMiniMap(double dt)
 {
-
 	MiniMapDelay += dt;
 
-	if (MiniMapDelay >= 1.5)
+	if(MiniMapDelay >= 1.5)
 	{
 		MiniMapDelay = 0;
 	}
 
-	cout << MiniMapDelay << endl;
+	//cout << MiniMapDelay << endl;
 
-	if (Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.5)
+	if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.5)
 	{
 		MiniMapRendered = true;
 		OpenCloseMiniMap = 1;
 	}
 
-	else if (Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 1)
+	else if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 1)
 	{
 		MiniMapRendered = false;
 		OpenCloseMiniMap = 0;
@@ -3105,9 +3104,9 @@ void SceneText::RenderHUD()
 
 void SceneText::RenderMinimap()
 {
-	if (MiniMapRendered == true)
+	if(MiniMapRendered == true)
 	{
-		if (CustomMenuRendered == false)
+		if(CustomMenuRendered == false)
 		{
 			Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 			Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
@@ -3116,37 +3115,37 @@ void SceneText::RenderMinimap()
 			RenderQuadOnScreen(CurrentMiniMap->GetBackground(), 50, 33, 40, 30, false);
 			RenderQuadOnScreen(CurrentMiniMap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 20) + 15.3, (hero.gettheHeroPositiony() / 24) + 14.5, false);
 
-			for (int i = 0; i < enemyList.size(); ++i)
+			for(int i = 0; i < enemyList.size(); ++i)
 			{
 				// For Representing Enemy on Minimap
 				RenderQuadOnScreen(CurrentMiniMap->GetEnemyAvatar(), 1, 1, (enemyList[i]->GetPos_x() / 20) + 15.3, (enemyList[i]->GetPos_y() / 24) + 14.5, false);
 			}
 
-			for (vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+			for(vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 			{
 				CGoodies *go = (CGoodies *)*it;
 				int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
 				int theGoodies_y = go->GetPos_y();
 
-				if (go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
+				if(go->GoodiesType == CGoodies::Goodies_Type::JEWEL)
 				{
-					if (go->active == true)
+					if(go->active == true)
 					{
 						RenderQuadOnScreen(CurrentMiniMap->GetDiamondAvatar(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
 					}
 				}
 
-				else if (go->GoodiesType == CGoodies::Goodies_Type::KEY)
+				else if(go->GoodiesType == CGoodies::Goodies_Type::KEY)
 				{
-					if (go->active == true)
+					if(go->active == true)
 					{
 						RenderQuadOnScreen(CurrentMiniMap->GetKeyAvatar(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
 					}
 				}
 
-				else if (go->GoodiesType == CGoodies::Goodies_Type::BARREL)
+				else if(go->GoodiesType == CGoodies::Goodies_Type::BARREL)
 				{
-					if (go->active == true)
+					if(go->active == true)
 					{
 						RenderQuadOnScreen(CurrentMiniMap->GetBarrelAvater(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
 					}
