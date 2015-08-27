@@ -29,6 +29,7 @@ Hero::Hero()
 	, ammo(3)
 	, full_health(4)
 	, NoOfScroll(0)
+	, rotation (0,-1,0)
 {
 }
 

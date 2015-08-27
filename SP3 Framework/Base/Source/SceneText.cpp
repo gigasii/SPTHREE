@@ -1039,7 +1039,7 @@ void SceneText::UpdateEnemies(double dt)
 			
 			else
 			{
-				go->Update(CurrentMap, hero.heroCurrTile, BarrelList);
+				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus);
 				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
@@ -1487,6 +1487,8 @@ void SceneText::UpdateMouse()
 			if(Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
 			{
 				onHero = true;
+				hero.rotation = hero.direction;
+
 				for(int i = 0; i < 10; ++i)
 				{
 					GameObject *go = FetchGO();
@@ -1570,6 +1572,32 @@ void SceneText::UpdateMouse()
 			int h = Application::GetWindowHeight();
 			float posX = x / w * m_worldWidth;
 			float posY = (h - y) / h * m_worldHeight;
+
+			if (onHero == true)
+			{
+				Vector3 posXY (posX,posY,0);
+				Vector3 mousePos = -Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + posXY;
+
+				float angle;
+
+				angle = Math::RadianToDegree(atan2((hero.rotation.Cross(mousePos)).Length(),hero.rotation.Dot(mousePos)));
+
+				Vector3 pointB = Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + hero.rotation;
+
+				if ((pointB.x - hero.gettheHeroPositionx()) * (posY - hero.gettheHeroPositiony()) - 
+					(pointB.y - hero.gettheHeroPositiony()) * (posX - hero.gettheHeroPositionx()) > 0)
+				{
+					Mtx44 rot;
+					rot.SetToRotation(angle,0,0,1);
+					hero.rotation = rot * hero.rotation;
+				}
+				else
+				{
+					Mtx44 rot;
+					rot.SetToRotation(-angle,0,0,1);
+					hero.rotation = rot * hero.rotation;
+				}
+			}
 
 			for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
@@ -2379,6 +2407,16 @@ void SceneText::RenderText()
 
 void SceneText::RenderHero()
 {
+	//Slingshot rotation angle
+	float angle = Math::RadianToDegree(atan2(hero.rotation.y, hero.rotation.x));
+
+	if (angle > 180)
+		angle -= 180;
+	else
+		angle += 180;
+
+	cout << angle << endl;
+
 	//For dislaying Hero's Health
 	if(hero.transform == false)
 	{
