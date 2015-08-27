@@ -22,7 +22,7 @@ public:
 	CStrategy();
 	~CStrategy();
 
-	virtual void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2) = 0;
+	virtual void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2, bool heroInvis) = 0;
 	virtual void SetDestination(const float x, const float y) = 0;
 	virtual void SetEnemyPosition(const float x, const float y) = 0;
 	virtual void GetEnemyPosition(float& x, float& y) = 0;

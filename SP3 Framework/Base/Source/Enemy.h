@@ -76,7 +76,7 @@ public:
 	bool GetAnimationFlip();
 
 	//Enemy Update
-	void Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList);
+	void Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);

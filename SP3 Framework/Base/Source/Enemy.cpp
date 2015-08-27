@@ -99,11 +99,11 @@ bool CEnemy::GetAnimationFlip()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList)
+void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2);
+		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2, heroInvis);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 

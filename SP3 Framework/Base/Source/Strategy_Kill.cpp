@@ -8,7 +8,7 @@ CStrategy_Kill::~CStrategy_Kill()
 {
 }
 
-void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2)
+void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2, bool heroInvis)
 {
 	//Decide which state to change to
 	int distanceHeroToEnemy = CalculateDistance();
@@ -21,7 +21,7 @@ void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Ve
 		}
 	}
 	
-	if (detectionCheck(map, enemyTile, heroTile, enemyDir))
+	if (detectionCheck(map, enemyTile, heroTile, enemyDir, heroInvis))
 	{
 		isAttacking = true;
 	}
@@ -408,9 +408,9 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 	return ""; // no path found
 }
 
-bool CStrategy_Kill::detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir)
+bool CStrategy_Kill::detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, bool heroInvis)
 {
-	if (map->theScreenMap[heroTile.y][heroTile.x] == CMap::HAY)
+	if (map->theScreenMap[heroTile.y][heroTile.x] == CMap::HAY || heroInvis == true)
 		return false;
 
 	Vector3 tempTile;
