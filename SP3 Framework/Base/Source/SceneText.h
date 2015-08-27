@@ -86,6 +86,7 @@ class SceneText : public Scene
 		GEO_TILEENEMYSHEET,
 		GEO_TILEENEMYSHEET2,
 		GEO_EXCLAMATIONMARK,
+		GEO_STUNSHEET,
 
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,

@@ -212,6 +212,9 @@ void SceneText::Init()
 	meshList[GEO_EXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_EXCLAMATIONMARK]->textureID = LoadTGA("Image//Enemy//exclamationmark.tga");
 
+	meshList[GEO_STUNSHEET] = MeshBuilder::GenerateSprites("GEO_STUNSHEET", 3, 3);
+	meshList[GEO_STUNSHEET]->textureID = LoadTGA("Image//Enemy//stun.tga");
+
 	// ================================= Load Boss =================================
 
 	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
@@ -1020,15 +1023,23 @@ void SceneText::UpdateHero(double dt)
 			hero.heroTransformID = 0;
 			hero.transform = false;
 
-			if(Blue_Selected == true)
+			if(Blue_Selected == true && hero.invisibleTimer < 15)
 			{
 				hero.invisibleStatus = true;
 			}
 
-			else if(Red_Selected == true)
+			else if(Red_Selected == true && hero.invisibleTimer < 15)
 			{
 				hero.invisibleStatus = false;
 				hero.invisibleTimer = 0;
+			}
+
+			if(hero.invisibleTimer >= 15)
+			{
+				hero.invisibleStatus = false;
+				hero.invisibleTimer = 0;
+				Red_Selected = true;
+				Blue_Selected = false;
 			}
 		}
 	}
@@ -1039,10 +1050,7 @@ void SceneText::UpdateHero(double dt)
 		hero.invisibleTimer += dt;
 		if(hero.invisibleTimer >= 15)
 		{
-			hero.invisibleStatus = false;
-			hero.invisibleTimer = 0;
-			Red_Selected = true;
-			Blue_Selected = false;
+			hero.transform = true;
 		}
 	}
 
@@ -1074,6 +1082,7 @@ void SceneText::UpdateEnemies(double dt)
 			else
 			{
 				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus);
+				
 				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
@@ -1083,12 +1092,18 @@ void SceneText::UpdateEnemies(double dt)
 			if(go->stunned)
 			{
 				go->stunTimer += dt;
+				go->stunTileID += 0.2;
+				if(go->stunTileID >= 4)
+				{
+					go->stunTileID = 0;
+				}
 			}
 
 			if(go->stunTimer >= 3)
 			{
 				go->stunned = false;
 				go->stunTimer = 0;
+				go->stunTileID = 0;
 				go->theStrategy->isAttacking = true;
 			}
 
@@ -1479,7 +1494,7 @@ void SceneText::UpdateMouse()
 	if(CustomMenuRendered == false)
 	{
 		static bool bLButtonState = false;
-		if(!bLButtonState && Application::IsMousePressed(0))
+		if(!bLButtonState && Application::IsMousePressed(0) && hero.invisibleStatus == false)
 		{
 			bLButtonState = true;
 			//std::cout << "LBUTTON DOWN" << std::endl;
@@ -1492,7 +1507,7 @@ void SceneText::UpdateMouse()
 			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		}
 
-		else if(bLButtonState && !Application::IsMousePressed(0))
+		else if(bLButtonState && !Application::IsMousePressed(0) && hero.invisibleStatus == false)
 		{
 			bLButtonState = false;
 			//std::cout << "LBUTTON UP" << std::endl;
@@ -1506,7 +1521,7 @@ void SceneText::UpdateMouse()
 		}
 
 		static bool bRButtonState = false;
-		if(!bRButtonState && Application::IsMousePressed(1))
+		if(!bRButtonState && Application::IsMousePressed(1) && hero.invisibleStatus == false)
 		{
 			bRButtonState = true;
 			//std::cout << "RBUTTON DOWN" << std::endl;
@@ -1552,7 +1567,7 @@ void SceneText::UpdateMouse()
 			}
 		}
 
-		else if(bRButtonState && !Application::IsMousePressed(1))
+		else if(bRButtonState && !Application::IsMousePressed(1) && hero.invisibleStatus == false)
 		{
 			bRButtonState = false;
 			//std::cout << "RBUTTON UP" << std::endl;
@@ -1612,7 +1627,7 @@ void SceneText::UpdateMouse()
 			float posX = x / w * m_worldWidth;
 			float posY = (h - y) / h * m_worldHeight;
 
-			if (onHero == true)
+			if(onHero == true)
 			{
 				Vector3 posXY (posX,posY,0);
 				Vector3 mousePos = -Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + posXY;
@@ -1623,13 +1638,14 @@ void SceneText::UpdateMouse()
 
 				Vector3 pointB = Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + hero.rotation;
 
-				if ((pointB.x - hero.gettheHeroPositionx()) * (posY - hero.gettheHeroPositiony()) - 
+				if((pointB.x - hero.gettheHeroPositionx()) * (posY - hero.gettheHeroPositiony()) - 
 					(pointB.y - hero.gettheHeroPositiony()) * (posX - hero.gettheHeroPositionx()) > 0)
 				{
 					Mtx44 rot;
 					rot.SetToRotation(angle,0,0,1);
 					hero.rotation = rot * hero.rotation;
 				}
+				
 				else
 				{
 					Mtx44 rot;
@@ -1711,7 +1727,8 @@ void SceneText::UpdateMouse()
 					cout << "HELLO RED WORLD" << endl;
 					
 					Red_Selected = true;
-					Blue_Selected = false;				
+					Blue_Selected = false;
+					hero.transform = true;
 				}
 				
 				//For Blue Hero
@@ -1721,9 +1738,8 @@ void SceneText::UpdateMouse()
 					
 					Red_Selected = false;
 					Blue_Selected = true;
+					hero.transform = true;
 				}
-
-				hero.transform = true;
 			}
 
 			else
@@ -1874,13 +1890,11 @@ void SceneText::UpdatePhysics(double dt)
 									{
 										collisionResponse(go, go2);	
 
-										if(go->timer < 3 && go4->ID >= 50 && go4->stunned == false)
-											go4->health--;
-
-										if(go->timer < 3 && go4->ID < 80)
+										if(go->timer < 3 && go4->ID < 80 && go4->stunned == false)
 										{
 											go4->stunned = true;
 											go4->isHit = true;
+											go4->health--;
 										}
 
 										else if (go4->ID >= 80)
@@ -2517,11 +2531,15 @@ void SceneText::RenderHero()
 {
 	//Slingshot rotation angle
 	float angle = Math::RadianToDegree(atan2(hero.rotation.y, hero.rotation.x));
-
-	if (angle > 180)
+	if(angle > 180)
+	{
 		angle -= 180;
+	}
+	
 	else
+	{
 		angle += 180;
+	}
 
 	//For dislaying Hero's Health
 	if(hero.transform == false)
@@ -2626,11 +2644,17 @@ void SceneText::RenderEnemies()
 		Vector3 theEnemyPos (theEnemy_x,theEnemy_y,0);
 
 		if(go->active)	
-		{	
+		{
+			//Stunned
+			if(go->stunned == true)
+			{
+				RenderSprites(meshList[GEO_STUNSHEET], go->stunTileID, 48, theEnemy_x - 10, theEnemy_y + 18);
+			}
+
 			//Detection radius
 			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
 			{
-				if(go->theStrategy->CurrentState == CStrategy::PATROL)
+				if(go->theStrategy->CurrentState == CStrategy::PATROL && go->stunned == false)
 				{
 					Vector3 go2 = (Vector3)*it2;
 					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
@@ -3075,12 +3099,7 @@ void SceneText::Render()
 	RenderTileMap();
 	RenderBoss();
 	RenderEnemies();
-	RenderHero();
-	RenderGoodies();
 	RenderText();
-	RenderHUD();
-	RenderCustomMenu();
-	RenderMinimap();
 
 	if(m_ghost->active)
 	{
@@ -3095,6 +3114,12 @@ void SceneText::Render()
 			RenderGO(go);
 		}
 	}
+
+	RenderHero();
+	RenderGoodies();
+	RenderHUD();
+	RenderCustomMenu();
+	//RenderMinimap();
 
 	if(lose == true)
 	{
