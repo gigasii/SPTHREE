@@ -24,15 +24,19 @@ public:
 		// Enemy List: 70 - 79	   Waypoint: 081 - 120		Wei Heng
 		// Enemy List: 80 - ...	   Waypoint: 121 - 160		Giggs
 
+
 		GROUND	= 0,
 		WALL	= 1,
 		JEWEL	= 2,
 		KEY		= 3,
-		CHEST	= 4,
-		BARREL	= 5,
-		DOOR	= 6,
-		HAY		= 7,
-		HOLE	= 8,
+		HPPOT   = 4,
+		MAXHP   = 5,
+		SCROLL  = 6,
+		CHEST	= 7,
+		BARREL	= 8,
+		DOOR	= 9,
+		HAY		= 10,
+		HOLE    = 11,
 		BOSS	= 17,
 
 		//BRANDON's ENEMIES
@@ -108,6 +112,5 @@ private:
 	int theNumOfTiles_MapHeight;		//Number of tiles in the map's height
 
 	bool LoadFile(const string mapName);
-
-	void setMap (CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 };

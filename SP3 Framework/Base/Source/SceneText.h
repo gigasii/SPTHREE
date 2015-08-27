@@ -56,6 +56,7 @@ class SceneText : public Scene
 		U_TEXT_COLOR,
 		U_TOTAL,
 	};
+
 	enum GEOMETRY_TYPE
 	{
 		GEO_AXES,
@@ -73,11 +74,12 @@ class SceneText : public Scene
 
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
+		GEO_TILEHEROSHEET2,
+		GEO_TRANSFORMATIONSHEET,
 
 		//Customisation Menu
 		GEO_HERO_RED,
 		GEO_HERO_BLUE,
-		GEO_BLUE_SPRITE,
 		GEO_CUSTOM_MENU,
 
 		//Enemy sprite Animation
@@ -97,22 +99,27 @@ class SceneText : public Scene
 		GEO_BARREL_BROKEN,
 		GEO_HAY,
 		GEO_HOLE,
+		
+		//Shop items
+		GEO_HPPOT,
+		GEO_MAXHP,
+		GEO_SCROLL,
 
 		//HUD icons
 		GEO_HUD_HEART,
 		GEO_HUD_KEY,
 		GEO_HUD_DIAMOND,
+		GEO_HUD_SLINGSHOT,
 		GEO_DETECTIONEYE,
 		GEO_DETECTIONEYE2,
-
+		GEO_DIM,
+		
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
 
 		//Sahara desert
 		GEO_TILESHEET_DESERT,
-	
-		GEO_DIM,
 
 		NUM_GEOMETRY,
 	};
@@ -127,15 +134,6 @@ public:
 	virtual void Render();
 	virtual void Exit();
 	
-	//Update Camera status
-	virtual void UpdateCameraStatus(const unsigned char key, const bool status = true);
-	
-	//Update Attack status
-	virtual void UpdateAttackStatus(const unsigned char key);
-
-	//Check whether hero is in range to attack enemies
-	void CheckEnemiesInRange(CEnemy *go, Hero hero, int DistanceFromEnemyX, int DistanceFromEnemyY);
-
 	//General functions to run the program
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
@@ -145,31 +143,44 @@ public:
 	void RenderQuadOnScreen(Mesh* mesh, float sizeX, float sizeY, float x, float y, bool enableLight);
 	void RenderSprites(Mesh* mesh, int id, const float size, const float x, const float y);
 	void RenderTilesMap(Mesh* mesh, int ID, const float size, const float x, const float y);
+
+	//Updates
+	virtual void UpdateCameraStatus(const unsigned char key, const bool status = true);
+	virtual void UpdateAttackStatus(const unsigned char key);
+	void CheckEnemiesInRange(CEnemy *go, Hero hero, int DistanceFromEnemyX, int DistanceFromEnemyY);
+	void UpdateHero(double dt);
+	void UpdateEnemies(double dt);
+	void UpdateGoodies();
+	void UpdateBossLevel(int checkPosition_X, int checkPosition_Y);
+	void UpdateCustomisation(double dt);
+	void UpdateGameOver();
+	void UpdateMouse();
+	void UpdatePhysics(double dt);
+	void MainUpdates(int checkPosition_X, int checkPosition_Y);
+	
+	//Game project functions
 	void RenderInit();
 	void RenderText();
 	void RenderHero();
 	void RenderEnemies();
-	void RenderHUD();
-	void RenderGameOver();
-	void RenderBoss();
-	void RenderCustomMenu();
-	void RenderMinimap();
-	void RenderMenu(int &InteractHighLight, int max, int min);
-
-	//General tilemap renderer
 	void RenderTileMap();
-
-	//Render Goodies
 	void RenderGoodies();
+	void RenderBoss();
+	void RenderHUD();
+	void RenderMinimap();
+	
+	//Render Menus
+	void RenderMenu(int &InteractHighLight, int max, int min);
+	void RenderGameOver();
+	void RenderCustomMenu();
 
-	static bool bReset;
-
+	//Physics functions
 	bool checkCollision(GameObject* go, GameObject* go2, double dt);
 	void collisionResponse(GameObject* go, GameObject* go2);
-
 	void RenderGO(GameObject *go);
-
 	GameObject* FetchGO();
+
+	static bool bReset;
 
 enum CHARACTER_ACTION
 {

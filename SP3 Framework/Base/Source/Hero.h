@@ -35,9 +35,16 @@ public:
 	Vector3 direction;
 
 	float heroTileID;
+	float heroTransformID;
 	int health;
 	bool hiding;
-
+	bool transform;
+	bool invisibleStatus;
+	float invisibleTimer;
+	
+	//Inventory
+	int full_health;
+	int NoOfScroll;
 	int ammo;
 
 	//Set the position x of the player

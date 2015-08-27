@@ -24,7 +24,11 @@ public:
 		DOOR,
 		BARREL,
 		HAY,
-		HOLE,
+		HPPOT,
+		MAXHP,
+		SCROLL,
+		HOLE = 11,
+		
 		GOODIES_TOTAL
 	};
 

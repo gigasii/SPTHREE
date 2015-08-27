@@ -408,7 +408,7 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 	return ""; // no path found
 }
 
-bool  CStrategy_Kill::detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir)
+bool CStrategy_Kill::detectionCheck(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir)
 {
 	if (map->theScreenMap[heroTile.y][heroTile.x] == CMap::HAY)
 		return false;

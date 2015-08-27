@@ -28,7 +28,6 @@ public:
 	};
 
 	STRATEGY_TYPE currentStrat;
-
 	Vector3 theENEMYPosition;
 
 	int ID;
@@ -42,7 +41,7 @@ public:
 	float attackReactionTime;
 	bool attackAnimation;
 	float attackAnimationTimer;
-	vector <Vector3> detectionGrid;
+	vector <Vector3>detectionGrid;
 	bool stunned;
 	double stunTimer;
 
@@ -77,7 +76,7 @@ public:
 	bool GetAnimationFlip();
 
 	//Enemy Update
-	void Update(CMap* map, Vector3& heroTile,vector<CGoodies*> goodyList);
+	void Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
