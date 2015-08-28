@@ -53,6 +53,8 @@ void SceneText::InitMiniMap_Level1()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::InitMiniMap_Level2()
@@ -73,6 +75,8 @@ void SceneText::InitMiniMap_Level2()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::InitMiniMap_Level3()
@@ -94,6 +98,8 @@ void SceneText::InitMiniMap_Level3()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::InitMiniMap_Level4()
@@ -115,6 +121,8 @@ void SceneText::InitMiniMap_Level4()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::InitMiniMap_Level5()
@@ -136,6 +144,8 @@ void SceneText::InitMiniMap_Level5()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::InitMiniMap_Level6()
@@ -157,6 +167,8 @@ void SceneText::InitMiniMap_Level6()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::InitMiniMap_Level7()
@@ -166,7 +178,7 @@ void SceneText::InitMiniMap_Level7()
 	CurrentMiniMap = minimap.m_cMiniMap7;
 
 	CurrentMiniMap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//level1_minimap.tga");
+	CurrentMiniMap->GetBackground()->textureID = LoadTGA("Image//Minimap//boss_minimap.tga");
 	CurrentMiniMap->SetBorder(MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f));
 	CurrentMiniMap->SetAvatar(MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetAvatar()->textureID = LoadTGA("Image//Minimap//player.tga");
@@ -178,6 +190,8 @@ void SceneText::InitMiniMap_Level7()
 	CurrentMiniMap->GetKeyAvatar()->textureID = LoadTGA("Image//Goodies//key.tga");
 	CurrentMiniMap->SetBarrelAvatar(MeshBuilder::GenerateMinimapAvatar("BARRELAVATAR", Color(1, 1, 0), 1));
 	CurrentMiniMap->GetBarrelAvater()->textureID = LoadTGA("Image//Goodies//barrel.tga");
+	CurrentMiniMap->SetBossAvatar(MeshBuilder::GenerateMinimapAvatar("BOSSAVATAR", Color(1, 1, 0), 1));
+	CurrentMiniMap->GetBossAvatar()->textureID = LoadTGA("Image//Minimap//boss.tga");
 }
 
 void SceneText::Init()
@@ -463,7 +477,7 @@ void SceneText::Init()
 
 	// === Game variables ===	
 	
-	stage = 3;
+	stage = 7;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -1070,13 +1084,13 @@ void SceneText::UpdateHero(double dt)
 			CHAR_HEROKEY = 'a';
 
 			//Sprite Animation
-			hero.heroTileID += 0.1;
+			hero.heroTileID += 0.2;
 			if(hero.heroTileID < 4)
 			{
 				hero.heroTileID = 4;
 			}
 
-			if(hero.heroTileID > 6)
+			if(hero.heroTileID > 7)
 			{
 				hero.heroTileID = 4;
 			}
@@ -1088,16 +1102,18 @@ void SceneText::UpdateHero(double dt)
 			CHAR_HEROKEY = 'd';
 
 			//Sprite Animation
-			hero.heroTileID += 0.1;
+			hero.heroTileID += 0.2;
 			if(hero.heroTileID < 8)
 			{
 				hero.heroTileID = 8;
 			}
 
-			if(hero.heroTileID > 10)
+			if(hero.heroTileID > 11)
 			{
 				hero.heroTileID = 8;
 			}
+
+			cout << hero.heroTileID << endl;
 		}
 
 		else if(Application::IsKeyPressed('W') && hero.transform == false)
@@ -1106,13 +1122,13 @@ void SceneText::UpdateHero(double dt)
 			CHAR_HEROKEY = 'w';
 
 			//Sprite Animation
-			hero.heroTileID += 0.1;
+			hero.heroTileID += 0.2;
 			if(hero.heroTileID < 12)
 			{
 				hero.heroTileID = 12;
 			}
 
-			if(hero.heroTileID > 14)
+			if(hero.heroTileID > 15)
 			{
 				hero.heroTileID = 12;
 			}
@@ -1124,13 +1140,13 @@ void SceneText::UpdateHero(double dt)
 			CHAR_HEROKEY = 's';
 
 			//Sprite Animation
-			hero.heroTileID += 0.1;
+			hero.heroTileID += 0.2;
 			if(hero.heroTileID < 0)
 			{
 				hero.heroTileID = 0;
 			}
 
-			if(hero.heroTileID > 2)
+			if(hero.heroTileID > 3)
 			{
 				hero.heroTileID = 0;
 			}
@@ -1305,7 +1321,7 @@ void SceneText::UpdateEnemies(double dt)
 			if(go->direction == Vector3(0, -1, 0))
 			{
 				//Sprite Animation
-				go->enemyTileID += 0.1;
+				go->enemyTileID += 0.2;
 				if(go->enemyTileID < 0)
 				{
 					go->enemyTileID = 0;
@@ -1320,7 +1336,7 @@ void SceneText::UpdateEnemies(double dt)
 			else if(go->direction == Vector3(-1, 0, 0))
 			{
 				//Sprite Animation
-				go->enemyTileID += 0.1;
+				go->enemyTileID += 0.2;
 				if(go->enemyTileID < 5)
 				{
 					go->enemyTileID = 5;
@@ -1335,7 +1351,7 @@ void SceneText::UpdateEnemies(double dt)
 			else if(go->direction == Vector3(1, 0, 0))
 			{
 				//Sprite Animation
-				go->enemyTileID += 0.1;
+				go->enemyTileID += 0.2;
 				if(go->enemyTileID < 10)
 				{
 					go->enemyTileID = 10;
@@ -1350,7 +1366,7 @@ void SceneText::UpdateEnemies(double dt)
 			else if(go->direction == Vector3(0, 1, 0))
 			{
 				//Sprite Animation
-				go->enemyTileID += 0.1;
+				go->enemyTileID += 0.2;
 				if(go->enemyTileID < 15)
 				{
 					go->enemyTileID = 15;
@@ -1558,11 +1574,6 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 			else
 			{
 				go->active = false;
-			}
-			
-			if (EnemiesRendered == false)
-			{
-				go->stunned = true;
 			}
 		}
 	}
@@ -2112,20 +2123,20 @@ void SceneText::UpdateMiniMap(double dt)
 {
 	MiniMapDelay += dt;
 
-	if(MiniMapDelay >= 1.5)
+	if(MiniMapDelay >= 1)
 	{
 		MiniMapDelay = 0;
 	}
 
 	//cout << MiniMapDelay << endl;
 
-	if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.5)
+	if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.3)
 	{
 		MiniMapRendered = true;
 		OpenCloseMiniMap = 1;
 	}
 
-	else if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 1)
+	else if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 0.7)
 	{
 		MiniMapRendered = false;
 		OpenCloseMiniMap = 0;
@@ -2828,7 +2839,7 @@ void SceneText::RenderEnemies()
 			//Stunned
 			if(go->stunned == true)
 			{
-				RenderSprites(meshList[GEO_STUNSHEET], go->stunTileID, 48, theEnemy_x - 10, theEnemy_y + 18);
+				RenderSprites(meshList[GEO_STUNSHEET], go->stunTileID, 48, theEnemy_x - 8, theEnemy_y + 18);
 			}
 
 			//Detection radius
@@ -3174,6 +3185,12 @@ void SceneText::RenderMinimap()
 			RenderQuadOnScreen(CurrentMiniMap->GetBackground(), 50, 33, 40, 30, false);
 			RenderQuadOnScreen(CurrentMiniMap->GetAvatar(), 1, 1, (hero.gettheHeroPositionx() / 20) + 15.3, (hero.gettheHeroPositiony() / 24) + 14.5, false);
 
+			if (stage == 7)
+			{
+				// For Representing Boss On Minimap
+				RenderQuadOnScreen(CurrentMiniMap->GetBossAvatar(), 1, 1, (BossPointer->Get_BossX() / 20) + 18.5, (BossPointer->Get_BossY() / 24) + 31.5, false);
+			}
+
 			for(int i = 0; i < enemyList.size(); ++i)
 			{
 				// For Representing Enemy on Minimap
@@ -3198,7 +3215,7 @@ void SceneText::RenderMinimap()
 				{
 					if(go->active == true)
 					{
-						RenderQuadOnScreen(CurrentMiniMap->GetKeyAvatar(), 1, 1, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 15.3, (theGoodies_y / 24) + 14.5, false);
+						RenderQuadOnScreen(CurrentMiniMap->GetKeyAvatar(), 2, 2, ((theGoodies_x - CurrentMap->mapOffset_x) / 20) + 16, (theGoodies_y / 24) + 14, false);
 					}
 				}
 

@@ -20,6 +20,7 @@ CMinimap::CMinimap()
 	, m_cMinimap_DiamondAvatar(NULL)
 	, m_cMinimap_KeyAvatar(NULL)
 	, m_cMinimap_BarrelAvatar(NULL)
+	, m_cMinimap_BossAvatar(NULL)
 {
 }
 
@@ -171,6 +172,17 @@ bool CMinimap::SetBarrelAvatar(Mesh* BarrelAvatar)
 	return false;
 }
 
+bool CMinimap::SetBossAvatar(Mesh* BossAvatar)
+{
+	if (BossAvatar != NULL)
+	{
+		m_cMinimap_BossAvatar = BossAvatar;
+		return true;
+	}
+
+	return false;
+}
+
 bool CMinimap::SetDiamondAvatar(Mesh* DiamondAvatar)
 {
 	if (DiamondAvatar != NULL)
@@ -232,6 +244,11 @@ Mesh* CMinimap::GetEnemyAvatar(void)
 Mesh* CMinimap::GetBarrelAvater(void)
 {
 	return m_cMinimap_BarrelAvatar;
+}
+
+Mesh* CMinimap::GetBossAvatar(void)
+{
+	return m_cMinimap_BossAvatar;
 }
 
 Mesh* CMinimap::GetKeyAvatar(void)
