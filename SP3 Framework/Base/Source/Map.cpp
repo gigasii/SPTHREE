@@ -85,8 +85,8 @@ void CMap::InitScreenMap(std::vector<CEnemy *> &enemyList, std::vector<CGoodies 
 {
 	m_cScreenMap = new CMap();
 	m_cScreenMap->Init(800, 1024, 25, 32, 800, 1024, 32);
-	//m_cScreenMap->LoadMap("Image//Level_1-1.csv");
-	m_cScreenMap->LoadMap("Image//Level_Shop.csv");
+	m_cScreenMap->LoadMap("Image//Level_1-1.csv");
+	//m_cScreenMap->LoadMap("Image//Level_Shop.csv");
 	m_cScreenMap->scroll = false;
 	setMap(m_cScreenMap, enemyList, GoodiesList, BarrelsList, goList);
 }

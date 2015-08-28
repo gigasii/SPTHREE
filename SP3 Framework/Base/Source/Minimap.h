@@ -14,6 +14,7 @@ public:
 	Mesh* m_cMinimap_DiamondAvatar;
 	Mesh* m_cMinimap_KeyAvatar;
 	Mesh* m_cMinimap_BarrelAvatar;
+	Mesh* m_cMinimap_BossAvatar;
 
 	bool SetBackground(Mesh* aBackground);				// Set the background mesh to this class
 	bool SetBorder(Mesh* aBorder);						// Set the Border mesh to this class
@@ -25,6 +26,7 @@ public:
 	bool SetDiamondAvatar(Mesh* DiamondAvatar);			// Set The Avatar for Diamond on the Minimap
 	bool SetKeyAvatar(Mesh* KeyAvatar);					// Set The Avatar for Key on the Minimap
 	bool SetBarrelAvatar(Mesh* BarrelAvatar);			// Set The Avatar for Barrel on the Minimap
+	bool SetBossAvatar(Mesh* BossAvatar);				// Set The Avatar for Boss on the Minimap
 
 	void InitMiniMap_1();
 	void InitMiniMap_2();
@@ -41,6 +43,7 @@ public:
 	Mesh* GetDiamondAvatar(void);						// Get the Diamond Avatar Mesh to this Class
 	Mesh* GetKeyAvatar(void);							// Get the Key Avatar Mesh to this class
 	Mesh* GetBarrelAvater(void);						// Get the Barrel Avater Mesh to this class
+	Mesh* GetBossAvatar(void);
 
 	// Minimaps Init
 	CMinimap* m_cMiniMap1;
