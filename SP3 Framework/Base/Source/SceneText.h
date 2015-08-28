@@ -247,6 +247,7 @@ private:
 	float BossTileID;
 
 	//Project variables
+	bool InShop;
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
