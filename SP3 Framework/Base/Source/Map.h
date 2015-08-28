@@ -24,7 +24,6 @@ public:
 		// Enemy List: 70 - 79	   Waypoint: 081 - 120		Wei Heng
 		// Enemy List: 80 - ...	   Waypoint: 121 - 160		Giggs
 
-
 		GROUND	= 0,
 		WALL	= 1,
 		JEWEL	= 2,
@@ -48,10 +47,16 @@ public:
 		ENEMY_55 = 55, WAYPOINT_21 = -21, WAYPOINT_22 = -22, WAYPOINT_23 = -23, WAYPOINT_24 = -24,
 		ENEMY_56 = 56, WAYPOINT_25 = -25, WAYPOINT_26 = -26, WAYPOINT_27 = -27, WAYPOINT_28 = -28,
 
-		//SEAN's ENEMIES
-		ENEMY_60 = 60, WAYPOINT_41 = -41, WAYPOINT_42 = -42, WAYPOINT_43 = -43, WAYPOINT_44 = -44,
-		ENEMY_61 = 61, WAYPOINT_45 = -45, WAYPOINT_46 = -46, WAYPOINT_47 = -47, WAYPOINT_48 = -48,
-		
+		//WEI HENG'S ENEMIES
+		ENEMY_70 = 70, WAYPOINT_81 = -81, WAYPOINT_82 = -82, WAYPOINT_83 = -83, WAYPOINT_84 = -84,
+		ENEMY_71 = 71, WAYPOINT_85 = -85, WAYPOINT_86 = -86, WAYPOINT_87 = -87, WAYPOINT_88 = -88,
+		ENEMY_72 = 72, 
+		ENEMY_73 = 73, WAYPOINT_89 = -89, WAYPOINT_90 = -90, 	
+		ENEMY_74 = 74, WAYPOINT_91 = -91, WAYPOINT_92 = -92,
+		ENEMY_75 = 75, WAYPOINT_93 = -93, WAYPOINT_94 = -94,
+		ENEMY_76 = 76, WAYPOINT_95 = -95, WAYPOINT_96 = -96,
+		ENEMY_77 = 77, WAYPOINT_97 = -97, WAYPOINT_98 = -98,
+
 		//GIGGS' ENEMIES
 		ENEMY_57 = 57, WAYPOINT_29 = -29, WAYPOINT_30 = -30,
 		ENEMY_58 = 58, WAYPOINT_31 = -31, WAYPOINT_32 = -32, WAYPOINT_33 = -33, WAYPOINT_34 = -34,
@@ -64,21 +69,10 @@ public:
 		ENEMYAMOURED_84 = 84, WAYPOINT_129 = -129, WAYPOINT_130 = -130, WAYPOINT_131 = -131,
 		ENEMYAMOURED_85 = 85, WAYPOINT_132 = -132, WAYPOINT_133 = -133, WAYPOINT_134 = -134,
 
-		//WEI HENG'S ENEMIES
-		ENEMY_70 = 70, WAYPOINT_81 = -81, WAYPOINT_82 = -82, WAYPOINT_83 = -83, WAYPOINT_84 = -84,
-		ENEMY_71 = 71, WAYPOINT_85 = -85, WAYPOINT_86 = -86, WAYPOINT_87 = -87, WAYPOINT_88 = -88,
-		ENEMY_72 = 72, 
+		//SEAN's ENEMIES
+		ENEMY_60 = 60, WAYPOINT_41 = -41, WAYPOINT_42 = -42, WAYPOINT_43 = -43, WAYPOINT_44 = -44,
+		ENEMY_61 = 61, WAYPOINT_45 = -45, WAYPOINT_46 = -46, WAYPOINT_47 = -47, WAYPOINT_48 = -48,
 		
-		ENEMY_73 = 73, WAYPOINT_89 = -89, WAYPOINT_90 = -90, 
-		
-		ENEMY_74 = 74, WAYPOINT_91 = -91, WAYPOINT_92 = -92,
-
-		ENEMY_75 = 75, WAYPOINT_93 = -93, WAYPOINT_94 = -94,
-
-		ENEMY_76 = 76, WAYPOINT_95 = -95, WAYPOINT_96 = -96,
-
-		ENEMY_77 = 77, WAYPOINT_97 = -97, WAYPOINT_98 = -98,
-
 		TILE_TOTAL
 	};
 
@@ -99,6 +93,7 @@ public:
 	void InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
 	void InitShopMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
 	int tileOffset_x, tileOffset_y;

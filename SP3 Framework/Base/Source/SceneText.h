@@ -61,8 +61,6 @@ class SceneText : public Scene
 	{
 		GEO_AXES,
 		GEO_SPHERE,
-		GEO_SPHERE2,
-		GEO_AIM,
 		GEO_CUBE,
 		GEO_QUAD,
 		GEO_TEXT,
@@ -75,6 +73,7 @@ class SceneText : public Scene
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
 		GEO_TILEHEROSHEET2,
+		GEO_TILEHEROSHEET3,
 		GEO_TRANSFORMATIONSHEET,
 
 		//Customisation Menu
@@ -115,6 +114,11 @@ class SceneText : public Scene
 		GEO_DETECTIONEYE2,
 		GEO_DIM,
 		
+		//Weapon
+		GEO_AIM,
+		GEO_SHURIKEN,
+		GEO_DAGGER,
+
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
@@ -160,7 +164,7 @@ public:
 	void CheckEnemiesInRange(CEnemy *go, Hero hero, int DistanceFromEnemyX, int DistanceFromEnemyY);
 	void UpdateHero(double dt);
 	void UpdateEnemies(double dt);
-	void UpdateGoodies();
+	void UpdateGoodies(double dt);
 	void UpdateBossLevel(int checkPosition_X, int checkPosition_Y);
 	void UpdateCustomisation(double dt);
 	void UpdateGameOver();
@@ -184,6 +188,7 @@ public:
 	void RenderMenu(int &InteractHighLight, int max, int min);
 	void RenderGameOver();
 	void RenderCustomMenu();
+	void RenderWeaponCollectedMenu();
 
 	//Physics functions
 	bool checkCollision(GameObject* go, GameObject* go2, double dt);
@@ -234,25 +239,28 @@ private:
 	std::vector<CGoodies *> HoleList;
 	std::vector<GameObject *> m_goList;
 
-	//General variables
+	//Project variables
 	float fps;
 	float rotateAngle;
-	float bossCounter;
-
-	bool EnemiesRendered;
-	bool bLightEnabled;
-	bool IsTurn;
-	bool GetKey;
-	bool derenderDoor;
-	float BossTileID;
-
-	//Project variables
 	bool InShop;
 	int stage;
 	float attackSpeed;
 	bool stabOnce;
 	bool RenderDim;
 	float shurikenTileID;
+	bool chestOpen;
+	float floatUp;
+	bool weaponCollectedScreen;
+	float weaponCollectedTimer;
+
+	//Boss variables
+	float bossCounter;
+	bool EnemiesRendered;
+	bool bLightEnabled;
+	bool IsTurn;
+	bool GetKey;
+	bool derenderDoor;
+	float BossTileID;
 
 	//HUD Variable
 	int diamondCount;
