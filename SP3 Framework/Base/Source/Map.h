@@ -98,7 +98,7 @@ public:
 	void InitScrollingMap2(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
-	
+	void InitShopMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
 	int tileOffset_x, tileOffset_y;
@@ -118,6 +118,7 @@ public:
 	CMap *m_cScrollingMap2;
 	CMap *m_cScrollingMap3;
 	CMap *m_cBossMap;
+	CMap *m_cShopMap;
 
 	vector<vector<int> > theScreenMap;
 	bool scroll;

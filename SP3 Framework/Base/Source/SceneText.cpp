@@ -460,9 +460,9 @@ void SceneText::Init()
 
 	// === Set hero's position ===
 
-	hero.settheHeroPositionx(896);
+	hero.settheHeroPositionx(128);
 	hero.settheHeroPositiony(640);
-	int tempHeroPosX = (int) ceil ((float)(896) / 32);
+	int tempHeroPosX = (int) ceil ((float)(128) / 32);
 	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
 	hero.heroCurrTile = Vector3(tempHeroPosX, tempHeroPosY, 0);
 
@@ -476,8 +476,8 @@ void SceneText::Init()
 	MiniMapDelay = 0;
 
 	// === Game variables ===	
-	
-	stage = 7;
+	InShop = false;
+	stage = 1;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -1217,7 +1217,14 @@ void SceneText::UpdateHero(double dt)
 		}
 	}
 
-	hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
+	if(!InShop)
+	{
+		hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
+	}
+	else
+	{
+		hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, 999);
+	}
 	CHAR_HEROKEY = NULL;
 }
 
@@ -2154,7 +2161,12 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 			{
 				if(Application::IsKeyPressed(VK_SPACE))
 				{
+
 					hero.SetdoorOpened(true);
+					if(stage == 2)
+					{
+						cout << '1' << endl;
+					}
 					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 					{
 						CGoodies *go = (CGoodies *)*it;
@@ -2175,13 +2187,182 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 	{
 		if(hero.GetdoorOpened() == true)
 		{
-			if(stage == 1)
+			hero.moveToDown = hero.moveToLeft = hero.moveToRight = hero.moveToRight = false;
+			if(!InShop)
+			{
+				if(stage == 1)
+				{
+					hero.SetdoorOpened(true);
+					stage = 2;
+					hero.settheHeroPositionx(32);
+					hero.heroCurrTile.x = 1;
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+					GetKey = false;
+					derenderDoor = false;
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if(go->active)
+							go->active = false;
+					}
+
+					hero.ammo = 2;
+
+					//Set new map
+					map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cScrollingMap;
+
+					
+
+					InitMiniMap_Level2();
+				}
+
+				else if(stage == 2)
+				{
+					hero.SetdoorOpened(true);
+					InShop = true;
+					hero.settheHeroPositionx(512);
+					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+					hero.settheHeroPositiony(256);
+					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
+
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+					
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if(go->active)
+							go->active = false;
+					}
+					hero.ammo = 2;
+
+					//Set new map
+					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cShopMap;
+
+					
+
+
+					//InitMiniMap_Level3();
+				}
+
+				else if (stage == 3)
+				{
+					
+					
+					hero.SetdoorOpened(true);
+					stage = 4;
+					hero.settheHeroPositionx(64);
+					hero.settheHeroPositiony(128);
+					hero.heroCurrTile.x = 2;
+					hero.heroCurrTile.y = 20;
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if (go->active)
+							go->active = false;
+					}
+
+					hero.ammo = 2;
+
+					//Set new map
+					map.InitScrollingMap2(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cScrollingMap2;
+
+					InitMiniMap_Level4();
+				}
+
+				else if (stage == 4)
+				{
+					hero.SetdoorOpened(true);
+					InShop = true;
+					hero.settheHeroPositionx(512);
+					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+					hero.settheHeroPositiony(256);
+					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
+
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+					
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if(go->active)
+							go->active = false;
+					}
+					hero.ammo = 2;
+
+					//Set new map
+					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cShopMap;
+					InitMiniMap_Level5();
+				}
+
+				else if(stage == 5)
+				{
+					
+					hero.SetdoorOpened(true);
+					stage = 6;
+					hero.settheHeroPositionx(32);
+					hero.heroCurrTile.x = 1;
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if (go->active)
+							go->active = false;
+					}
+
+					hero.ammo = 2;
+
+					//Set new map
+					map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cScrollingMap3;
+
+					InitMiniMap_Level6();
+				}
+
+				else if(stage == 6)
+				{
+					
+					hero.SetdoorOpened(true);
+					InShop = true;
+					hero.settheHeroPositionx(512);
+					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+					hero.settheHeroPositiony(256);
+					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
+
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if(go->active)
+							go->active = false;
+					}
+
+					hero.ammo = 2;
+
+					//Set new map
+					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cShopMap;
+					InitMiniMap_Level7();
+				}
+			}
+			else
 			{
 				hero.SetKeyAcquired(false);	
 				hero.SetdoorOpened(false);
-				stage = 2;
-				hero.settheHeroPositionx(32);
-				hero.heroCurrTile.x = 1;
+				InShop = false;
+				stage++;
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
@@ -2195,115 +2376,49 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 				hero.ammo = 2;
 
 				//Set new map
-				map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cScrollingMap;
-
-				InitMiniMap_Level2();
-			}
-
-			else if(stage == 2)
-			{
-				stage = 3;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				if(stage == 3)
 				{
-					GameObject *go = (GameObject *)*it;
-					if(go->active)
-						go->active = false;
+					//hero position for map
+					hero.settheHeroPositionx(896);
+					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+					hero.settheHeroPositiony(640);
+					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
+
+					//map for level 3
+					map.InitScreenMap2(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cScreenMap2;
+					InitMiniMap_Level3();
+				}	
+				else if(stage == 5)
+				{
+					//hero position for map
+					hero.settheHeroPositionx(896);
+					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+					hero.settheHeroPositiony(640);
+					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
+
+					//map for level 3
+					map.InitScreenMap3(enemyList, GoodiesList, BarrelList, m_goList);
+					CurrentMap = map.m_cScreenMap3;
+					InitMiniMap_Level5();
+				}
+				else if(stage == 7)
+				{
+					//hero position for map
+					hero.settheHeroPositionx(896);
+					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+					hero.settheHeroPositiony(640);
+					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
+
+					//map for level 3
+					map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
+					CurrentMap = map.m_cBossMap;
+					InitMiniMap_Level7();
 				}
 
-				hero.ammo = 2;
-
-				//Set new map
-				map.InitScreenMap2(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cScreenMap2;
-
-
-				InitMiniMap_Level3();
 			}
 
-			else if (stage == 3)
-			{
-				stage = 4;
-
-				hero.SetKeyAcquired(false);	
-				hero.SetdoorOpened(false);
-				stage = 4;
-				hero.settheHeroPositionx(64);
-				hero.settheHeroPositiony(128);
-				hero.heroCurrTile.x = 2;
-				hero.heroCurrTile.y = 20;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 2;
-
-				//Set new map
-				map.InitScrollingMap2(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cScrollingMap2;
-
-				InitMiniMap_Level4();
-			}
-
-			else if (stage == 4)
-			{
-				stage = 5;
-
-				InitMiniMap_Level5();
-			}
-
-			else if(stage == 5)
-			{
-				hero.SetKeyAcquired(false);	
-				hero.SetdoorOpened(false);
-				stage = 6;
-				hero.settheHeroPositionx(32);
-				hero.heroCurrTile.x = 1;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 2;
-
-				//Set new map
-				map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cScrollingMap3;
-
-				InitMiniMap_Level6();
-			}
-
-			else if(stage == 6)
-			{
-				stage = 7;
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-					if(go->active)
-						go->active = false;
-				}
-
-				hero.ammo = 2;
-
-				InitMiniMap_Level7();
-			}
+				
 		}
 	}
 }
@@ -3010,7 +3125,14 @@ void SceneText::RenderTileMap()
 
 				else if(CurrentMap->theScreenMap[i][m] == CMap::DOOR)
 				{
-					Render2DMesh(meshList[GEO_TILEDOOR], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					if(hero.GetdoorOpened() == false)
+					{
+						Render2DMesh(meshList[GEO_TILEDOOR], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());				
+					}
+					else
+					{
+						Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					}
 				}
 
 				else
@@ -3035,6 +3157,30 @@ void SceneText::RenderTileMap()
 				{
 					a = i;
 					b = k;
+				}
+			}
+			else
+			{
+				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				{
+					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+				else if(CurrentMap->theScreenMap[i][m] == CMap::DOOR)
+				{
+					if(hero.GetdoorOpened() == false)
+					{
+						Render2DMesh(meshList[GEO_TILEDOOR], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());				
+					}
+					else
+					{
+						Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					}
+				}
+
+				else
+				{
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 			}
 		}

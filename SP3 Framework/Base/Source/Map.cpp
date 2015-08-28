@@ -146,6 +146,15 @@ void CMap::InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &Good
 	setMap(m_cBossMap, enemyList, GoodiesList, BarrelsList, goList);
 }
 
+void CMap::InitShopMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
+{
+	m_cShopMap = new CMap();
+	m_cShopMap->Init(800, 1024, 25, 32, 800, 1024, 32);
+	m_cShopMap->LoadMap("Image//Level_Shop.csv");
+	m_cShopMap->scroll = false;
+	setMap(m_cShopMap, enemyList, GoodiesList, BarrelsList, goList);
+}
+
 bool CMap::LoadMap(const string mapName)
 {
 	if(LoadFile(mapName) == true)
