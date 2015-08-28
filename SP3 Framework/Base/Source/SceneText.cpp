@@ -476,6 +476,9 @@ void SceneText::Init()
 	int tempHeroPosY = 25 - (int) ceil ((float)(640 + 32) / 32);
 	hero.heroCurrTile = Vector3(tempHeroPosX, tempHeroPosY, 0);
 
+	// === Set Boss's Position ===
+	boss.Set_BossDestination(50, 380);
+
 	// === Variables ===
 	
 	rotateAngle = 0;
@@ -489,7 +492,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 1;
+	stage = 7;
 	attackSpeed = 0;	
 	stabOnce = false;
 	RenderDim = false;
@@ -509,6 +512,8 @@ void SceneText::Init()
 	EnemiesRendered = false;
 	derenderDoor = false;
 	GetKey = false;
+	CurrentScreenMapX = 0;
+	CurrentScreenMapY = 0;
 
 	// === HUD Variables ===
 
@@ -1613,15 +1618,17 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 			if (EnemiesRendered == true && go->health > 0)
 			{
 				go->active = true;
-			}
-			else
-			{
-				go->active = false;
+				go->isHit = true;
 			}
 		}
 	}
 
 	BossPointer->Set_SpawnGuards(IsTurn);
+}
+
+void SceneText::UpdateBossLevelScrolling()
+{
+
 }
 
 void SceneText::UpdateCustomisation(double dt)
@@ -2341,7 +2348,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					//Set new map
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
-					InitMiniMap_Level5();
+					//InitMiniMap_Level5();
 				}
 
 				else if(stage == 5)
@@ -2395,9 +2402,38 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					//Set new map
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
-					InitMiniMap_Level7();
+					//InitMiniMap_Level7();
 				}
 			}
+
+			else if (stage == 7)
+			{
+				hero.SetKeyAcquired(false);
+				hero.SetdoorOpened(false);
+				stage = 4;
+				hero.settheHeroPositionx(64);
+				hero.settheHeroPositiony(128);
+				hero.heroCurrTile.x = 2;
+				hero.heroCurrTile.y = 20;
+				enemyList.erase(enemyList.begin(), enemyList.end());
+				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				{
+					GameObject *go = (GameObject *)*it;
+					if (go->active)
+						go->active = false;
+				}
+
+				hero.ammo = 2;
+
+				//Set new map
+				map.InitBossScrollingMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
+				CurrentMap = map.m_cBossScrollingMap;
+
+				InitMiniMap_Level7();
+			}
+
 			else
 			{
 				hero.SetKeyAcquired(false);	
@@ -2446,6 +2482,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 				else if(stage == 7)
 				{
 					//hero position for map
+					stage = 8;
 					hero.settheHeroPositionx(896);
 					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
 					hero.settheHeroPositiony(640);
@@ -3222,6 +3259,18 @@ void SceneText::RenderTileMap()
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
+				else if (CurrentMap->theScreenMap[i][m] == CMap::DOOR)
+				{
+					if (hero.GetdoorOpened() == false)
+					{
+						Render2DMesh(meshList[GEO_TILEDOOR], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					}
+					else
+					{
+						Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+					}
+				}
+
 				else
 				{
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
@@ -3233,6 +3282,21 @@ void SceneText::RenderTileMap()
 					b = k;
 				}
 			}
+
+			// Render Boss Scrolling Map
+			else if (stage == 8)
+			{
+				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				{
+					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+
+				else
+				{
+					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
+				}
+			}
+
 			else
 			{
 				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
@@ -3358,7 +3422,10 @@ void SceneText::RenderGoodies()
 
 void SceneText::RenderBoss()
 {
-	RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 64, b * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - a * CurrentMap->GetTileSize());
+	if (stage == 7)
+	{
+		RenderSprites(meshList[GEO_TILEBOSS_FRAME0], BossTileID, 64, boss.Get_BossX(), boss.Get_BossY());
+	}
 }
 
 void SceneText::RenderHUD()

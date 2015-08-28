@@ -245,7 +245,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1]  >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 50 || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == 18)
 			{
 			}
 			
@@ -328,7 +328,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1]  >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 50 || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == 18)
 			{
 			}
 			
@@ -403,7 +403,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x]  >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 50 || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == 18)
 			{
 			}
 
@@ -478,7 +478,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 50 || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == 18)
 			{
 			}
 

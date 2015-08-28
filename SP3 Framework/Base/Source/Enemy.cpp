@@ -248,6 +248,22 @@ void CEnemy::setWayPoints(CMap* map)
 		path.setWayPoints(map, 4, CMap::WAYPOINT_45, CMap::WAYPOINT_46, CMap::WAYPOINT_47, CMap::WAYPOINT_48);
 		break;
 
+	case CMap::ENEMYAMOURED_86:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_135, CMap::WAYPOINT_136);
+		break;
+
+	case CMap::ENEMYAMOURED_87:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_137, CMap::WAYPOINT_138);
+		break;
+
+	case CMap::ENEMYAMOURED_88:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_139, CMap::WAYPOINT_140, CMap::WAYPOINT_141);
+		break;
+
+	case CMap::ENEMYAMOURED_89:
+		path.setWayPoints(map, 4, CMap::WAYPOINT_142, CMap::WAYPOINT_143, CMap::WAYPOINT_144);
+		break;
+
 		//GIGGS' ENEMIES
 	case CMap::ENEMY_57:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_29, CMap::WAYPOINT_30);

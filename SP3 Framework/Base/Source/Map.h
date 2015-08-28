@@ -72,7 +72,12 @@ public:
 		//SEAN's ENEMIES
 		ENEMY_60 = 60, WAYPOINT_41 = -41, WAYPOINT_42 = -42, WAYPOINT_43 = -43, WAYPOINT_44 = -44,
 		ENEMY_61 = 61, WAYPOINT_45 = -45, WAYPOINT_46 = -46, WAYPOINT_47 = -47, WAYPOINT_48 = -48,
-		
+
+		ENEMYAMOURED_86 = 86, WAYPOINT_135 = -135, WAYPOINT_136 = -136,
+		ENEMYAMOURED_87 = 87, WAYPOINT_137 = -137, WAYPOINT_138 = -138,
+		ENEMYAMOURED_88 = 88, WAYPOINT_139 = -139, WAYPOINT_140 = -140, WAYPOINT_141 = -141,
+		ENEMYAMOURED_89 = 89, WAYPOINT_142 = -142, WAYPOINT_143 = -143, WAYPOINT_144 = -144,
+
 		TILE_TOTAL
 	};
 
@@ -93,7 +98,8 @@ public:
 	void InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
 	void InitShopMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
-	
+	void InitBossScrollingMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
+
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
 	int tileOffset_x, tileOffset_y;
@@ -114,6 +120,7 @@ public:
 	CMap *m_cScrollingMap3;
 	CMap *m_cBossMap;
 	CMap *m_cShopMap;
+	CMap *m_cBossScrollingMap;
 
 	vector<vector<int> > theScreenMap;
 	bool scroll;

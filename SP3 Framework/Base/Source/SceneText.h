@@ -171,6 +171,7 @@ public:
 	void UpdateMouse();
 	void UpdatePhysics(double dt);
 	void UpdateMiniMap(double dt);
+	void UpdateBossLevelScrolling();
 	void MainUpdates(int checkPosition_X, int checkPosition_Y);
 	
 	//Game project functions
@@ -219,6 +220,7 @@ private:
 	Light lights[2];
 	Hero hero;
 	CMap map;
+	CBoss boss;
 	CMinimap minimap;
 
 	//current map/map handler
@@ -261,6 +263,8 @@ private:
 	bool GetKey;
 	bool derenderDoor;
 	float BossTileID;
+	int CurrentScreenMapX;
+	int CurrentScreenMapY;
 
 	//HUD Variable
 	int diamondCount;
