@@ -61,6 +61,12 @@ CMap::~CMap(void)
 		m_cBossMap = NULL;
 	}
 
+	if (m_cBossScrollingMap)
+	{
+		delete m_cBossScrollingMap;
+		m_cBossScrollingMap = NULL;
+	}
+
 	theScreenMap.clear();
 }
 

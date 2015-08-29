@@ -492,7 +492,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 1;
+	stage = 7;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -629,6 +629,12 @@ void SceneText::Init()
 	{
 		map.InitBossMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
 		CurrentMap = map.m_cBossMap;
+	}
+
+	else if (stage == 8)
+	{
+		map.InitBossScrollingMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
+		CurrentMap = map.m_cBossScrollingMap;
 	}
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
@@ -1619,7 +1625,7 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 		}
 	}
 
-	if(stage == 7)
+	if (stage == 7 || stage == 8)
 	{
 		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 		{
@@ -2397,21 +2403,48 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
 				}
+
+				else if (stage == 7)
+				{
+					hero.SetKeyAcquired(false);
+					hero.SetdoorOpened(false);
+					stage = 8;
+					hero.settheHeroPositionx(64);
+					hero.settheHeroPositiony(128);
+					hero.heroCurrTile.x = 2;
+					hero.heroCurrTile.y = 20;
+					enemyList.erase(enemyList.begin(), enemyList.end());
+					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
+
+					for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					{
+						GameObject *go = (GameObject *)*it;
+						if (go->active)
+							go->active = false;
+					}
+
+					hero.weapon.ammo = 2;
+
+					//Set new map
+					map.InitBossScrollingMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
+					CurrentMap = map.m_cBossScrollingMap;
+					InitMiniMap_Level7();
+				}
 			}
 
-			else if(stage == 7)
+			else if (stage == 8)
 			{
-				hero.SetKeyAcquired(false);
-				hero.SetdoorOpened(false);
-				stage = 4;
-				hero.settheHeroPositionx(64);
-				hero.settheHeroPositiony(128);
-				hero.heroCurrTile.x = 2;
-				hero.heroCurrTile.y = 20;
+				hero.SetdoorOpened(true);
+				InShop = true;
+				hero.settheHeroPositionx(512);
+				hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
+				hero.settheHeroPositiony(256);
+				hero.heroCurrTile.y = 25 - (int)ceil((float)(hero.gettheHeroPositiony() + 32) / 32);
+
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
-				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
 					if (go->active)
@@ -2421,9 +2454,9 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 				hero.weapon.ammo = 2;
 
 				//Set new map
-				map.InitBossScrollingMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
-				CurrentMap = map.m_cBossScrollingMap;
-				InitMiniMap_Level7();
+				map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
+				CurrentMap = map.m_cShopMap;
+				//InitMiniMap_Level7();
 			}
 
 			else
