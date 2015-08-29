@@ -335,7 +335,7 @@ void SceneText::Init()
 	meshList[GEO_TILEDOOR]->textureID = LoadTGA("Image//door.tga");
 
 	meshList[GEO_TILEDETECTIONRADIUS] = MeshBuilder::Generate2DMesh("GEO_TILE_WAYPOINT", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_TILEDETECTIONRADIUS]->textureID = LoadTGA("Image//tile0_blank_red.tga");
+	meshList[GEO_TILEDETECTIONRADIUS]->textureID = LoadTGA("Image//detectiongrid.tga");
 
 	meshList[GEO_TILESHEET_DESERT] = MeshBuilder::GenerateTileMap("GEO_TILESHEET_DESERT", 8, 8);
 	meshList[GEO_TILESHEET_DESERT]->textureID = LoadTGA("Image//Desert//desert_tile1.tga");
@@ -441,7 +441,7 @@ void SceneText::Init()
 	meshList[GEO_DETECTIONEYE2]->textureID = LoadTGA("Image//HUD//detectioneye2.tga");
 	
 	meshList[GEO_DIM] = MeshBuilder::Generate2DMesh("GEO_DIM", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
-	meshList[GEO_DIM]->textureID = LoadTGA("Image//tile0_blank_grey.tga");
+	meshList[GEO_DIM]->textureID = LoadTGA("Image//dimscreen.tga");
 
 	// ================================= Weapon =================================
 
@@ -462,6 +462,9 @@ void SceneText::Init()
 	meshList[GEO_LOSE] = MeshBuilder::GenerateQuad("gameover", Color(1, 1, 1), 1);
 	meshList[GEO_LOSE]->textureID = LoadTGA("Image//lose_screen.tga");
 
+	meshList[GEO_STAGECLEAR] = MeshBuilder::Generate2DMesh("GEO_STAGECLEAR", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_STAGECLEAR]->textureID = LoadTGA("Image//stageclear.tga");
+
 	// ==================================================================================
 
 	Mtx44 perspective;
@@ -477,6 +480,7 @@ void SceneText::Init()
 	hero.heroCurrTile = Vector3(tempHeroPosX, tempHeroPosY, 0);
 
 	// === Set Boss's Position ===
+	
 	boss.Set_BossDestination(50, 380);
 
 	// === Variables ===
@@ -492,13 +496,16 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 7;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
 	floatUp = 0;
 	weaponCollectedScreen = false;
 	weaponCollectedTimer = 0;
+	stageClear = false;
+	stageClearTimer = 0;
+	floatDown = 0;
 
 	// === Boss's Variables and Pointers ===
 
@@ -883,11 +890,11 @@ void SceneText::Update(double dt)
 	UpdateGoodies(dt);
 	UpdateBossLevel(checkPosition_X, checkPosition_Y);
 	UpdateCustomisation(dt);
-	UpdateGameOver();
+	UpdateGameOver(dt);
 	UpdateMouse();
 	UpdatePhysics(dt);
 	UpdateMiniMap(dt);
-	UpdateLevels(checkPosition_X, checkPosition_Y);
+	UpdateLevels(checkPosition_X, checkPosition_Y, dt);
 
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -1103,7 +1110,7 @@ void SceneText::UpdateHero(double dt)
 {
 	if(lockMovement == false)
 	{
-		if(Application::IsKeyPressed('A') && hero.transform == false)
+		if(Application::IsKeyPressed('A') && hero.transform == false && stageClear == false)
 		{
 			hero.direction = Vector3(-1,0,0);
 			CHAR_HEROKEY = 'a';
@@ -1121,7 +1128,7 @@ void SceneText::UpdateHero(double dt)
 			}
 		}
 
-		else if(Application::IsKeyPressed('D') && hero.transform == false)
+		else if(Application::IsKeyPressed('D') && hero.transform == false && stageClear == false)
 		{
 			hero.direction = Vector3(1,0,0);
 			CHAR_HEROKEY = 'd';
@@ -1139,7 +1146,7 @@ void SceneText::UpdateHero(double dt)
 			}
 		}
 
-		else if(Application::IsKeyPressed('W') && hero.transform == false)
+		else if(Application::IsKeyPressed('W') && hero.transform == false && stageClear == false)
 		{
 			hero.direction = Vector3(0,1,0);
 			CHAR_HEROKEY = 'w';
@@ -1157,7 +1164,7 @@ void SceneText::UpdateHero(double dt)
 			}
 		}
 
-		else if(Application::IsKeyPressed('S') && hero.transform == false)
+		else if(Application::IsKeyPressed('S') && hero.transform == false && stageClear == false)
 		{
 			hero.direction = Vector3(0,-1,0);
 			CHAR_HEROKEY = 's';
@@ -1304,7 +1311,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->theStrategy->isAttacking = true;
 			}
 
-			if (go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
+			if(go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
 			{
 				go->theStrategy->isAttacking = true;
 			}
@@ -1328,7 +1335,7 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Attacking animation for enemy
-			if (go->attackAnimation == true)
+			if(go->attackAnimation == true)
 			{
 				go->attackAnimationTimer += dt;
 				if (go->attackAnimationTimer >= 1)
@@ -1670,7 +1677,7 @@ void SceneText::UpdateCustomisation(double dt)
 	}
 
 	//Open Menu
-	if(Application::IsKeyPressed('T'))
+	if(Application::IsKeyPressed('T') && weaponCollectedScreen == false && stageClear == false)
 	{
 		if(CloseOpenCustomMenu == 1)
 		{
@@ -1705,7 +1712,7 @@ void SceneText::UpdateCustomisation(double dt)
 	}
 }
 
-void SceneText::UpdateGameOver()
+void SceneText::UpdateGameOver(double dt)
 {
 	if(hero.health <= 0)
 	{
@@ -1714,8 +1721,8 @@ void SceneText::UpdateGameOver()
 
 	if(lose == true)
 	{
-		LoseTimer += 0.01f;
-		if(LoseTimer >= 2.0f)
+		LoseTimer += dt;
+		if(LoseTimer >= 4)
 		{
 			bReset = true;
 		}
@@ -2213,8 +2220,26 @@ void SceneText::UpdateMiniMap(double dt)
 	}
 }
 
-void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
+void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt)
 {
+	if(stageClear == true)
+	{
+		stageClearTimer += dt;
+		floatDown += 5;
+
+		if(stageClearTimer >= 5)
+		{
+			floatDown = 0;
+			stageClearTimer = 0;
+			stageClear = false;
+		}
+
+		if(floatDown >= 830)
+		{
+			floatDown = 830;
+		}
+	}
+
 	//Moving from screen stage to scrollnig stage conditions
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
 	{
@@ -2300,11 +2325,12 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 					hero.weapon.ammo = 2;
 
 					//Set new map
+					stageClear = true;
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
 				}
 
-				else if (stage == 3)
+				else if(stage == 3)
 				{				
 					hero.SetdoorOpened(true);
 					stage = 4;
@@ -2351,6 +2377,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 					hero.weapon.ammo = 2;
 
 					//Set new map
+					stageClear = true;
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
 				}
@@ -2400,11 +2427,12 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 					hero.weapon.ammo = 2;
 
 					//Set new map
+					stageClear = true;
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
 				}
 
-				else if (stage == 7)
+				else if(stage == 7)
 				{
 					hero.SetKeyAcquired(false);
 					hero.SetdoorOpened(false);
@@ -2416,7 +2444,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 					enemyList.erase(enemyList.begin(), enemyList.end());
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
-					for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 					{
 						GameObject *go = (GameObject *)*it;
 						if (go->active)
@@ -2432,7 +2460,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 				}
 			}
 
-			else if (stage == 8)
+			else if(stage == 8)
 			{
 				hero.SetdoorOpened(true);
 				InShop = true;
@@ -2456,7 +2484,6 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 				//Set new map
 				map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 				CurrentMap = map.m_cShopMap;
-				//InitMiniMap_Level7();
 			}
 
 			else
@@ -3473,9 +3500,9 @@ void SceneText::RenderHUD()
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
 	
+	//For indicating number of shurikens left
 	if(hero.weapon.GetShurikensAcquired() == true)
 	{
-		//For indicating number of shurikens left
 		RenderQuadOnScreen(meshList[GEO_HUD_SHURIKEN], 3.9, 3, 22, 56.6, false);
 		std::ostringstream ss4;
 		ss4 << "x " << hero.weapon.ammo;
@@ -3616,7 +3643,16 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 
 void SceneText::RenderGameOver()
 {
-	RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
+	if(lose == true)
+	{
+		RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
+
+		//Final score
+		std::ostringstream ss;
+		ss.precision(5);
+		ss << "Final score: " << PointSystem;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 3, 20, 15);
+	}
 }
 
 void SceneText::RenderCustomMenu()
@@ -3667,6 +3703,17 @@ void SceneText::RenderWeaponCollectedMenu()
 	}
 }
 
+void SceneText::RenderStageClear()
+{
+	if(stageClear == true)
+	{
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+
+		Render2DMesh(meshList[GEO_STAGECLEAR], false, 700, 200, 900 - floatDown);
+	}
+}
+
 // ================================== RENDER & EXIT ==================================
 
 void SceneText::Render()
@@ -3702,12 +3749,9 @@ void SceneText::Render()
 	RenderHUD();
 	RenderCustomMenu();
 	RenderWeaponCollectedMenu();
+	RenderStageClear();
 	RenderMinimap();
-
-	if(lose == true)
-	{
-		RenderGameOver();
-	}
+	RenderGameOver();
 }
 
 void SceneText::Exit()

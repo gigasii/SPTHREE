@@ -122,6 +122,7 @@ class SceneText : public Scene
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
+		GEO_STAGECLEAR,
 
 		//Sahara desert
 		GEO_TILESHEET_DESERT,
@@ -167,12 +168,12 @@ public:
 	void UpdateGoodies(double dt);
 	void UpdateBossLevel(int checkPosition_X, int checkPosition_Y);
 	void UpdateCustomisation(double dt);
-	void UpdateGameOver();
+	void UpdateGameOver(double dt);
 	void UpdateMouse();
 	void UpdatePhysics(double dt);
 	void UpdateMiniMap(double dt);
 	void UpdateBossLevelScrolling();
-	void UpdateLevels(int checkPosition_X, int checkPosition_Y);
+	void UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt);
 	
 	//Game project functions
 	void RenderInit();
@@ -190,6 +191,7 @@ public:
 	void RenderGameOver();
 	void RenderCustomMenu();
 	void RenderWeaponCollectedMenu();
+	void RenderStageClear();
 
 	//Physics functions
 	bool checkCollision(GameObject* go, GameObject* go2, double dt);
@@ -252,6 +254,9 @@ private:
 	float floatUp;
 	bool weaponCollectedScreen;
 	float weaponCollectedTimer;
+	bool stageClear;
+	float stageClearTimer;
+	float floatDown;
 
 	//Boss variables
 	float bossCounter;
