@@ -172,7 +172,7 @@ public:
 	void UpdatePhysics(double dt);
 	void UpdateMiniMap(double dt);
 	void UpdateBossLevelScrolling();
-	void MainUpdates(int checkPosition_X, int checkPosition_Y);
+	void UpdateLevels(int checkPosition_X, int checkPosition_Y);
 	
 	//Game project functions
 	void RenderInit();
@@ -226,7 +226,7 @@ private:
 	//current map/map handler
 	CMap *CurrentMap;
 	
-	// Current Minimap Handler
+	//Current Minimap Handler
 	CMinimap *CurrentMiniMap;
 
 	//Boss handler
@@ -246,10 +246,8 @@ private:
 	float rotateAngle;
 	bool InShop;
 	int stage;
-	float attackSpeed;
 	bool stabOnce;
 	bool RenderDim;
-	float shurikenTileID;
 	bool chestOpen;
 	float floatUp;
 	bool weaponCollectedScreen;

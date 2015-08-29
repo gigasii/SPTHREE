@@ -492,11 +492,9 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 7;
-	attackSpeed = 0;	
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
-	shurikenTileID = 0;
 	chestOpen = false;
 	floatUp = 0;
 	weaponCollectedScreen = false;
@@ -603,7 +601,7 @@ void SceneText::Init()
 		CurrentMap = map.m_cScrollingMap;
 	}
 
-	else if (stage == 3)
+	else if(stage == 3)
 	{
 		map.InitScreenMap2(enemyList, GoodiesList, BarrelList, m_goList);
 		CurrentMap = map.m_cScreenMap2;
@@ -673,7 +671,7 @@ void SceneText::RenderGO(GameObject *go)
 		if(go->timer < 3)
 		{
 			//Render2DMesh(meshList[GEO_SPHERE], false, go->scale.x, go->pos.x - CurrentMap->mapOffset_x, go->pos.y);
-			RenderSprites(meshList[GEO_SHURIKEN], shurikenTileID, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
+			RenderSprites(meshList[GEO_SHURIKEN], hero.weapon.shurikenTileID, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
 		}
 		
 		else
@@ -882,8 +880,8 @@ void SceneText::Update(double dt)
 	UpdateGameOver();
 	UpdateMouse();
 	UpdatePhysics(dt);
-	MainUpdates(checkPosition_X, checkPosition_Y);
 	UpdateMiniMap(dt);
+	UpdateLevels(checkPosition_X, checkPosition_Y);
 
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -895,7 +893,7 @@ void SceneText::UpdateCameraStatus(const unsigned char key, const bool status)
 
 void SceneText::UpdateAttackStatus(const unsigned char key)
 {
-	if(key == CA_ATTACK && hero.GetDaggerAcquired() == true && hero.invisibleStatus == false)
+	if(key == CA_ATTACK && hero.weapon.GetDaggerAcquired() == true && hero.invisibleStatus == false)
 	{
 		hero.SetAttackStatus(true);
 	}
@@ -1084,7 +1082,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-	if(go->eneCurrTile == hero.heroCurrTile)
+	if(go->eneCurrTile == hero.heroCurrTile && hero.invisibleStatus == false)
 	{
 		go->attackStatus = true;
 	}
@@ -1175,10 +1173,10 @@ void SceneText::UpdateHero(double dt)
 	//Limit hero's attak rate
 	if(hero.GetAttackStatus() == true)
 	{
-		attackSpeed += dt;
-		if(attackSpeed >= 0.5)
+		hero.weapon.attackSpeed += dt;
+		if(hero.weapon.attackSpeed >= 0.5)
 		{
-			attackSpeed = 0;
+			hero.weapon.attackSpeed = 0;
 			hero.SetAttackStatus(false);
 		}
 	}
@@ -1216,7 +1214,7 @@ void SceneText::UpdateHero(double dt)
 				hero.invisibleTimer = 0;
 			}
 
-			if(hero.invisibleTimer >= 15)
+			if(hero.invisibleTimer >= 7)
 			{
 				hero.invisibleStatus = false;
 				hero.invisibleTimer = 0;
@@ -1230,20 +1228,23 @@ void SceneText::UpdateHero(double dt)
 	if(hero.invisibleStatus == true)
 	{
 		hero.invisibleTimer += dt;
-		if(hero.invisibleTimer >= 15)
+		if(hero.invisibleTimer >= 7)
 		{
 			hero.transform = true;
 		}
 	}
 
+	//Shop selections
 	if(!InShop)
 	{
 		hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, stage);
 	}
+	
 	else
 	{
 		hero.HeroUpdate(CurrentMap, BarrelList, enemyList, CHAR_HEROKEY, 999);
 	}
+
 	CHAR_HEROKEY = NULL;
 }
 
@@ -1456,9 +1457,17 @@ void SceneText::UpdateGoodies(double dt)
 					Vector3 tempheroTile = hero.heroCurrTile + Vector3(hero.direction.x,-hero.direction.y,0);
 					if(tempheroTile == go->tilePos)
 					{
-						hero.SetDaggerAcquired(true);
 						go->active = false;
 						chestOpen = true;
+						if(stage == 2)
+						{
+							hero.weapon.SetDaggerAcquired(true);
+						}
+
+						else if(stage == 3)
+						{
+							hero.weapon.SetShurikensAcquired(true);
+						}
 					}
 				}
 			}
@@ -1714,7 +1723,7 @@ void SceneText::UpdateMouse()
 	if(CustomMenuRendered == false)
 	{
 		static bool bLButtonState = false;
-		if(!bLButtonState && Application::IsMousePressed(0) && hero.invisibleStatus == false)
+		if(!bLButtonState && Application::IsMousePressed(0) && hero.invisibleStatus == false && hero.weapon.GetShurikensAcquired() == true)
 		{
 			bLButtonState = true;
 			//std::cout << "LBUTTON DOWN" << std::endl;
@@ -1727,7 +1736,7 @@ void SceneText::UpdateMouse()
 			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		}
 
-		else if(bLButtonState && !Application::IsMousePressed(0) && hero.invisibleStatus == false)
+		else if(bLButtonState && !Application::IsMousePressed(0) && hero.invisibleStatus == false && hero.weapon.GetShurikensAcquired() == true)
 		{
 			bLButtonState = false;
 			//std::cout << "LBUTTON UP" << std::endl;
@@ -1741,7 +1750,7 @@ void SceneText::UpdateMouse()
 		}
 
 		static bool bRButtonState = false;
-		if(!bRButtonState && Application::IsMousePressed(1) && hero.invisibleStatus == false)
+		if(!bRButtonState && Application::IsMousePressed(1) && hero.invisibleStatus == false && hero.weapon.GetShurikensAcquired() == true)
 		{
 			bRButtonState = true;
 			//std::cout << "RBUTTON DOWN" << std::endl;
@@ -1758,10 +1767,10 @@ void SceneText::UpdateMouse()
 			int mouseX = (int)((CurrentMap->mapOffset_x + posX) / CurrentMap->GetTileSize());
 			int mouseY = CurrentMap->GetNumOfTiles_Height() - (int)((posY + CurrentMap->GetTileSize()) / CurrentMap->GetTileSize());
 
-			if(Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.ammo >= 1)
+			if(Vector3(mouseX, mouseY, 0) == hero.heroCurrTile && hero.weapon.ammo >= 1)
 			{
 				onHero = true;
-				hero.rotation = hero.direction;
+				hero.weapon.rotation = hero.direction;
 
 				for(int i = 0; i < 10; ++i)
 				{
@@ -1787,7 +1796,7 @@ void SceneText::UpdateMouse()
 			}
 		}
 
-		else if(bRButtonState && !Application::IsMousePressed(1) && hero.invisibleStatus == false)
+		else if(bRButtonState && !Application::IsMousePressed(1) && hero.invisibleStatus == false && hero.weapon.GetShurikensAcquired() == true)
 		{
 			bRButtonState = false;
 			//std::cout << "RBUTTON UP" << std::endl;
@@ -1819,7 +1828,7 @@ void SceneText::UpdateMouse()
 						}
 
 						m_ghost->active = false;
-						hero.ammo -= 1;
+						hero.weapon.ammo -= 1;
 						break;
 					}
 				}
@@ -1854,23 +1863,23 @@ void SceneText::UpdateMouse()
 
 				float angle;
 
-				angle = Math::RadianToDegree(atan2((hero.rotation.Cross(mousePos)).Length(),hero.rotation.Dot(mousePos)));
+				angle = Math::RadianToDegree(atan2((hero.weapon.rotation.Cross(mousePos)).Length(),hero.weapon.rotation.Dot(mousePos)));
 
-				Vector3 pointB = Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + hero.rotation;
+				Vector3 pointB = Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + hero.weapon.rotation;
 
 				if((pointB.x - hero.gettheHeroPositionx()) * (posY - hero.gettheHeroPositiony()) - 
 					(pointB.y - hero.gettheHeroPositiony()) * (posX - hero.gettheHeroPositionx()) > 0)
 				{
 					Mtx44 rot;
 					rot.SetToRotation(angle,0,0,1);
-					hero.rotation = rot * hero.rotation;
+					hero.weapon.rotation = rot * hero.weapon.rotation;
 				}
 				
 				else
 				{
 					Mtx44 rot;
 					rot.SetToRotation(-angle,0,0,1);
-					hero.rotation = rot * hero.rotation;
+					hero.weapon.rotation = rot * hero.weapon.rotation;
 				}
 			}
 
@@ -1942,7 +1951,7 @@ void SceneText::UpdateMouse()
 			if(w <= 800 && h <= 600)
 			{
 				//For Red Hero
-				if((x > 123 && x < 278) && (y < 404 && y > 203) && Red_Selected == false)
+				if((x > 123 && x < 278) && (y < 404 && y > 203) && Red_Selected == false && Temp_Red_Selected == false)
 				{
 					cout << "HELLO RED WORLD" << endl;
 					
@@ -2072,10 +2081,10 @@ void SceneText::UpdatePhysics(double dt)
 				go->pos += go->vel * dt;
 				go->timer += dt;
 
-				shurikenTileID += 1;
-				if(shurikenTileID >= 5)
+				hero.weapon.shurikenTileID += 1;
+				if(hero.weapon.shurikenTileID >= 5)
 				{
-					shurikenTileID = 0;
+					hero.weapon.shurikenTileID = 0;
 				}
 
 				if(go->vel.Length() <= 2.f)
@@ -2148,9 +2157,9 @@ void SceneText::UpdatePhysics(double dt)
 					if(combinedDist <= combinedRad)
 					{
 						go->active = false;
-						hero.ammo++;
+						hero.weapon.ammo++;
 						go->timer = 0;
-						shurikenTileID = 0;
+						hero.weapon.shurikenTileID = 0;
 					}					
 				}
 			}
@@ -2198,7 +2207,7 @@ void SceneText::UpdateMiniMap(double dt)
 	}
 }
 
-void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
+void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y)
 {
 	//Moving from screen stage to scrollnig stage conditions
 	if(CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::DOOR)
@@ -2209,12 +2218,12 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 			{
 				if(Application::IsKeyPressed(VK_SPACE))
 				{
-
 					hero.SetdoorOpened(true);
 					if(stage == 2)
 					{
 						cout << '1' << endl;
 					}
+					
 					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 					{
 						CGoodies *go = (CGoodies *)*it;
@@ -2248,6 +2257,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 					GetKey = false;
 					derenderDoor = false;
+					
 					for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 					{
 						GameObject *go = (GameObject *)*it;
@@ -2255,14 +2265,11 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 							go->active = false;
 					}
 
-					hero.ammo = 2;
+					hero.weapon.ammo = 2;
 
 					//Set new map
 					map.InitScrollingMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cScrollingMap;
-
-					
-
 					InitMiniMap_Level2();
 				}
 
@@ -2274,7 +2281,6 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
 					hero.settheHeroPositiony(256);
 					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
-
 					enemyList.erase(enemyList.begin(), enemyList.end());
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 					
@@ -2284,22 +2290,16 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						if(go->active)
 							go->active = false;
 					}
-					hero.ammo = 2;
+					
+					hero.weapon.ammo = 2;
 
 					//Set new map
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
-
-					
-
-
-					//InitMiniMap_Level3();
 				}
 
 				else if (stage == 3)
-				{
-					
-					
+				{				
 					hero.SetdoorOpened(true);
 					stage = 4;
 					hero.settheHeroPositionx(64);
@@ -2316,16 +2316,15 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 							go->active = false;
 					}
 
-					hero.ammo = 2;
+					hero.weapon.ammo = 2;
 
 					//Set new map
 					map.InitScrollingMap2(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cScrollingMap2;
-
 					InitMiniMap_Level4();
 				}
 
-				else if (stage == 4)
+				else if(stage == 4)
 				{
 					hero.SetdoorOpened(true);
 					InShop = true;
@@ -2333,7 +2332,6 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
 					hero.settheHeroPositiony(256);
 					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
-
 					enemyList.erase(enemyList.begin(), enemyList.end());
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 					
@@ -2343,17 +2341,16 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						if(go->active)
 							go->active = false;
 					}
-					hero.ammo = 2;
+					
+					hero.weapon.ammo = 2;
 
 					//Set new map
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
-					//InitMiniMap_Level5();
 				}
 
 				else if(stage == 5)
-				{
-					
+				{					
 					hero.SetdoorOpened(true);
 					stage = 6;
 					hero.settheHeroPositionx(32);
@@ -2368,25 +2365,22 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 							go->active = false;
 					}
 
-					hero.ammo = 2;
+					hero.weapon.ammo = 2;
 
 					//Set new map
 					map.InitScrollingMap3(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cScrollingMap3;
-
 					InitMiniMap_Level6();
 				}
 
 				else if(stage == 6)
-				{
-					
+				{					
 					hero.SetdoorOpened(true);
 					InShop = true;
 					hero.settheHeroPositionx(512);
 					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
 					hero.settheHeroPositiony(256);
 					hero.heroCurrTile.y = 25 - (int) ceil ((float)(hero.gettheHeroPositiony() + 32) / 32);
-
 					enemyList.erase(enemyList.begin(), enemyList.end());
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
@@ -2397,16 +2391,15 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 							go->active = false;
 					}
 
-					hero.ammo = 2;
+					hero.weapon.ammo = 2;
 
 					//Set new map
 					map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
 					CurrentMap = map.m_cShopMap;
-					//InitMiniMap_Level7();
 				}
 			}
 
-			else if (stage == 7)
+			else if(stage == 7)
 			{
 				hero.SetKeyAcquired(false);
 				hero.SetdoorOpened(false);
@@ -2418,19 +2411,18 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 				enemyList.erase(enemyList.begin(), enemyList.end());
 				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+				for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 				{
 					GameObject *go = (GameObject *)*it;
 					if (go->active)
 						go->active = false;
 				}
 
-				hero.ammo = 2;
+				hero.weapon.ammo = 2;
 
 				//Set new map
 				map.InitBossScrollingMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
 				CurrentMap = map.m_cBossScrollingMap;
-
 				InitMiniMap_Level7();
 			}
 
@@ -2450,12 +2442,12 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 						go->active = false;
 				}
 
-				hero.ammo = 2;
+				hero.weapon.ammo = 2;
 
 				//Set new map
 				if(stage == 3)
 				{
-					//hero position for map
+					//Hero position for map
 					hero.settheHeroPositionx(896);
 					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
 					hero.settheHeroPositiony(640);
@@ -2466,6 +2458,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					CurrentMap = map.m_cScreenMap2;
 					InitMiniMap_Level3();
 				}	
+				
 				else if(stage == 5)
 				{
 					//hero position for map
@@ -2479,6 +2472,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					CurrentMap = map.m_cScreenMap3;
 					InitMiniMap_Level5();
 				}
+				
 				else if(stage == 7)
 				{
 					//hero position for map
@@ -2493,10 +2487,7 @@ void SceneText::MainUpdates(int checkPosition_X, int checkPosition_Y)
 					CurrentMap = map.m_cBossMap;
 					InitMiniMap_Level7();
 				}
-
-			}
-
-				
+			}				
 		}
 	}
 }
@@ -2914,7 +2905,7 @@ void SceneText::RenderText()
 void SceneText::RenderHero()
 {
 	//Slingshot rotation angle
-	float angle = Math::RadianToDegree(atan2(hero.rotation.y, hero.rotation.x));
+	float angle = Math::RadianToDegree(atan2(hero.weapon.rotation.y, hero.weapon.rotation.x));
 	if(angle > 180)
 	{
 		angle -= 180;
@@ -2950,7 +2941,8 @@ void SceneText::RenderHero()
 		}
 	}
 
-	if(Red_Selected == true || Temp_Red_Selected == true || hero.invisibleTimer >= 10 && hero.invisibleTimer <= 11 || hero.invisibleTimer >= 13 && hero.invisibleTimer <= 14)
+	if(Red_Selected == true || Temp_Red_Selected == true 
+		|| hero.invisibleTimer >= 5 && hero.invisibleTimer < 5.2 || hero.invisibleTimer >= 5.4 && hero.invisibleTimer < 5.6 || hero.invisibleTimer >= 5.8 && hero.invisibleTimer < 6 || hero.invisibleTimer >= 6.2 && hero.invisibleTimer < 6.4 || hero.invisibleTimer >= 6.6 && hero.invisibleTimer < 6.8)
 	{
 		if(hero.transform == true)
 		{
@@ -3328,7 +3320,7 @@ void SceneText::RenderTileMap()
 void SceneText::RenderGoodies()
 {
 	//Render the goodies
-	for (vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+	for(vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 	{
 		CGoodies *go = (CGoodies *)*it;
 		int theGoodies_x = go->GetPos_x() - map.mapOffset_x;
@@ -3447,12 +3439,15 @@ void SceneText::RenderHUD()
 	ss3.precision(5);
 	ss3 << "Points: " << PointSystem;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
-
-	//For indicating number of shurikens left
-	RenderQuadOnScreen(meshList[GEO_HUD_SHURIKEN], 3.9, 3, 22, 56.6, false);
-	std::ostringstream ss4;
-	ss4 << "x " << hero.ammo;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0, 0, 0), 2.3, 26.5, 57);
+	
+	if(hero.weapon.GetShurikensAcquired() == true)
+	{
+		//For indicating number of shurikens left
+		RenderQuadOnScreen(meshList[GEO_HUD_SHURIKEN], 3.9, 3, 22, 56.6, false);
+		std::ostringstream ss4;
+		ss4 << "x " << hero.weapon.ammo;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0, 0, 0), 2.3, 26.5, 57);
+	}
 
 	//Detection status
 	if(hero.hiding == false)
@@ -3634,7 +3629,7 @@ void SceneText::RenderWeaponCollectedMenu()
 		else if(stage == 3)
 		{
 			Render2DMesh(meshList[GEO_HUD_SHURIKEN], false, 320, 350, 300);
-			RenderTextOnScreen(meshList[GEO_TEXT], "SHURIKENS ACQUIRED", Color(1, 0, 0), 5, 15, 16);
+			RenderTextOnScreen(meshList[GEO_TEXT], "SHURIKENS ACQUIRED", Color(1, 0, 0), 5, 15, 15);
 		}
 	}
 }
