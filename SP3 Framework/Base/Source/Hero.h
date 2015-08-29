@@ -16,7 +16,7 @@ private:
 	int  theHeroPositiony;
 	bool heroAnimationInvert;
 	bool heroAnimationFlip;
-	bool moveToLeft, moveToRight, moveToUp, moveToDown;
+	
 
 	//Hero map interaction
 	bool keyAcquired;
@@ -42,6 +42,9 @@ public:
 	bool invisibleStatus;
 	float invisibleTimer;
 	
+	//Hero's information
+	bool moveToLeft, moveToRight, moveToUp, moveToDown;
+
 	//Inventory
 	int full_health;
 	int NoOfScroll;
