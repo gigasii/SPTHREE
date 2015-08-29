@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Enemy.h"
 #include "Goodies.h"
+#include "Weapon.h"
 
 class Hero
 {
@@ -16,16 +17,12 @@ private:
 	int  theHeroPositiony;
 	bool heroAnimationInvert;
 	bool heroAnimationFlip;
+	bool pickUpWeapon;
+	bool attackStatus;
 	
-
 	//Hero map interaction
 	bool keyAcquired;
 	bool doorOpened;
-	
-	//Weapon stuff
-	bool pickUpWeapon;
-	bool daggerAcquired;
-	bool attackStatus;
 
 public:
 	Hero();
@@ -33,7 +30,9 @@ public:
 
 	Vector3 heroCurrTile;
 	Vector3 direction;
+	CWeapon weapon;
 
+	//Hero's information
 	float heroTileID;
 	float heroTransformID;
 	int health;
@@ -41,17 +40,11 @@ public:
 	bool transform;
 	bool invisibleStatus;
 	float invisibleTimer;
-	
-	//Hero's information
 	bool moveToLeft, moveToRight, moveToUp, moveToDown;
 
 	//Inventory
 	int full_health;
 	int NoOfScroll;
-	int ammo;
-
-	//Slingshot rotation
-	Vector3 rotation;
 
 	//Set the position x of the player
 	void settheHeroPositionx(int theHeroPositionx_);
@@ -86,11 +79,6 @@ public:
 	void SetdoorOpened(bool doorOpened_);
 	//Check whether key has been taken
 	bool GetdoorOpened();
-
-	//Set whether dagger has been taken
-	void SetDaggerAcquired(bool daggerAcquired_);
-	//Check whether dagger has been taken
-	bool GetDaggerAcquired();
 
 	//Constrain the position of the Hero to within the border
 	void ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff);

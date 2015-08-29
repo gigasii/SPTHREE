@@ -28,6 +28,7 @@ public:
 	};
 
 	STRATEGY_TYPE currentStrat;
+	CStrategy *theStrategy;
 	Vector3 theENEMYPosition;
 
 	int ID;
@@ -46,10 +47,7 @@ public:
 	bool stunned;
 	double stunTimer;
 	bool isHit;
-
 	int routeCounter, routeCounter2;
-
-	CStrategy *theStrategy;
 
 	//Initialise this class instance
 	void Init();

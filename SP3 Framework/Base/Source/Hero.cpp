@@ -12,7 +12,6 @@ Hero::Hero()
 	, attackStatus(false)
 	, keyAcquired(false)
 	, doorOpened(false)
-	, daggerAcquired(false)
 	, moveToLeft(false)
 	, moveToRight(false)
 	, moveToDown(false)
@@ -26,10 +25,8 @@ Hero::Hero()
 	, transform(false)
 	, invisibleStatus(false)
 	, invisibleTimer(0)
-	, ammo(2)
 	, full_health(4)
 	, NoOfScroll(0)
-	, rotation (0,-1,0)
 {
 }
 
@@ -60,11 +57,6 @@ void Hero::SetKeyAcquired(bool keyAcquired_)
 void Hero::SetdoorOpened(bool doorOpened_)
 {
 	this->doorOpened = doorOpened_;
-}
-
-void Hero::SetDaggerAcquired(bool daggerAcquired_)
-{
-	daggerAcquired = daggerAcquired_;
 }
 
 int Hero::gettheHeroPositionx()
@@ -105,11 +97,6 @@ bool Hero::GetKeyAcquired()
 bool Hero::GetdoorOpened()
 {
 	return doorOpened;
-}
-
-bool Hero::GetDaggerAcquired()
-{
-	return daggerAcquired;
 }
 
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
