@@ -505,7 +505,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 1;
+	stage = 4;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -1132,7 +1132,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-	if(go->eneCurrTile == hero.heroCurrTile && hero.hiding == false)
+	if((go->eneCurrTile == hero.heroCurrTile && hero.hiding == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK))
 	{
 		go->attackStatus = true;
 	}
@@ -1235,7 +1235,7 @@ void SceneText::UpdateHero(double dt)
 	{
 		if(hero.stamina > 0)
 		{
-			hero.stamina -= 0.07;
+			hero.stamina -= 0.05;
 			hero.sprint = true;
 		}
 
@@ -1389,7 +1389,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->theStrategy->isAttacking = true;
 			}
 
-			if (go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
+			if(go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
 			{
 				go->theStrategy->isAttacking = true;
 			}
@@ -1400,9 +1400,12 @@ void SceneText::UpdateEnemies(double dt)
 				go->attackReactionTime += dt;
 				if(go->attackReactionTime >= 0.2)
 				{
-					hero.health--;
-					go->attackReactionTime = 0;
-					go->attackStatus = false;
+					if(go->ID < 100)
+					{
+						hero.health--;
+						go->attackReactionTime = 0;
+						go->attackStatus = false;
+					}
 					go->attackAnimation = true;
 				}
 			}
@@ -1416,7 +1419,7 @@ void SceneText::UpdateEnemies(double dt)
 			if(go->attackAnimation == true)
 			{
 				go->attackAnimationTimer += dt;
-				if (go->attackAnimationTimer >= 1)
+				if(go->attackAnimationTimer >= 1)
 				{
 					go->attackAnimationTimer = 0;
 					go->attackAnimation = false;
@@ -3253,7 +3256,6 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_STUNSHEET], go->stunTileID, 48, theEnemy_x - 8, theEnemy_y + 18);
 			}
 
-
 			//Detection radius
 			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
 			{
@@ -3262,12 +3264,13 @@ void SceneText::RenderEnemies()
 					Vector3 go2 = (Vector3)*it2;
 					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
 				}
-				else if (go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID != CMap::BOSS_2)
+				
+				else if(go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID != CMap::BOSS_2)
 				{
 					Render2DMesh(meshList[GEO_EXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
 				}
 
-				else if (go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID == CMap::BOSS_2)
+				else if(go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID == CMap::BOSS_2)
 				{
 					Render2DMesh(meshList[GEO_EXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 57);
 				}
@@ -3283,12 +3286,12 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 &&  go->ID < 100)
+					else if(go->ID >= 80 && go->ID != CMap::BOSS_2 &&  go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 3, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 100)
+					if(go->ID >= 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 3, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3301,12 +3304,12 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
+					else if(go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 8, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 100)
+					else if(go->ID >= 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 8, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3324,7 +3327,7 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 13, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 100)
+					else if(go->ID >= 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 13, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3342,7 +3345,7 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 18, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 100)
+					else if(go->ID >= 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 18, 32, theEnemy_x, theEnemy_y);
 					}
