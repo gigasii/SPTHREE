@@ -499,7 +499,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 6;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
