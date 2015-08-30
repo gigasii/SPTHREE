@@ -12,7 +12,6 @@ Hero::Hero()
 	, attackStatus(false)
 	, keyAcquired(false)
 	, doorOpened(false)
-	, daggerAcquired(false)
 	, moveToLeft(false)
 	, moveToRight(false)
 	, moveToDown(false)
@@ -26,10 +25,8 @@ Hero::Hero()
 	, transform(false)
 	, invisibleStatus(false)
 	, invisibleTimer(0)
-	, ammo(2)
 	, full_health(4)
 	, NoOfScroll(0)
-	, rotation (0,-1,0)
 {
 }
 
@@ -60,11 +57,6 @@ void Hero::SetKeyAcquired(bool keyAcquired_)
 void Hero::SetdoorOpened(bool doorOpened_)
 {
 	this->doorOpened = doorOpened_;
-}
-
-void Hero::SetDaggerAcquired(bool daggerAcquired_)
-{
-	daggerAcquired = daggerAcquired_;
 }
 
 int Hero::gettheHeroPositionx()
@@ -105,11 +97,6 @@ bool Hero::GetKeyAcquired()
 bool Hero::GetdoorOpened()
 {
 	return doorOpened;
-}
-
-bool Hero::GetDaggerAcquired()
-{
-	return daggerAcquired;
 }
 
 void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBorder, const int topBorder, const int bottomBorder, float timeDiff)
@@ -245,7 +232,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1]  >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] >= 50 || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x - 1] == 18)
 			{
 			}
 			
@@ -328,7 +315,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1]  >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 21 && mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] <= 27) || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] >= 50 || mapType->theScreenMap[tileTopLeft_y][tileTopLeft_x + 1] == 18)
 			{
 			}
 			
@@ -403,7 +390,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x]  >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] >= 50 || mapType->theScreenMap[tileTopLeft_y - 1][tileTopLeft_x] == 18)
 			{
 			}
 
@@ -478,7 +465,7 @@ bool Hero::CheckCollision(CMap *mapType, vector<CGoodies*> obstacles, vector<CEn
 
 		if(mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] > 6)
 		{
-			if((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 50)
+			if ((mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 21 && mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] <= 27) || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] >= 50 || mapType->theScreenMap[tileTopLeft_y + 1][tileTopLeft_x] == 18)
 			{
 			}
 

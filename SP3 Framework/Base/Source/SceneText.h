@@ -61,8 +61,6 @@ class SceneText : public Scene
 	{
 		GEO_AXES,
 		GEO_SPHERE,
-		GEO_SPHERE2,
-		GEO_AIM,
 		GEO_CUBE,
 		GEO_QUAD,
 		GEO_TEXT,
@@ -75,6 +73,7 @@ class SceneText : public Scene
 		//Hero sprite Animation
 		GEO_TILEHEROSHEET,
 		GEO_TILEHEROSHEET2,
+		GEO_TILEHEROSHEET3,
 		GEO_TRANSFORMATIONSHEET,
 
 		//Customisation Menu
@@ -85,11 +84,13 @@ class SceneText : public Scene
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
 		GEO_TILEENEMYSHEET2,
+		GEO_TILEENEMYSHEET3,
 		GEO_EXCLAMATIONMARK,
 		GEO_STUNSHEET,
 
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
+		GEO_BOSS2,
 
 		//Goodies
 		GEO_DIAMOND,
@@ -115,9 +116,15 @@ class SceneText : public Scene
 		GEO_DETECTIONEYE2,
 		GEO_DIM,
 		
+		//Weapon
+		GEO_AIM,
+		GEO_SHURIKEN,
+		GEO_DAGGER,
+
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
+		GEO_STAGECLEAR,
 
 		//Sahara desert
 		GEO_TILESHEET_DESERT,
@@ -160,14 +167,15 @@ public:
 	void CheckEnemiesInRange(CEnemy *go, Hero hero, int DistanceFromEnemyX, int DistanceFromEnemyY);
 	void UpdateHero(double dt);
 	void UpdateEnemies(double dt);
-	void UpdateGoodies();
+	void UpdateGoodies(double dt);
 	void UpdateBossLevel(int checkPosition_X, int checkPosition_Y);
 	void UpdateCustomisation(double dt);
-	void UpdateGameOver();
+	void UpdateGameOver(double dt);
 	void UpdateMouse();
 	void UpdatePhysics(double dt);
 	void UpdateMiniMap(double dt);
-	void MainUpdates(int checkPosition_X, int checkPosition_Y);
+	void UpdateBossLevelScrolling();
+	void UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt);
 	
 	//Game project functions
 	void RenderInit();
@@ -184,6 +192,8 @@ public:
 	void RenderMenu(int &InteractHighLight, int max, int min);
 	void RenderGameOver();
 	void RenderCustomMenu();
+	void RenderWeaponCollectedMenu();
+	void RenderStageClear();
 
 	//Physics functions
 	bool checkCollision(GameObject* go, GameObject* go2, double dt);
@@ -214,12 +224,13 @@ private:
 	Light lights[2];
 	Hero hero;
 	CMap map;
+	CBoss boss;
 	CMinimap minimap;
 
 	//current map/map handler
 	CMap *CurrentMap;
 	
-	// Current Minimap Handler
+	//Current Minimap Handler
 	CMinimap *CurrentMiniMap;
 
 	//Boss handler
@@ -234,25 +245,31 @@ private:
 	std::vector<CGoodies *> HoleList;
 	std::vector<GameObject *> m_goList;
 
-	//General variables
+	//Project variables
 	float fps;
 	float rotateAngle;
-	float bossCounter;
+	bool InShop;
+	int stage;
+	bool stabOnce;
+	bool RenderDim;
+	bool chestOpen;
+	float floatUp;
+	bool weaponCollectedScreen;
+	float weaponCollectedTimer;
+	bool stageClear;
+	float stageClearTimer;
+	float floatDown;
 
+	//Boss variables
+	float bossCounter;
 	bool EnemiesRendered;
 	bool bLightEnabled;
 	bool IsTurn;
 	bool GetKey;
 	bool derenderDoor;
 	float BossTileID;
-
-	//Project variables
-	bool InShop;
-	int stage;
-	float attackSpeed;
-	bool stabOnce;
-	bool RenderDim;
-	float shurikenTileID;
+	int CurrentScreenMapX;
+	int CurrentScreenMapY;
 
 	//HUD Variable
 	int diamondCount;

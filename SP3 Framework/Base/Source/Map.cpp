@@ -23,6 +23,7 @@ CMap::CMap(void)
 , m_cScrollingMap(NULL)
 , m_cScrollingMap3(NULL)
 , m_cBossMap(NULL)
+, m_cBossScrollingMap(NULL)
 , scroll(false)
 {
 	theScreenMap.clear();
@@ -58,6 +59,12 @@ CMap::~CMap(void)
 	{
 		delete m_cBossMap;
 		m_cBossMap = NULL;
+	}
+
+	if (m_cBossScrollingMap)
+	{
+		delete m_cBossScrollingMap;
+		m_cBossScrollingMap = NULL;
 	}
 
 	theScreenMap.clear();
@@ -116,6 +123,15 @@ void CMap::InitScreenMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies
 	m_cScreenMap3->LoadMap("Image//Level_3-1.csv");
 	m_cScreenMap3->scroll = false;
 	setMap(m_cScreenMap3, enemyList, GoodiesList, BarrelsList, goList);
+}
+
+void CMap::InitBossScrollingMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList)
+{
+	m_cBossScrollingMap = new CMap();
+	m_cBossScrollingMap->Init(800, 1024, 25, 32, 800, 2048, 32);
+	m_cBossScrollingMap->LoadMap("Image//Level_Boss_Scrolling.csv");
+	m_cBossScrollingMap->scroll = true;
+	setMap(m_cBossScrollingMap, enemyList, GoodiesList, BarrelsList, goList);
 }
 
 void CMap::InitScrollingMap2(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
@@ -360,7 +376,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if(tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
+			else if ((tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80) || tempType >= ENEMYRANGED_100)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
@@ -381,7 +397,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				go->ID = tempType;
 			}
 
-			else if(tempType >= CMap::ENEMYAMOURED_80)
+			else if(tempType >= CMap::ENEMYAMOURED_80 && tempType < ENEMYRANGED_100)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);

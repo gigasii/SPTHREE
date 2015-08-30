@@ -23,7 +23,7 @@ public:
 		// Enemy List: 60 - 69	   Waypoint: 041 - 80		Sean
 		// Enemy List: 70 - 79	   Waypoint: 081 - 120		Wei Heng
 		// Enemy List: 80 - ...	   Waypoint: 121 - 160		Giggs
-
+		// Enemy List: 100 - ...						 	Ranged enemies
 
 		GROUND	= 0,
 		WALL	= 1,
@@ -48,10 +48,18 @@ public:
 		ENEMY_55 = 55, WAYPOINT_21 = -21, WAYPOINT_22 = -22, WAYPOINT_23 = -23, WAYPOINT_24 = -24,
 		ENEMY_56 = 56, WAYPOINT_25 = -25, WAYPOINT_26 = -26, WAYPOINT_27 = -27, WAYPOINT_28 = -28,
 
-		//SEAN's ENEMIES
-		ENEMY_60 = 60, WAYPOINT_41 = -41, WAYPOINT_42 = -42, WAYPOINT_43 = -43, WAYPOINT_44 = -44,
-		ENEMY_61 = 61, WAYPOINT_45 = -45, WAYPOINT_46 = -46, WAYPOINT_47 = -47, WAYPOINT_48 = -48,
-		
+		//WEI HENG'S ENEMIES
+		ENEMY_70 = 70, WAYPOINT_81 = -81, WAYPOINT_82 = -82, WAYPOINT_83 = -83, WAYPOINT_84 = -84,
+		ENEMY_71 = 71, WAYPOINT_85 = -85, WAYPOINT_86 = -86, WAYPOINT_87 = -87, WAYPOINT_88 = -88,
+		ENEMY_72 = 72, 
+		ENEMY_73 = 73, WAYPOINT_89 = -89, WAYPOINT_90 = -90, 	
+		ENEMY_74 = 74, WAYPOINT_91 = -91, WAYPOINT_92 = -92,
+		ENEMY_75 = 75, WAYPOINT_93 = -93, WAYPOINT_94 = -94,
+		ENEMY_76 = 76, WAYPOINT_95 = -95, WAYPOINT_96 = -96,
+		ENEMY_77 = 77, WAYPOINT_97 = -97, WAYPOINT_98 = -98,
+		ENEMY_78 = 78, WAYPOINT_99 = -99, WAYPOINT_100 = -100, WAYPOINT_101 = -101, WAYPOINT_102 = -102,  WAYPOINT_103 = -103,
+
+
 		//GIGGS' ENEMIES
 		ENEMY_57 = 57, WAYPOINT_29 = -29, WAYPOINT_30 = -30,
 		ENEMY_58 = 58, WAYPOINT_31 = -31, WAYPOINT_32 = -32, WAYPOINT_33 = -33, WAYPOINT_34 = -34,
@@ -64,20 +72,26 @@ public:
 		ENEMYAMOURED_84 = 84, WAYPOINT_129 = -129, WAYPOINT_130 = -130, WAYPOINT_131 = -131,
 		ENEMYAMOURED_85 = 85, WAYPOINT_132 = -132, WAYPOINT_133 = -133, WAYPOINT_134 = -134,
 
-		//WEI HENG'S ENEMIES
-		ENEMY_70 = 70, WAYPOINT_81 = -81, WAYPOINT_82 = -82, WAYPOINT_83 = -83, WAYPOINT_84 = -84,
-		ENEMY_71 = 71, WAYPOINT_85 = -85, WAYPOINT_86 = -86, WAYPOINT_87 = -87, WAYPOINT_88 = -88,
-		ENEMY_72 = 72, 
-		
-		ENEMY_73 = 73, WAYPOINT_89 = -89, WAYPOINT_90 = -90, 
-		
-		ENEMY_74 = 74, WAYPOINT_91 = -91, WAYPOINT_92 = -92,
+		//SEAN's ENEMIES
+		ENEMY_60 = 60, WAYPOINT_41 = -41, WAYPOINT_42 = -42, WAYPOINT_43 = -43, WAYPOINT_44 = -44,
+		ENEMY_61 = 61, WAYPOINT_45 = -45, WAYPOINT_46 = -46, WAYPOINT_47 = -47, WAYPOINT_48 = -48,
 
-		ENEMY_75 = 75, WAYPOINT_93 = -93, WAYPOINT_94 = -94,
+		ENEMYAMOURED_86 = 86, WAYPOINT_135 = -135, WAYPOINT_136 = -136,
+		ENEMYAMOURED_87 = 87, WAYPOINT_137 = -137, WAYPOINT_138 = -138,
+		ENEMYAMOURED_88 = 88, WAYPOINT_139 = -139, WAYPOINT_140 = -140, WAYPOINT_141 = -141,
+		ENEMYAMOURED_89 = 89, WAYPOINT_142 = -142, WAYPOINT_143 = -143, WAYPOINT_144 = -144,
 
-		ENEMY_76 = 76, WAYPOINT_95 = -95, WAYPOINT_96 = -96,
+		ENEMYAMOURED_90 = 90, WAYPOINT_145 = -145, WAYPOINT_146 = -146,
+		ENEMYAMOURED_91 = 91, WAYPOINT_147 = -147, WAYPOINT_148 = -148,
+		ENEMYAMOURED_92 = 92, WAYPOINT_149 = -149, WAYPOINT_150 = -150,
+		ENEMYAMOURED_93 = 93, WAYPOINT_151 = -151, WAYPOINT_152 = -152,
+		ENEMYAMOURED_94 = 94, WAYPOINT_153 = -153, WAYPOINT_154 = -154,
+		ENEMYAMOURED_95 = 95, WAYPOINT_155 = -155, WAYPOINT_156 = -156,
 
-		ENEMY_77 = 77, WAYPOINT_97 = -97, WAYPOINT_98 = -98,
+		BOSS_2 = 96, WAYPOINT_157 = -157, WAYPOINT_158 = -158,
+
+		//RANGED ENEMIES
+		ENEMYRANGED_100 = 100, ENEMYRANGED_101 = 101, ENEMYRANGED_102 = 102,
 
 		TILE_TOTAL
 	};
@@ -99,6 +113,8 @@ public:
 	void InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
 	void InitBossMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
 	void InitShopMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList);
+	void InitBossScrollingMap(vector<CEnemy*> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<CGoodies *> &HoleList, std::vector<GameObject *> &goList);
+
 	//Codes for scrolling
 	int mapOffset_x, mapOffset_y;
 	int tileOffset_x, tileOffset_y;
@@ -119,6 +135,7 @@ public:
 	CMap *m_cScrollingMap3;
 	CMap *m_cBossMap;
 	CMap *m_cShopMap;
+	CMap *m_cBossScrollingMap;
 
 	vector<vector<int> > theScreenMap;
 	bool scroll;

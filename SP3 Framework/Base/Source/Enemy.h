@@ -1,8 +1,10 @@
 #pragma once
 #include <Vector2.h>
 #include "Strategy_Kill.h"
+#include "Strategy_Range.h"
 #include "Pathing.h"
 #include <Vector3.h>
+#include "GameObject.h"
 
 class CEnemy
 {
@@ -22,12 +24,13 @@ public:
 	enum STRATEGY_TYPE
 	{
 		STRAT_KILL,
-		STRAT_SAFE,
+		STRAT_RANGE,
 		STRAT_NULL,
 		NUM_STRATEGY,
 	};
 
 	STRATEGY_TYPE currentStrat;
+	CStrategy *theStrategy;
 	Vector3 theENEMYPosition;
 
 	int ID;
@@ -39,6 +42,7 @@ public:
 	float enemyTileID;
 	float stunTileID;
 	bool attackStatus;
+	float bossTileID;
 	float attackReactionTime;
 	bool attackAnimation;
 	float attackAnimationTimer;
@@ -46,10 +50,8 @@ public:
 	bool stunned;
 	double stunTimer;
 	bool isHit;
-
 	int routeCounter, routeCounter2;
-
-	CStrategy *theStrategy;
+	float RoF;
 
 	//Initialise this class instance
 	void Init();
@@ -78,7 +80,7 @@ public:
 	bool GetAnimationFlip();
 
 	//Enemy Update
-	void Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis);
+	void Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis, vector<GameObject*> &goList, double dt);
 
 	//Strategy
 	void ChangeStrategy(CStrategy* theNewStrategy, bool bDelete = true);
