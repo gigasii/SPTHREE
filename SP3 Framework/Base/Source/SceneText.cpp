@@ -1362,8 +1362,7 @@ void SceneText::UpdateEnemies(double dt)
 			
 			else
 			{
-				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus, m_goList, dt);
-				
+				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus, m_goList, dt);	
 				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
 				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
@@ -1394,20 +1393,27 @@ void SceneText::UpdateEnemies(double dt)
 				go->theStrategy->isAttacking = true;
 			}
 
+			//Force set the range enemies to die in 2 hits
+			if(go->isHit == true && go->ID >= 100 && go->health == 0)
+			{
+				go->active = false;
+			}
+
 			//Checking enemy attack status
 			if(go->attackStatus == true && go->attackAnimation == false)
 			{
-				go->attackReactionTime += dt;
-				if(go->attackReactionTime >= 0.2)
+				if(go->ID < 100)
 				{
-					if(go->ID < 100)
+					go->attackReactionTime += dt;
+					if(go->attackReactionTime >= 0.2)
 					{
 						hero.health--;
 						go->attackReactionTime = 0;
 						go->attackStatus = false;
 					}
-					go->attackAnimation = true;
 				}
+
+				go->attackAnimation = true;
 			}
 
 			else
@@ -1553,9 +1559,7 @@ void SceneText::UpdateEnemies(double dt)
 			float angle;
 
 			Vector3 heroPos = -Vector3(go->GetPos_x(),go->GetPos_y(),0) + Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0);
-
 			angle = Math::RadianToDegree(atan2((go->rotation.Cross(heroPos)).Length(),go->rotation.Dot(heroPos)));
-
 			Vector3 pointB = Vector3(go->GetPos_x(),go->GetPos_y(),0) + go->rotation;
 
 			if((pointB.x - go->GetPos_x()) * (hero.gettheHeroPositiony() -  go->GetPos_y()) - 
@@ -1571,18 +1575,6 @@ void SceneText::UpdateEnemies(double dt)
 				Mtx44 rot;
 				rot.SetToRotation(-angle,0,0,1);
 				go->rotation = rot * go->rotation;
-			}
-
-			float angle2 = Math::RadianToDegree(atan2(go->rotation.y, go->rotation.x));
-
-			if(angle2 > 180)
-			{
-				angle2 -= 180;
-			}
-
-			else
-			{
-				angle2 += 180;
 			}
 		}
 	}
@@ -2046,7 +2038,6 @@ void SceneText::UpdateMouse()
 				float angle;
 
 				angle = Math::RadianToDegree(atan2((hero.weapon.rotation.Cross(mousePos)).Length(),hero.weapon.rotation.Dot(mousePos)));
-
 				Vector3 pointB = Vector3(hero.gettheHeroPositionx(),hero.gettheHeroPositiony(),0) + hero.weapon.rotation;
 
 				if((pointB.x - hero.gettheHeroPositionx()) * (posY - hero.gettheHeroPositiony()) - 
@@ -3257,25 +3248,6 @@ void SceneText::RenderHero()
 
 void SceneText::RenderEnemies()
 {
-	//For displaying Enemy's Health
-	for(int i = 0; i < enemyList.size(); ++i)
-	{
-		if(enemyList[i]->health >= 1)
-		{
-			Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() - 5) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
-
-			if(enemyList[i]->health >= 2)
-			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 15) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
-
-				if(enemyList[i]->health == 3)
-				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (enemyList[i]->GetPos_x() + 35) - CurrentMap->mapOffset_x, enemyList[i]->GetPos_y() - 20);
-				}
-			}
-		}
-	}
-
 	for(vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		CEnemy *go = (CEnemy *)*it;
@@ -3283,8 +3255,36 @@ void SceneText::RenderEnemies()
 		int theEnemy_y = go->GetPos_y();
 		Vector3 theEnemyPos (theEnemy_x,theEnemy_y,0);
 
+		//Range enemies rotation angle
+		float angle2 = Math::RadianToDegree(atan2(go->rotation.y, go->rotation.x));
+		if(angle2 > 180)
+		{
+			angle2 -= 180;
+		}
+
+		else
+		{
+			angle2 += 180;
+		}
+
 		if(go->active)	
 		{
+			//For displaying Enemy's Health
+			if(go->health >= 1)
+			{
+				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - 5) - CurrentMap->mapOffset_x, go->GetPos_y() - 20);
+
+				if(go->health >= 2)
+				{
+					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() + 15) - CurrentMap->mapOffset_x, go->GetPos_y() - 20);
+
+					if(go->health == 3)
+					{
+						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() + 35) - CurrentMap->mapOffset_x, go->GetPos_y() - 20);
+					}
+				}
+			}
+
 			//Stunned
 			if(go->stunned == true)
 			{
@@ -3314,6 +3314,7 @@ void SceneText::RenderEnemies()
 			//Attacking
 			if(go->attackAnimation == true)
 			{
+				//Melee soldiers
 				if(go->direction == Vector3(0, -1, 0))
 				{
 					if(go->ID >= 50 && go->ID < 80)
@@ -3324,11 +3325,6 @@ void SceneText::RenderEnemies()
 					else if(go->ID >= 80 && go->ID != CMap::BOSS_2 &&  go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 3, 32, theEnemy_x, theEnemy_y);
-					}
-
-					if(go->ID >= 100)
-					{
-						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 3, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 
@@ -3343,11 +3339,6 @@ void SceneText::RenderEnemies()
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 8, 32, theEnemy_x, theEnemy_y);
 					}
-
-					else if(go->ID >= 100)
-					{
-						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 8, 32, theEnemy_x, theEnemy_y);
-					}
 				}
 
 				else if(go->direction == Vector3(1, 0, 0))
@@ -3360,11 +3351,6 @@ void SceneText::RenderEnemies()
 					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 13, 32, theEnemy_x, theEnemy_y);
-					}
-
-					else if(go->ID >= 100)
-					{
-						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 13, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 
@@ -3379,10 +3365,29 @@ void SceneText::RenderEnemies()
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 18, 32, theEnemy_x, theEnemy_y);
 					}
+				}
 
-					else if(go->ID >= 100)
+				//Range soldiers
+				if(go->ID >= 100)
+				{
+					if(angle2 >= 225 && angle2 < 315)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 18, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if(angle2 >= 135 && angle2 < 225)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 13, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if((angle2 >= 315 && angle2 <= 360) || (angle2 >= 0 && angle2 < 45))
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 8, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 3, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 			}
@@ -3414,19 +3419,19 @@ void SceneText::RenderEnemies()
 		}
 
 		//Idling
-		else if (stage == 7 && go->health > 0)
+		else if(stage == 7 && go->health > 0)
 		{
-			if (go->ID >= 50 && go->ID < 80)
+			if(go->ID >= 50 && go->ID < 80)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET], 5, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
+			else if(go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 5, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 100)
+			else if(go->ID >= 100)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET3], 5, 32, theEnemy_x, theEnemy_y);
 			}
@@ -3440,12 +3445,12 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
+			else if(go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 19, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 100)
+			else if(go->ID >= 100)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET3], 19, 32, theEnemy_x, theEnemy_y);
 			}

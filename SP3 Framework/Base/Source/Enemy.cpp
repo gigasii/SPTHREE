@@ -19,12 +19,12 @@ CEnemy::CEnemy()
 	, attackReactionTime(0)
 	, attackAnimation(false)
 	, attackAnimationTimer(0)
-	, stunned (false)
+	, stunned(false)
 	, routeCounter(0)
 	, routeCounter2(0)
 	, isHit(false)
-	, RoF (0)
-	, rotation (1,0,0)
+	, RoF(0)
+	, rotation(1, 0, 0)
 {
 }
 
