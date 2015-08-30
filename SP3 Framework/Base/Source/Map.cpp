@@ -376,7 +376,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if (tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
+			else if ((tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80) || tempType >= ENEMYRANGED_100)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
@@ -397,7 +397,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				go->ID = tempType;
 			}
 
-			else if(tempType >= CMap::ENEMYAMOURED_80)
+			else if(tempType >= CMap::ENEMYAMOURED_80 && tempType < ENEMYRANGED_100)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);

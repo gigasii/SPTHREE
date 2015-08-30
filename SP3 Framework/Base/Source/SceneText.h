@@ -84,6 +84,7 @@ class SceneText : public Scene
 		//Enemy sprite Animation
 		GEO_TILEENEMYSHEET,
 		GEO_TILEENEMYSHEET2,
+		GEO_TILEENEMYSHEET3,
 		GEO_EXCLAMATIONMARK,
 		GEO_STUNSHEET,
 

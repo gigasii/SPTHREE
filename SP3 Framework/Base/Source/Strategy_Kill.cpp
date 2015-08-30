@@ -8,7 +8,7 @@ CStrategy_Kill::~CStrategy_Kill()
 {
 }
 
-void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2, bool heroInvis, bool &eneHit)
+void CStrategy_Kill::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2, bool heroInvis, bool &eneHit, vector<GameObject*> &goList, float &eneROF, double dt)
 {
 	//Decide which state to change to
 	int distanceHeroToEnemy = CalculateDistance();
@@ -337,7 +337,7 @@ string CStrategy_Kill::pathFind(const int& xStart, const int& yStart, const int&
 
 			if (!(xdx < 0 || xdx > n - 1 || ydy < 0 || ydy > m - 1 ||  Map[xdx][ydy] == CMap::CHEST || closed_nodes_map[xdx][ydy] == 1 ||
 				!((Map[xdx][ydy] >= 21 && Map[xdx][ydy] <= 27) || Map[xdx][ydy] <= 0 || Map[xdx][ydy] == CMap::BARREL || Map[xdx][ydy] >= CMap::ENEMY_50 ||
-				Map[xdx][ydy] == CMap::KEY || Map[xdx][ydy] == CMap::JEWEL || Map[xdx][ydy] == CMap::HAY || Map[xdx][ydy] == 18 || Map[xdx][ydy] == CMap::BOSS_2)))
+				Map[xdx][ydy] == CMap::KEY || Map[xdx][ydy] == CMap::JEWEL || Map[xdx][ydy] == CMap::HAY || Map[xdx][ydy] == 18)))
 			{
 				//if (Map[xdx][ydy] == CMap::BARREL)
 				//{

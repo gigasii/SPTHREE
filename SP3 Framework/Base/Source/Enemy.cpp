@@ -23,6 +23,7 @@ CEnemy::CEnemy()
 	, routeCounter(0)
 	, routeCounter2(0)
 	, isHit(false)
+	, RoF (0)
 {
 }
 
@@ -102,85 +103,88 @@ bool CEnemy::GetAnimationFlip()
 }
 
 //Enemy Update
-void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis)
+void CEnemy::Update(CMap* map, Vector3& heroTile, vector<CGoodies*> goodyList, bool heroInvis, vector<GameObject*> &goList, double dt)
 {
 	if(theStrategy != NULL)
 	{
-		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2, heroInvis, isHit);
+		theStrategy->Update(map, eneCurrTile, heroTile, direction, goodyList, routeCounter, routeCounter2, heroInvis, isHit, goList, RoF, dt);
 		theStrategy->GetEnemyPosition((theENEMYPosition.x), (theENEMYPosition.y));
 	}
 
-	detectionGrid.erase(detectionGrid.begin(),detectionGrid.end());
-
-	Vector3 eneDir (direction.x, -direction.y, 0);
-	Vector3 enemyRight = eneDir.Cross(Vector3(0,0,1));
-	Vector3 tempTile;
-	bool renderUp(true), renderDown(true), renderFront(true);
-
-	for (int i = 0; i < 8; ++i)
+	if (currentStrat == STRAT_KILL)
 	{
-		switch (i)
+		detectionGrid.erase(detectionGrid.begin(),detectionGrid.end());
+
+		Vector3 eneDir (direction.x, -direction.y, 0);
+		Vector3 enemyRight = eneDir.Cross(Vector3(0,0,1));
+		Vector3 tempTile;
+		bool renderUp(true), renderDown(true), renderFront(true);
+
+		for (int i = 0; i < 8; ++i)
 		{
-		case 0:
-			tempTile = eneCurrTile + eneDir;
-			break;
-
-		case 1:
-			tempTile = eneCurrTile + enemyRight;
-			break;
-
-		case 2:
-			tempTile = eneCurrTile - enemyRight;
-			break;
-
-		case 3:
-			tempTile = eneCurrTile + eneDir + enemyRight;
-			break;
-
-		case 4:
-			tempTile = eneCurrTile + eneDir - enemyRight;
-			break;
-
-		case 5:
-			tempTile = eneCurrTile + eneDir * 2;
-			break;
-
-		case 6:
-			tempTile = eneCurrTile + enemyRight * 2;
-			break;
-
-		case 7:
-			tempTile = eneCurrTile - enemyRight * 2;
-			break;
-		}
-
-		if(!(map->theScreenMap[tempTile.y][tempTile.x] == 20 || (map->theScreenMap[tempTile.y][tempTile.x] >= 28 && map->theScreenMap[tempTile.y][tempTile.x] <= 49)))
-		{
-			if((i == 5 && renderFront == false) || (i == 6 && renderUp == false) || (i == 7 && renderDown == false))
+			switch (i)
 			{
+			case 0:
+				tempTile = eneCurrTile + eneDir;
+				break;
+
+			case 1:
+				tempTile = eneCurrTile + enemyRight;
+				break;
+
+			case 2:
+				tempTile = eneCurrTile - enemyRight;
+				break;
+
+			case 3:
+				tempTile = eneCurrTile + eneDir + enemyRight;
+				break;
+
+			case 4:
+				tempTile = eneCurrTile + eneDir - enemyRight;
+				break;
+
+			case 5:
+				tempTile = eneCurrTile + eneDir * 2;
+				break;
+
+			case 6:
+				tempTile = eneCurrTile + enemyRight * 2;
+				break;
+
+			case 7:
+				tempTile = eneCurrTile - enemyRight * 2;
+				break;
+			}
+
+			if(!(map->theScreenMap[tempTile.y][tempTile.x] == 20 || (map->theScreenMap[tempTile.y][tempTile.x] >= 28 && map->theScreenMap[tempTile.y][tempTile.x] <= 49)))
+			{
+				if((i == 5 && renderFront == false) || (i == 6 && renderUp == false) || (i == 7 && renderDown == false))
+				{
+				}
+
+				else
+				{
+					detectionGrid.push_back(Vector3(tempTile.x * 32, 32 * (map->GetNumOfTiles_Height() - tempTile.y) - 32, 0));
+				}
 			}
 
 			else
 			{
-				detectionGrid.push_back(Vector3(tempTile.x * 32, 32 * (map->GetNumOfTiles_Height() - tempTile.y) - 32, 0));
-			}
-		}
+				if (i == 0 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
+				{
+					renderFront = false;
+				}
 
-		else
-		{
-			if (i == 0 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
-			{
-				renderFront = false;
-			}
+				else if (i == 1 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
+				{
+					renderUp = false;
+				}
 
-			else if (i == 1 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
-			{
-				renderUp = false;
-			}
-
-			else if (i == 2 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
-			{
-				renderDown = false;
+				else if (i == 2 && map->theScreenMap[tempTile.y][tempTile.x] != 43)
+				{
+					renderDown = false;
+				}
 			}
 		}
 	}
@@ -361,6 +365,10 @@ void CEnemy::setWayPoints(CMap* map)
 
 	case CMap::ENEMY_77:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_97, CMap::WAYPOINT_98);
+		break;
+
+	case CMap::ENEMY_78:
+		path.setWayPoints(map, 5, CMap::WAYPOINT_99, CMap::WAYPOINT_100,  CMap::WAYPOINT_101, CMap::WAYPOINT_102, CMap::WAYPOINT_103);
 		break;
 	}
 }

@@ -23,6 +23,7 @@ public:
 		// Enemy List: 60 - 69	   Waypoint: 041 - 80		Sean
 		// Enemy List: 70 - 79	   Waypoint: 081 - 120		Wei Heng
 		// Enemy List: 80 - ...	   Waypoint: 121 - 160		Giggs
+		// Enemy List: 100 - ...						 	Ranged enemies
 
 		GROUND	= 0,
 		WALL	= 1,
@@ -56,6 +57,8 @@ public:
 		ENEMY_75 = 75, WAYPOINT_93 = -93, WAYPOINT_94 = -94,
 		ENEMY_76 = 76, WAYPOINT_95 = -95, WAYPOINT_96 = -96,
 		ENEMY_77 = 77, WAYPOINT_97 = -97, WAYPOINT_98 = -98,
+		ENEMY_78 = 78, WAYPOINT_99 = -99, WAYPOINT_100 = -100, WAYPOINT_101 = -101, WAYPOINT_102 = -102,  WAYPOINT_103 = -103,
+
 
 		//GIGGS' ENEMIES
 		ENEMY_57 = 57, WAYPOINT_29 = -29, WAYPOINT_30 = -30,
@@ -86,6 +89,9 @@ public:
 		ENEMYAMOURED_95 = 95, WAYPOINT_155 = -155, WAYPOINT_156 = -156,
 
 		BOSS_2 = 96, WAYPOINT_157 = -157, WAYPOINT_158 = -158,
+
+		//RANGED ENEMIES
+		ENEMYRANGED_100 = 100, ENEMYRANGED_101 = 101, ENEMYRANGED_102 = 102,
 
 		TILE_TOTAL
 	};
