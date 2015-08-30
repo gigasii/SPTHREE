@@ -376,7 +376,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if(tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
+			else if (tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80  && tempType == CMap::BOSS_2)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);

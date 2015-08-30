@@ -14,6 +14,7 @@ CEnemy::CEnemy()
 	, direction(0, 0, 0)
 	, enemyTileID(0)
 	, stunTileID(0)
+	, bossTileID(0)
 	, attackStatus(false)
 	, attackReactionTime(0)
 	, attackAnimation(false)
@@ -288,20 +289,8 @@ void CEnemy::setWayPoints(CMap* map)
 		path.setWayPoints(map, 2, CMap::WAYPOINT_155, CMap::WAYPOINT_156);
 		break;
 
-	case CMap::ENEMYAMOURED_96:
+	case CMap::BOSS_2:
 		path.setWayPoints(map, 2, CMap::WAYPOINT_157, CMap::WAYPOINT_158);
-		break;
-
-	case CMap::ENEMYAMOURED_97:
-		path.setWayPoints(map, 2, CMap::WAYPOINT_159, CMap::WAYPOINT_160);
-		break;
-
-	case CMap::ENEMYAMOURED_98:
-		path.setWayPoints(map, 2, CMap::WAYPOINT_161, CMap::WAYPOINT_162);
-		break;
-
-	case CMap::ENEMYAMOURED_99:
-		path.setWayPoints(map, 4, CMap::WAYPOINT_163, CMap::WAYPOINT_164, CMap::WAYPOINT_165, CMap::WAYPOINT_166);
 		break;
 
 		//GIGGS' ENEMIES

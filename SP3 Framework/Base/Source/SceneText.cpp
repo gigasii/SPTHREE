@@ -384,6 +384,9 @@ void SceneText::Init()
 	meshList[GEO_TILEBOSS_FRAME0] = MeshBuilder::GenerateSprites("GEO_TILEENEMY_FRAME0", 3, 3);
 	meshList[GEO_TILEBOSS_FRAME0]->textureID = LoadTGA("Image//Enemy//boss.tga");
 
+	meshList[GEO_BOSS2] = MeshBuilder::GenerateSprites("GEO_BOSS2", 4, 4);
+	meshList[GEO_BOSS2]->textureID = LoadTGA("Image//Enemy//boss_2.tga");
+
 	// ==================================== Goodies ====================================
 
 	meshList[GEO_DIAMOND] = MeshBuilder::Generate2DMesh("GEO_DIAMOND", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
@@ -496,7 +499,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 1;
+	stage = 6;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -1359,63 +1362,107 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Movement Sprite Animation
-			if(go->direction == Vector3(0, -1, 0))
+			if (go->direction == Vector3(0, -1, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
-				if(go->enemyTileID < 0)
+				go->bossTileID += 0.2;
+				if (go->enemyTileID < 0)
+				{
+					go->enemyTileID = 0;
+				}
+				else if (go->enemyTileID > 3)
 				{
 					go->enemyTileID = 0;
 				}
 
-				else if(go->enemyTileID > 3)
+
+				// For Boss Animation
+				if (go->bossTileID < 0)
 				{
-					go->enemyTileID = 0;
+					go->bossTileID = 0;
+				}
+				else if (go->bossTileID > 2)
+				{
+					go->bossTileID = 0;
 				}
 			}
 
-			else if(go->direction == Vector3(-1, 0, 0))
+			else if (go->direction == Vector3(-1, 0, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
-				if(go->enemyTileID < 5)
+				go->bossTileID += 0.2;
+				if (go->enemyTileID < 5)
 				{
 					go->enemyTileID = 5;
 				}
 
-				else if(go->enemyTileID > 8)
+				else if (go->enemyTileID > 8)
 				{
 					go->enemyTileID = 5;
 				}
+
+				// For Boss Animation
+				if (go->bossTileID < 4)
+				{
+					go->bossTileID = 4;
+				}
+				else if (go->bossTileID > 6)
+				{
+					go->bossTileID = 4;
+				}
 			}
 
-			else if(go->direction == Vector3(1, 0, 0))
+			else if (go->direction == Vector3(1, 0, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
-				if(go->enemyTileID < 10)
+				go->bossTileID += 0.2;
+				if (go->enemyTileID < 10)
 				{
 					go->enemyTileID = 10;
 				}
 
-				else if(go->enemyTileID > 13)
+				else if (go->enemyTileID > 13)
 				{
 					go->enemyTileID = 10;
 				}
+
+				// For Boss Animation
+				if (go->bossTileID < 8)
+				{
+					go->bossTileID = 8;
+				}
+				else if (go->bossTileID > 10)
+				{
+					go->bossTileID = 8;
+				}
 			}
 
-			else if(go->direction == Vector3(0, 1, 0))
+			else if (go->direction == Vector3(0, 1, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
-				if(go->enemyTileID < 15)
+				go->bossTileID += 0.2;
+				if (go->enemyTileID < 15)
 				{
 					go->enemyTileID = 15;
 				}
 
-				else if(go->enemyTileID > 18)
+				else if (go->enemyTileID > 18)
 				{
 					go->enemyTileID = 15;
+				}
+
+				// For Boss Animation
+				if (go->bossTileID < 12)
+				{
+					go->bossTileID = 12;
+				}
+				else if (go->bossTileID > 14)
+				{
+					go->bossTileID = 12;
 				}
 			}
 		}
@@ -1593,7 +1640,7 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 	{
 		if(Application::IsKeyPressed(VK_SPACE))
 		{
-			if(GetKey == false)
+			if (GetKey == false && keyCount < 1)
 			{
 				keyCount++;
 			}
@@ -1632,7 +1679,7 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 		}
 	}
 
-	if (stage == 7 || stage == 8)
+	if (stage == 7)
 	{
 		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 		{
@@ -2249,6 +2296,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 			{
 				if(Application::IsKeyPressed(VK_SPACE))
 				{
+					keyCount--;
 					hero.SetdoorOpened(true);
 					if(stage == 2)
 					{
@@ -2460,32 +2508,6 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 				}
 			}
 
-			else if(stage == 8)
-			{
-				hero.SetdoorOpened(true);
-				InShop = true;
-				hero.settheHeroPositionx(512);
-				hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
-				hero.settheHeroPositiony(256);
-				hero.heroCurrTile.y = 25 - (int)ceil((float)(hero.gettheHeroPositiony() + 32) / 32);
-
-				enemyList.erase(enemyList.begin(), enemyList.end());
-				GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
-
-				for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-				{
-					GameObject *go = (GameObject *)*it;
-					if (go->active)
-						go->active = false;
-				}
-
-				hero.weapon.ammo = 2;
-
-				//Set new map
-				map.InitShopMap(enemyList, GoodiesList, BarrelList, m_goList);
-				CurrentMap = map.m_cShopMap;
-			}
-
 			else
 			{
 				hero.SetKeyAcquired(false);	
@@ -2536,7 +2558,6 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 				else if(stage == 7)
 				{
 					//hero position for map
-					stage = 8;
 					hero.settheHeroPositionx(896);
 					hero.heroCurrTile.x = hero.gettheHeroPositionx() / 32;
 					hero.settheHeroPositiony(640);
@@ -3129,9 +3150,14 @@ void SceneText::RenderEnemies()
 					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
 				}
 
-				else if(go->theStrategy->CurrentState == CStrategy::ATTACK)
+				else if (go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID != CMap::BOSS_2)
 				{
 					Render2DMesh(meshList[GEO_EXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
+				}
+
+				else if (go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID == CMap::BOSS_2)
+				{
+					Render2DMesh(meshList[GEO_EXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 57);
 				}
 			}
 
@@ -3145,7 +3171,7 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if(go->ID >= 80)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 3, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3158,7 +3184,7 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if(go->ID >= 80)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 8, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3171,7 +3197,7 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 13, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if(go->ID >= 80)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 13, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3184,7 +3210,7 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 18, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if(go->ID >= 80)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 18, 32, theEnemy_x, theEnemy_y);
 					}
@@ -3199,7 +3225,13 @@ void SceneText::RenderEnemies()
 					RenderSprites(meshList[GEO_TILEENEMYSHEET], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
 				}
 
-				else if(go->ID >= 80)
+				if (go->ID == CMap::BOSS_2)
+				{
+					RenderSprites(meshList[GEO_BOSS2], go->bossTileID, 48, theEnemy_x - 8, theEnemy_y + 7);
+					go->isHit = true;
+				}
+
+				else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 				{
 					RenderSprites(meshList[GEO_TILEENEMYSHEET2], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
 				}
@@ -3214,7 +3246,7 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_TILEENEMYSHEET], 5, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 80)
+			else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 5, 32, theEnemy_x, theEnemy_y);
 			}
@@ -3228,7 +3260,7 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if(go->ID >= 80)
+			else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 19, 32, theEnemy_x, theEnemy_y);
 			}

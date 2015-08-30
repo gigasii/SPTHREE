@@ -89,6 +89,7 @@ class SceneText : public Scene
 
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
+		GEO_BOSS2,
 
 		//Goodies
 		GEO_DIAMOND,
