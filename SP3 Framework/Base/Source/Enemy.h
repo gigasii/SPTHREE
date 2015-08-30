@@ -38,6 +38,7 @@ public:
 	Vector3 eneCurrTile;
 	Vector3 direction;
 	float enemyTileID;
+	float bossTileID;
 	float stunTileID;
 	bool attackStatus;
 	float attackReactionTime;

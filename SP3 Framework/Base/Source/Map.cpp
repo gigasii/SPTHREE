@@ -61,6 +61,12 @@ CMap::~CMap(void)
 		m_cBossMap = NULL;
 	}
 
+	if (m_cBossScrollingMap)
+	{
+		delete m_cBossScrollingMap;
+		m_cBossScrollingMap = NULL;
+	}
+
 	theScreenMap.clear();
 }
 
@@ -370,7 +376,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if(tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
+			else if (tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);
