@@ -10,3 +10,4 @@
 10. Link menus to features such a highscore and save/load
 11. Add day/night textures to our levels
 12. Alpha the hero when he's invisible for better visual feedback
+13. Item shop lacks information. Currently player only sees items on the ground. (atleast show how many jewels are needed to buy the item)
