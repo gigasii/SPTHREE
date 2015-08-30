@@ -1132,7 +1132,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-	if((go->eneCurrTile == hero.heroCurrTile && hero.hiding == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK))
+	if((go->eneCurrTile == hero.heroCurrTile && hero.hiding == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK && go->RoF >= 1.3))
 	{
 		go->attackStatus = true;
 	}
@@ -1235,7 +1235,7 @@ void SceneText::UpdateHero(double dt)
 	{
 		if(hero.stamina > 0)
 		{
-			hero.stamina -= 0.05;
+			hero.stamina -= 0.075;
 			hero.sprint = true;
 		}
 
@@ -1548,6 +1548,41 @@ void SceneText::UpdateEnemies(double dt)
 				{
 					go->bossTileID = 12;
 				}
+			}
+
+			float angle;
+
+			Vector3 heroPos = -Vector3(go->GetPos_x(),go->GetPos_y(),0) + Vector3(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x,hero.gettheHeroPositiony(),0);
+
+			angle = Math::RadianToDegree(atan2((go->rotation.Cross(heroPos)).Length(),go->rotation.Dot(heroPos)));
+
+			Vector3 pointB = Vector3(go->GetPos_x(),go->GetPos_y(),0) + go->rotation;
+
+			if((pointB.x - go->GetPos_x()) * (hero.gettheHeroPositiony() -  go->GetPos_y()) - 
+				(pointB.y - go->GetPos_y()) * (hero.gettheHeroPositionx() + CurrentMap->mapOffset_x - go->GetPos_x()) > 0)
+			{
+				Mtx44 rot;
+				rot.SetToRotation(angle,0,0,1);
+				go->rotation = rot * go->rotation;
+			}
+
+			else
+			{
+				Mtx44 rot;
+				rot.SetToRotation(-angle,0,0,1);
+				go->rotation = rot * go->rotation;
+			}
+
+			float angle2 = Math::RadianToDegree(atan2(go->rotation.y, go->rotation.x));
+
+			if(angle2 > 180)
+			{
+				angle2 -= 180;
+			}
+
+			else
+			{
+				angle2 += 180;
 			}
 		}
 	}

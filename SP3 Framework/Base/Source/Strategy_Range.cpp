@@ -30,7 +30,7 @@ void CStrategy_Range::Update(CMap* map, Vector3& enemyTile, Vector3& heroTile, V
 		{
 			eneROF += dt;
 
-			if (eneROF >= 1)
+			if (eneROF >= 1.5)
 			{
 				eneROF = 0;
 
