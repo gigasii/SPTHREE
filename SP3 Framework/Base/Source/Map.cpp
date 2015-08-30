@@ -143,7 +143,6 @@ void CMap::InitScrollingMap2(std::vector<CEnemy *> &enemyList, std::vector<CGood
 	setMap(m_cScrollingMap2, enemyList, GoodiesList, BarrelsList, goList);
 }
 
-
 void CMap::InitScrollingMap3(std::vector<CEnemy *> &enemyList, std::vector<CGoodies *> &GoodiesList, std::vector<CGoodies *> &BarrelsList, std::vector<GameObject *> &goList)
 {
 	m_cScrollingMap3 = new CMap();
@@ -376,7 +375,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				GoodiesList.push_back(tempGoodies);
 			}
 
-			else if ((tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80) || tempType >= ENEMYRANGED_100)
+			else if((tempType >= CMap::ENEMY_50 && tempType < CMap::ENEMYAMOURED_80) || tempType >= ENEMYRANGED_100)
 			{
 				tempEnemy = new CEnemy();
 				tempEnemy->ChangeStrategy(NULL,false);

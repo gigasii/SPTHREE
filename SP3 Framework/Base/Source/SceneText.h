@@ -115,6 +115,7 @@ class SceneText : public Scene
 		GEO_DETECTIONEYE,
 		GEO_DETECTIONEYE2,
 		GEO_DIM,
+		GEO_STAMINAMETER,
 		
 		//Weapon
 		GEO_AIM,
@@ -179,7 +180,6 @@ public:
 	
 	//Game project functions
 	void RenderInit();
-	void RenderText();
 	void RenderHero();
 	void RenderEnemies();
 	void RenderTileMap();

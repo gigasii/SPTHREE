@@ -25,7 +25,10 @@ Hero::Hero()
 	, transform(false)
 	, invisibleStatus(false)
 	, invisibleTimer(0)
-	, full_health(4)
+	, sprint(true)
+	, stamina(20)
+	, reduceSpeed(0)
+	, full_health(3)
 	, NoOfScroll(0)
 {
 }
@@ -630,13 +633,13 @@ void Hero::HeroMoveUpDown(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositiony = theHeroPositiony + (int) (4.0f * timeDiff);
+		theHeroPositiony = theHeroPositiony + (int)((4.0f - reduceSpeed) * timeDiff);
 		heroAnimationFlip = true;
 	}  
 
 	else 
 	{ 
-		theHeroPositiony = theHeroPositiony - (int) (4.0f * timeDiff);
+		theHeroPositiony = theHeroPositiony - (int)((4.0f - reduceSpeed) * timeDiff);
 		heroAnimationFlip = false;
 	}
 } 
@@ -645,13 +648,13 @@ void Hero::HeroMoveLeftRight(const bool mode, const float timeDiff)
 { 
 	if(mode) 
 	{ 
-		theHeroPositionx = theHeroPositionx - (int) (4.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx - (int)((4.0f - reduceSpeed) * timeDiff);
 		heroAnimationInvert = true;
 	}
 
 	else 
 	{ 
-		theHeroPositionx = theHeroPositionx + (int) (4.0f * timeDiff);
+		theHeroPositionx = theHeroPositionx + (int)((4.0f - reduceSpeed) * timeDiff);
 		heroAnimationInvert = false;
 	}
 }
