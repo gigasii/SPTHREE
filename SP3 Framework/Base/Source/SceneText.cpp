@@ -324,7 +324,7 @@ void SceneText::Init()
 	meshList[GEO_AIM] = MeshBuilder::GenerateQuad("GEO_AIM", Color(1, 0, 0), 3.f);
 	meshList[GEO_AIM]->textureID = LoadTGA("Image//aim.tga");
 
-	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube",Color(1, 0, 0),1.f);
+	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube",Color(1, 0, 0), 1.f);
 
 	// ============================== Load Map tiles (Screen & scrolling) =============================
 
@@ -449,6 +449,9 @@ void SceneText::Init()
 	meshList[GEO_DIM] = MeshBuilder::Generate2DMesh("GEO_DIM", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_DIM]->textureID = LoadTGA("Image//dimscreen.tga");
 
+	meshList[GEO_STAMINAMETER] = MeshBuilder::GenerateQuad("StaminaMeter", Color(1, 1, 1), 1.0f);
+	meshList[GEO_STAMINAMETER]->textureID = LoadTGA("Image//HUD//staminameter.tga");
+
 	// ================================= Weapon =================================
 
 	meshList[GEO_SHURIKEN] = MeshBuilder::GenerateSprites("GEO_SHURIKEN", 3, 3);
@@ -528,7 +531,7 @@ void SceneText::Init()
 
 	// === HUD Variables ===
 
-	diamondCount = 11;
+	diamondCount = 10;
 	keyCount = 0;
 	PointSystem = 0;
 
@@ -549,7 +552,6 @@ void SceneText::Init()
 	CustomMenuSelected		= false;
 	CloseOpenCustomMenu		= 1;
 	CustomMenuDelay			= 0;
-
 	Custom_HeroSize_Red		= 20;
 	Custom_HeroSize_Blue	= 20;
 	
@@ -730,12 +732,10 @@ void SceneText::RenderGO(GameObject *go)
 	}
 }
 
-
 bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
 {
 	switch (go2->type)
 	{
-
 		case GameObject::GO_WALL:
 		{
 			Vector3 w0 = go2->pos;
@@ -1132,7 +1132,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-	if(go->eneCurrTile == hero.heroCurrTile && hero.invisibleStatus == false)
+	if(go->eneCurrTile == hero.heroCurrTile && hero.hiding == false)
 	{
 		go->attackStatus = true;
 	}
@@ -1217,6 +1217,43 @@ void SceneText::UpdateHero(double dt)
 			{
 				hero.heroTileID = 0;
 			}
+		}
+	}
+
+	//Stamina meter
+	if(hero.sprint == false && (hero.moveToLeft == false && hero.moveToRight == false && hero.moveToUp == false && hero.moveToDown == false))
+	{
+		hero.reduceSpeed = 2;
+	}
+
+	else if(hero.sprint == true && (hero.moveToLeft == false && hero.moveToRight == false && hero.moveToUp == false && hero.moveToDown == false))
+	{
+		hero.reduceSpeed = 0;
+	}
+	
+	if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+	{
+		if(hero.stamina > 0)
+		{
+			hero.stamina -= 0.07;
+			hero.sprint = true;
+		}
+
+		else
+		{
+			hero.stamina = 0;
+			hero.sprint = false;
+		}
+	}
+
+	else
+	{
+		hero.stamina += 0.2;
+		hero.sprint = true;
+
+		if(hero.stamina > 20)
+		{
+			hero.stamina = 20;
 		}
 	}
 
@@ -1311,7 +1348,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->currentStrat = CEnemy::STRAT_KILL;
 			}
 
-			else if (go->currentStrat != CEnemy::STRAT_RANGE && go->ID >= 100)
+			else if(go->currentStrat != CEnemy::STRAT_RANGE && go->ID >= 100)
 			{
 				go->ChangeStrategy(new CStrategy_Range());
 				go->currentStrat = CEnemy::STRAT_RANGE;
@@ -1376,7 +1413,7 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Attacking animation for enemy
-			if (go->attackAnimation == true)
+			if(go->attackAnimation == true)
 			{
 				go->attackAnimationTimer += dt;
 				if (go->attackAnimationTimer >= 1)
@@ -1400,7 +1437,7 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Movement Sprite Animation
-			if (go->direction == Vector3(0, -1, 0))
+			if(go->direction == Vector3(0, -1, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
@@ -1414,91 +1451,97 @@ void SceneText::UpdateEnemies(double dt)
 					go->enemyTileID = 0;
 				}
 
-
-				// For Boss Animation
-				if (go->bossTileID < 0)
+				//For Boss Animation
+				if(go->bossTileID < 0)
 				{
 					go->bossTileID = 0;
 				}
-				else if (go->bossTileID > 2)
+				
+				else if(go->bossTileID > 2)
 				{
 					go->bossTileID = 0;
 				}
 			}
 
-			else if (go->direction == Vector3(-1, 0, 0))
+			else if(go->direction == Vector3(-1, 0, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
 				go->bossTileID += 0.2;
-				if (go->enemyTileID < 5)
+				
+				if(go->enemyTileID < 5)
 				{
 					go->enemyTileID = 5;
 				}
 
-				else if (go->enemyTileID > 8)
+				else if(go->enemyTileID > 8)
 				{
 					go->enemyTileID = 5;
 				}
 
 				// For Boss Animation
-				if (go->bossTileID < 4)
+				if(go->bossTileID < 4)
 				{
 					go->bossTileID = 4;
 				}
-				else if (go->bossTileID > 6)
+				
+				else if(go->bossTileID > 6)
 				{
 					go->bossTileID = 4;
 				}
 			}
 
-			else if (go->direction == Vector3(1, 0, 0))
+			else if(go->direction == Vector3(1, 0, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
 				go->bossTileID += 0.2;
-				if (go->enemyTileID < 10)
+				
+				if(go->enemyTileID < 10)
 				{
 					go->enemyTileID = 10;
 				}
 
-				else if (go->enemyTileID > 13)
+				else if(go->enemyTileID > 13)
 				{
 					go->enemyTileID = 10;
 				}
 
-				// For Boss Animation
+				//For Boss Animation
 				if (go->bossTileID < 8)
 				{
 					go->bossTileID = 8;
 				}
+				
 				else if (go->bossTileID > 10)
 				{
 					go->bossTileID = 8;
 				}
 			}
 
-			else if (go->direction == Vector3(0, 1, 0))
+			else if(go->direction == Vector3(0, 1, 0))
 			{
 				//Sprite Animation
 				go->enemyTileID += 0.2;
 				go->bossTileID += 0.2;
-				if (go->enemyTileID < 15)
+				
+				if(go->enemyTileID < 15)
 				{
 					go->enemyTileID = 15;
 				}
 
-				else if (go->enemyTileID > 18)
+				else if(go->enemyTileID > 18)
 				{
 					go->enemyTileID = 15;
 				}
 
-				// For Boss Animation
-				if (go->bossTileID < 12)
+				//For Boss Animation
+				if(go->bossTileID < 12)
 				{
 					go->bossTileID = 12;
 				}
-				else if (go->bossTileID > 14)
+				
+				else if(go->bossTileID > 14)
 				{
 					go->bossTileID = 12;
 				}
@@ -1592,13 +1635,16 @@ void SceneText::UpdateGoodies(double dt)
 						
 						else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
 						{
-							if(hero.heroCurrTile == go->tilePos && hero.health < hero.full_health)
+							if(hero.heroCurrTile == go->tilePos)
 							{
-								if(diamondCount >= 3)
+								if(hero.health < hero.full_health)
 								{
-									go->active = false;
-									hero.health++;
-									diamondCount -= 3;
+									if(diamondCount >= 3)
+									{
+										go->active = false;
+										hero.health++;
+										diamondCount -= 3;
+									}
 								}
 							}
 						}
@@ -1762,7 +1808,7 @@ void SceneText::UpdateCustomisation(double dt)
 	}
 
 	//Open Menu
-	if(Application::IsKeyPressed('T') && weaponCollectedScreen == false && stageClear == false)
+	if(Application::IsKeyPressed('T') && weaponCollectedScreen == false && stageClear == false && hero.NoOfScroll >= 1)
 	{
 		if(CloseOpenCustomMenu == 1)
 		{
@@ -2050,9 +2096,7 @@ void SceneText::UpdateMouse()
 			{
 				//For Red Hero
 				if((x > 123 && x < 278) && (y < 404 && y > 203) && Red_Selected == false && Temp_Red_Selected == false)
-				{
-					cout << "HELLO RED WORLD" << endl;
-					
+				{			
 					Red_Selected = true;
 					Blue_Selected = false;
 					hero.transform = true;
@@ -2060,16 +2104,15 @@ void SceneText::UpdateMouse()
 				
 				//For Blue Hero
 				else if((x > 524 && x < 675) && (y < 404 && y > 203) && Blue_Selected == false)
-				{
-					cout << "HELLO BLUE WORLD" << endl;
-					
+				{		
 					Red_Selected = false;
 					Blue_Selected = true;
 					hero.transform = true;
+					hero.NoOfScroll--;
 				}
 			}
 
-			else
+			/*else
 			{
 				//For Red Hero
 				if((x > 303 && x < 662) && (y < 684 && y > 349))
@@ -2088,7 +2131,7 @@ void SceneText::UpdateMouse()
 					Red_Selected = false;
 					Blue_Selected = true;
 				}
-			}
+			}*/
 
 			CustomMenuSelected = true;
 		}
@@ -2117,13 +2160,13 @@ void SceneText::UpdateMouse()
 
 			if(w <= 800 && h <= 600)
 			{
-				// For Red Hero
-				if ((x > 123 && x < 278) && (y < 404 && y > 203))
+				//For Red Hero
+				if((x > 123 && x < 278) && (y < 404 && y > 203))
 				{
 					Custom_HeroSize_Red = 30;
 				}
 
-				// For BLUE Hero
+				//For BLUE Hero
 				else if((x > 524 && x < 675) && (y < 404 && y > 203))
 				{
 					Custom_HeroSize_Blue = 30;
@@ -2136,7 +2179,7 @@ void SceneText::UpdateMouse()
 				}
 			}
 			
-			else
+			/*else
 			{
 				//For Red Hero
 				if((x > 301 && x < 661) && (y < 677 && y > 353))
@@ -2155,7 +2198,7 @@ void SceneText::UpdateMouse()
 					Custom_HeroSize_Red = 20;
 					Custom_HeroSize_Blue = 20;
 				}
-			}
+			}*/
 		}
 		
 		else
@@ -3052,33 +3095,6 @@ void SceneText::RenderInit()
 	modelStack.LoadIdentity();
 }
 
-void SceneText::RenderText()
-{
-	//On screen text
-	std::ostringstream ss;
-	ss.precision(4);
-	ss << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 71, 0.5);
-
-	if(Application::IsKeyPressed(VK_INSERT))
-	{
-		std::ostringstream ss1;
-		ss1.precision(5);
-		ss1 << "Position: " << hero.gettheHeroPositionx() << "," << hero.gettheHeroPositiony();
-		RenderTextOnScreen(meshList[GEO_TEXT], ss1.str(), Color(1, 1, 0), 2.3, 2, 57);
-
-		std::ostringstream ss2;
-		ss2.precision(5);
-		ss2 << "MapOffset_x: " << CurrentMap->mapOffset_x;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 1, 0), 2.3, 2, 53);
-
-		std::ostringstream ss3;
-		ss3.precision(5);
-		ss3 << "TileOffset_x:" << CurrentMap->tileOffset_x;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 1, 0), 2.3, 2, 49);
-	}
-}
-
 void SceneText::RenderHero()
 {
 	//Slingshot rotation angle
@@ -3645,6 +3661,12 @@ void SceneText::RenderBoss()
 
 void SceneText::RenderHUD()
 {
+	//Framerate
+	std::ostringstream ss;
+	ss.precision(4);
+	ss << fps;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 71, 0.5);
+
 	//For indicating number of diamonds collected
 	RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 3.4, 3, 1, 56.5, false);
 	std::ostringstream ss1;
@@ -3661,7 +3683,7 @@ void SceneText::RenderHUD()
 	std::ostringstream ss3;
 	ss3.precision(5);
 	ss3 << "Points: " << PointSystem;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 65, 57);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 1, 0.5);
 	
 	//For indicating number of shurikens left
 	if(hero.weapon.GetShurikensAcquired() == true)
@@ -3672,7 +3694,14 @@ void SceneText::RenderHUD()
 		RenderTextOnScreen(meshList[GEO_TEXT], ss4.str(), Color(0, 0, 0), 2.3, 26.5, 57);
 	}
 
-	//Detection status
+	//Stamina meter
+	RenderTextOnScreen(meshList[GEO_TEXT], "Stam ina", Color(0, 0.7, 0), 2.3, 43, 57);
+	for(int i = 0; i <= hero.stamina; i++)
+	{
+		RenderQuadOnScreen(meshList[GEO_STAMINAMETER], 3, 1, 57 + i, 58.2, false);
+	}
+
+	//Hiding status
 	if(hero.hiding == false)
 	{
 		RenderQuadOnScreen(meshList[GEO_DETECTIONEYE], 4.7, 4.9, 35, 55.5, false);
@@ -3891,7 +3920,6 @@ void SceneText::Render()
 	RenderTileMap();
 	RenderBoss();
 	RenderEnemies();
-	RenderText();
 
 	if(m_ghost->active)
 	{
