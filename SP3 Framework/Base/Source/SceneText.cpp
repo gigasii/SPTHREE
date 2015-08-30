@@ -373,6 +373,9 @@ void SceneText::Init()
 	meshList[GEO_TILEENEMYSHEET2] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET2", 5, 5);
 	meshList[GEO_TILEENEMYSHEET2]->textureID = LoadTGA("Image//Enemy//enemy2.tga");
 
+	meshList[GEO_TILEENEMYSHEET3] = MeshBuilder::GenerateSprites("GEO_TILEENEMYSHEET3", 5, 5);
+	meshList[GEO_TILEENEMYSHEET3]->textureID = LoadTGA("Image//Enemy//enemy3.tga");
+
 	meshList[GEO_EXCLAMATIONMARK] = MeshBuilder::Generate2DMesh("GEO_TILEEXCLAMATIONMARK", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_EXCLAMATIONMARK]->textureID = LoadTGA("Image//Enemy//exclamationmark.tga");
 
@@ -718,8 +721,15 @@ void SceneText::RenderGO(GameObject *go)
 			}
 			break;
 		}
+
+		case GameObject::GO_BULLET:
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SPHERE], false, go->scale.x, go->pos.x - CurrentMap->mapOffset_x, go->pos.y);
+			modelStack.PopMatrix();
+			break;
 	}
 }
+
 
 bool SceneText::checkCollision(GameObject* go, GameObject* go2, double dt)
 {
@@ -837,6 +847,30 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 		}
 
 		break;
+
+		case GameObject::GO_BULLET:
+		{
+			m1 = go->mass;
+			m2 = go2->mass;
+			u1 = go->vel;
+			u2 = go2->vel;
+
+			Vector3 N = (go2->pos - go->pos).Normalized();
+			Vector3 u1N = u1.Dot(N) * N; 
+			Vector3 u2N = u2.Dot(N) * N; 
+
+			go->vel = u1 + (2 * m2 / (m1 + m2)) * (u2N - u1N);
+
+			//go2->vel = (2 * m1 * u1 + u2 * (m2 - m1)) * (1 / (m1 + m2));
+			//go->vel = (2 * m2 * u2 + u1 * (m1 - m2)) * (1 / (m1 + m2));
+
+			go2->vel = -go2->vel;
+			go2->deflect = true;
+
+			v1 = go->vel;
+		}
+
+		break;
 	}
 }
 
@@ -932,7 +966,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(-1, 0, 0))
 					{
 						//Normal soldier
-						if(go->ID >= 50 && go->ID < 80)
+						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
 						{
 							go->health -= 2;
 						}
@@ -963,7 +997,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(1, 0, 0))
 					{
 						//Normal soldier
-						if(go->ID >= 50 && go->ID < 80)
+						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
 						{
 							go->health -= 2;
 						}
@@ -998,7 +1032,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(0, -1, 0))
 					{
 						//Normal soldier
-						if(go->ID >= 50 && go->ID < 80)
+						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
 						{
 							go->health -= 2;
 						}
@@ -1029,7 +1063,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(0, 1, 0))
 					{
 						//Normal soldier
-						if(go->ID >= 50 && go->ID < 80)
+						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
 						{
 							go->health -= 2;
 						}
@@ -1064,7 +1098,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 						if(go->theStrategy->CurrentState == CStrategy::PATROL)
 						{
 							//Normal soldier
-							if(go->ID >= 50 && go->ID < 80)
+							if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
 							{
 								go->health -= 2;
 							}
@@ -1271,12 +1305,16 @@ void SceneText::UpdateEnemies(double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)	
 		{
-			go->theStrategy->CurrentState;
-
-			if(go->currentStrat != CEnemy::STRAT_KILL)
+			if(go->currentStrat != CEnemy::STRAT_KILL && go->ID < 100)
 			{
 				go->ChangeStrategy(new CStrategy_Kill());
 				go->currentStrat = CEnemy::STRAT_KILL;
+			}
+
+			else if (go->currentStrat != CEnemy::STRAT_RANGE && go->ID >= 100)
+			{
+				go->ChangeStrategy(new CStrategy_Range());
+				go->currentStrat = CEnemy::STRAT_RANGE;
 			}
 
 			go->SetDestination(hero.gettheHeroPositionx() + CurrentMap->mapOffset_x, hero.gettheHeroPositiony());
@@ -1287,7 +1325,7 @@ void SceneText::UpdateEnemies(double dt)
 			
 			else
 			{
-				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus);
+				go->Update(CurrentMap, hero.heroCurrTile, BarrelList, hero.invisibleStatus, m_goList, dt);
 				
 				int DistanceFromEnemyX = hero.gettheHeroPositionx() - go->GetPos_x() + CurrentMap->mapOffset_x;
 				int DistanceFromEnemyY = hero.gettheHeroPositiony() - go->GetPos_y();
@@ -1314,7 +1352,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->theStrategy->isAttacking = true;
 			}
 
-			if(go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
+			if (go->isHit == true && go->routeCounter == 0 && go->routeCounter2 == 0)
 			{
 				go->theStrategy->isAttacking = true;
 			}
@@ -1338,7 +1376,7 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Attacking animation for enemy
-			if(go->attackAnimation == true)
+			if (go->attackAnimation == true)
 			{
 				go->attackAnimationTimer += dt;
 				if (go->attackAnimationTimer >= 1)
@@ -2134,7 +2172,7 @@ void SceneText::UpdatePhysics(double dt)
 		GameObject *go = (GameObject *)*it;
 		if(go->active)
 		{
-			if(go->type == GameObject::GO_BALL)
+			if(go->type == GameObject::GO_BALL || go->type == GameObject::GO_BULLET)
 			{
 				Vector3 friction = -go->vel * 0.2f;
 				go->vel += friction * dt;
@@ -2152,6 +2190,18 @@ void SceneText::UpdatePhysics(double dt)
 					go->vel.SetZero();
 				}
 
+				if (go->type ==  GameObject::GO_BULLET)
+				{
+					float combinedDist = (go->pos - Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0)).Length();
+					float radius = go->scale.x + 16;
+
+					if (combinedDist <= radius)
+					{
+						go->active = false;
+						hero.health--;
+					}
+				}
+
 				for(std::vector<GameObject *>::iterator it2 = m_goList.begin(); it2 != m_goList.end(); ++it2)
 				{
 					GameObject *go2 = (GameObject *)*it2;
@@ -2159,51 +2209,97 @@ void SceneText::UpdatePhysics(double dt)
 					{
 						if(checkCollision(go, go2, dt))
 						{
-							if(go2->ID == CMap::BARREL)
+							if (go->type == GameObject::GO_BALL)
 							{
-								for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
+								if(go2->ID == CMap::BARREL)
 								{
-									CGoodies *go3 = (CGoodies *)*it3;
-
-									if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
+									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 									{
-										collisionResponse(go, go2);	
+										CGoodies *go3 = (CGoodies *)*it3;
 
-										if(go->timer < 3)
-											go3->active = false;
+										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
+										{
+											collisionResponse(go, go2);	
+
+											if(go->timer < 3)
+												go3->active = false;
+										}
 									}
 								}
-							}
 
-							else if(go2->ID >= CMap::ENEMY_50)
-							{
-								for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
+								else if(go2->ID >= CMap::ENEMY_50)
 								{
-									CEnemy *go4 = (CEnemy *)*it4;
-
-									if(go4->active && go4->ID == go2->ID)
+									for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
 									{
+										CEnemy *go4 = (CEnemy *)*it4;
+
+										if(go4->active && go4->ID == go2->ID)
+										{
+											collisionResponse(go, go2);	
+
+											if(go->timer < 3 && (go4->ID < 80 || go4->ID >= 100)&& go4->stunned == false)
+											{
+												go4->stunned = true;
+												go4->isHit = true;
+												go4->health--;
+											}
+
+											else if (go4->ID >= 80)
+												go4->isHit = true;
+										}
+									}
+								}
+
+								else
+								{
+									if (go2->type == go->GO_BULLET && go->timer >= 3)
+									{
+									}
+									else
 										collisionResponse(go, go2);	
 
-										if(go->timer < 3 && go4->ID < 80 && go4->stunned == false)
-										{
-											go4->stunned = true;
-											go4->isHit = true;
-											go4->health--;
-										}
-
-										else if (go4->ID >= 80)
-											go4->isHit = true;
-									}
+									if (go2->timer > 3)
+										go2->timer = 0;
 								}
 							}
 
 							else
 							{
-								collisionResponse(go, go2);	
+								if(go2->ID == CMap::BARREL)
+								{
+									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
+									{
+										CGoodies *go3 = (CGoodies *)*it3;
 
-								if (go2->timer > 3)
-									go2->timer = 0;
+										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
+										{
+											go->active = false;
+											go3->active = false;
+										}
+									}
+								}
+
+								else if (go2->ID >= CMap::ENEMY_50 && go->deflect == true)
+								{
+									for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
+									{
+										CEnemy *go4 = (CEnemy *)*it4;
+
+										if(go4->active && go4->ID == go2->ID)
+										{
+											if(go4->stunned == false)
+											{
+												go4->stunned = true;
+												go4->isHit = true;
+												go4->health--;
+												go->active = false;
+											}
+										}
+									}
+								}
+
+								else if (go2->ID < 50 && go2->type != GameObject::GO_BALL)
+									go->active = false;
 							}
 						}
 					}
@@ -3141,6 +3237,7 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_STUNSHEET], go->stunTileID, 48, theEnemy_x - 8, theEnemy_y + 18);
 			}
 
+
 			//Detection radius
 			for(vector<Vector3>::iterator it2 = go->detectionGrid.begin(); it2 != go->detectionGrid.end(); ++it2)
 			{
@@ -3149,7 +3246,6 @@ void SceneText::RenderEnemies()
 					Vector3 go2 = (Vector3)*it2;
 					Render2DMesh(meshList[GEO_TILEDETECTIONRADIUS], false, 1.0f, go2.x - CurrentMap->mapOffset_x, go2.y);
 				}
-
 				else if (go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID != CMap::BOSS_2)
 				{
 					Render2DMesh(meshList[GEO_EXCLAMATIONMARK], false, 23, (go->GetPos_x() + 5) - CurrentMap->mapOffset_x, go->GetPos_y() + 35);
@@ -3171,9 +3267,14 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 3, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 &&  go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 3, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if (go->ID >= 100)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 3, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 
@@ -3184,9 +3285,14 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 8, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 8, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if (go->ID >= 100)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 8, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 
@@ -3197,9 +3303,14 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 13, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 13, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if (go->ID >= 100)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 13, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 
@@ -3210,9 +3321,14 @@ void SceneText::RenderEnemies()
 						RenderSprites(meshList[GEO_TILEENEMYSHEET], 18, 32, theEnemy_x, theEnemy_y);
 					}
 
-					else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+					else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 					{
 						RenderSprites(meshList[GEO_TILEENEMYSHEET2], 18, 32, theEnemy_x, theEnemy_y);
+					}
+
+					else if (go->ID >= 100)
+					{
+						RenderSprites(meshList[GEO_TILEENEMYSHEET3], 18, 32, theEnemy_x, theEnemy_y);
 					}
 				}
 			}
@@ -3231,9 +3347,14 @@ void SceneText::RenderEnemies()
 					go->isHit = true;
 				}
 
-				else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+				else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 				{
 					RenderSprites(meshList[GEO_TILEENEMYSHEET2], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
+				}
+
+				else if (go->ID >= 100)
+				{
+					RenderSprites(meshList[GEO_TILEENEMYSHEET3], go->enemyTileID, 32, theEnemy_x, theEnemy_y);
 				}
 			}
 		}
@@ -3246,9 +3367,14 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_TILEENEMYSHEET], 5, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+			else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 5, 32, theEnemy_x, theEnemy_y);
+			}
+
+			else if (go->ID >= 100)
+			{
+				RenderSprites(meshList[GEO_TILEENEMYSHEET3], 5, 32, theEnemy_x, theEnemy_y);
 			}
 		}
 
@@ -3260,9 +3386,14 @@ void SceneText::RenderEnemies()
 				RenderSprites(meshList[GEO_TILEENEMYSHEET], 19, 32, theEnemy_x, theEnemy_y);
 			}
 
-			else if (go->ID >= 80 && go->ID != CMap::BOSS_2)
+			else if (go->ID >= 80 && go->ID != CMap::BOSS_2 && go->ID < 100)
 			{
 				RenderSprites(meshList[GEO_TILEENEMYSHEET2], 19, 32, theEnemy_x, theEnemy_y);
+			}
+
+			else if (go->ID >= 100)
+			{
+				RenderSprites(meshList[GEO_TILEENEMYSHEET3], 19, 32, theEnemy_x, theEnemy_y);
 			}
 		}
 	}

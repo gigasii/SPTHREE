@@ -4,6 +4,7 @@
 #include "Pathing.h"
 #include <vector>
 #include "Goodies.h"
+#include "GameObject.h"
 
 class CStrategy
 {
@@ -13,6 +14,7 @@ public:
 	//The AI states of the enemy
 	enum CURRENT_STATE
 	{
+		IDLE,
 		PATROL,
 		REPEL,
 		ATTACK,
@@ -22,7 +24,7 @@ public:
 	CStrategy();
 	~CStrategy();
 
-	virtual void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2, bool heroInvis, bool &eneHit) = 0;
+	virtual void Update(CMap* map, Vector3& enemyTile, Vector3& heroTile,Vector3& enemyDir, vector<CGoodies*> goodyList, int &routeCounter, int &routeCounter2, bool heroInvis, bool &eneHit, vector<GameObject*> &goList, float &eneROF, double dt) = 0;
 	virtual void SetDestination(const float x, const float y) = 0;
 	virtual void SetEnemyPosition(const float x, const float y) = 0;
 	virtual void GetEnemyPosition(float& x, float& y) = 0;

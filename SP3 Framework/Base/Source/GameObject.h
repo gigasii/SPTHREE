@@ -12,6 +12,7 @@ struct GameObject
 		GO_WALL,
 		GO_PILLAR,
 		GO_AIM,
+		GO_BULLET,
 		GO_TOTAL, //must be last
 	};
 	GAMEOBJECT_TYPE type;
@@ -26,6 +27,7 @@ struct GameObject
 	float rotate;
 	int ID;
 	float timer;
+	bool deflect;
 
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
