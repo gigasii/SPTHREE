@@ -24,6 +24,7 @@ CEnemy::CEnemy()
 	, routeCounter2(0)
 	, isHit(false)
 	, RoF (0)
+	, rotation (1,0,0)
 {
 }
 

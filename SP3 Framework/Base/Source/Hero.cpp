@@ -109,7 +109,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 		theHeroPositionx = leftBorder;
 		if(mapType->scroll == true)
 		{
-			mapType->mapOffset_x = mapType->mapOffset_x - (int)(4.0f * timeDiff);
+			mapType->mapOffset_x = mapType->mapOffset_x - (int)((4.0f - reduceSpeed) * timeDiff);
 			
 			if(mapType->mapOffset_x < 0)
 			{
@@ -128,7 +128,7 @@ void Hero::ConstrainHero(CMap *mapType, const int leftBorder, const int rightBor
 		theHeroPositionx = rightBorder;	
 		if(mapType->scroll == true)
 		{
-			mapType->mapOffset_x = mapType->mapOffset_x + (int)(4.0f * timeDiff);
+			mapType->mapOffset_x = mapType->mapOffset_x + (int)((4.0f - reduceSpeed) * timeDiff);
 			
 			if(mapType->mapOffset_x > Max_mapOffset_x)
 			{
