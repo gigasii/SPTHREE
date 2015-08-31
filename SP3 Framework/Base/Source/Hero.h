@@ -41,6 +41,9 @@ public:
 	bool invisibleStatus;
 	float invisibleTimer;
 	bool moveToLeft, moveToRight, moveToUp, moveToDown;
+	bool sprint;
+	float stamina;
+	int reduceSpeed;
 
 	//Inventory
 	int full_health;

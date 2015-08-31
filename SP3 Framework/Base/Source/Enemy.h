@@ -52,6 +52,7 @@ public:
 	bool isHit;
 	int routeCounter, routeCounter2;
 	float RoF;
+	Vector3 rotation;
 
 	//Initialise this class instance
 	void Init();
