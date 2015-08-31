@@ -505,7 +505,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 1;
+	stage = 7;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -1221,39 +1221,42 @@ void SceneText::UpdateHero(double dt)
 	}
 
 	//Stamina meter
-	if(hero.sprint == false && (hero.moveToLeft == false && hero.moveToRight == false && hero.moveToUp == false && hero.moveToDown == false))
+	if(stage != 8)
 	{
-		hero.reduceSpeed = 2;
-	}
-
-	else if(hero.sprint == true && (hero.moveToLeft == false && hero.moveToRight == false && hero.moveToUp == false && hero.moveToDown == false))
-	{
-		hero.reduceSpeed = 0;
-	}
-	
-	if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
-	{
-		if(hero.stamina > 0)
+		if (hero.sprint == false && (hero.moveToLeft == false && hero.moveToRight == false && hero.moveToUp == false && hero.moveToDown == false))
 		{
-			hero.stamina -= 0.075;
-			hero.sprint = true;
+			hero.reduceSpeed = 2;
+		}
+
+		else if (hero.sprint == true && (hero.moveToLeft == false && hero.moveToRight == false && hero.moveToUp == false && hero.moveToDown == false))
+		{
+			hero.reduceSpeed = 0;
+		}
+
+		if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+		{
+			if (hero.stamina > 0)
+			{
+				hero.stamina -= 0.075;
+				hero.sprint = true;
+			}
+
+			else
+			{
+				hero.stamina = 0;
+				hero.sprint = false;
+			}
 		}
 
 		else
 		{
-			hero.stamina = 0;
-			hero.sprint = false;
-		}
-	}
+			hero.stamina += 0.2;
+			hero.sprint = true;
 
-	else
-	{
-		hero.stamina += 0.2;
-		hero.sprint = true;
-
-		if(hero.stamina > 20)
-		{
-			hero.stamina = 20;
+			if (hero.stamina > 20)
+			{
+				hero.stamina = 20;
+			}
 		}
 	}
 
@@ -1717,88 +1720,104 @@ void SceneText::UpdateGoodies(double dt)
 
 void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 {
-	BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
-	bossCounter += 0.01f;
-
-	if(bossCounter < 2.0f)
+	if (stage == 7)
 	{
-		BossTileID += 0.1f;
-		if(BossTileID > 2)
+		BossPointer->Set_BossDestination(BossPointer->Get_BossX(), BossPointer->Get_BossY());
+		bossCounter += 0.01f;
+
+		if (bossCounter < 2.0f)
 		{
-			BossTileID = 0;
-			IsTurn = false;
-		}
-	}
-
-	else if(bossCounter > 2.0f && bossCounter < 4.0f)
-	{
-		BossTileID += 0.1f;
-		if(BossTileID > 5)
-		{
-			BossTileID = 3;
-			IsTurn = true;
-		}
-	}
-
-	else if(bossCounter > 4.0f)
-	{
-		bossCounter = 0;
-	}
-
-	if(hero.GetdoorOpened() == true)
-	{
-		derenderDoor = true;
-	}
-
-	if(stage == 7 && (CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X + 1] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS))
-	{
-		if(Application::IsKeyPressed(VK_SPACE))
-		{
-			if (GetKey == false && keyCount < 1)
+			BossTileID += 0.1f;
+			if (BossTileID > 2)
 			{
-				keyCount++;
+				BossTileID = 0;
+				IsTurn = false;
 			}
+		}
 
-			if(keyCount == 1)
+		else if (bossCounter > 2.0f && bossCounter < 4.0f)
+		{
+			BossTileID += 0.1f;
+			if (BossTileID > 5)
 			{
-				hero.SetKeyAcquired(true);
-				GetKey = true;
+				BossTileID = 3;
+				IsTurn = true;
 			}
+		}
 
-			for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+		else if (bossCounter > 4.0f)
+		{
+			bossCounter = 0;
+		}
+
+		if (hero.GetdoorOpened() == true)
+		{
+			derenderDoor = true;
+		}
+
+		if (stage == 7 && (CurrentMap->theScreenMap[checkPosition_Y + 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y - 1][checkPosition_X] == CMap::BOSS || CurrentMap->theScreenMap[checkPosition_Y][checkPosition_X - 1] == CMap::BOSS))
+		{
+			if (Application::IsKeyPressed(VK_SPACE))
 			{
-				CGoodies *go = (CGoodies *)*it;
-				if(go->active)
+				if (GetKey == false && keyCount < 1)
 				{
-					if(go->GoodiesType == CGoodies::Goodies_Type::DOOR)
+					keyCount++;
+				}
+
+				if (keyCount == 1)
+				{
+					hero.SetKeyAcquired(true);
+					GetKey = true;
+				}
+
+				for (std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
+				{
+					CGoodies *go = (CGoodies *)*it;
+					if (go->active)
 					{
-						go->active = false;
+						if (go->GoodiesType == CGoodies::Goodies_Type::DOOR)
+						{
+							go->active = false;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	if(IsTurn == true)
-	{
-		for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
+		if (IsTurn == true)
 		{
-			for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
+			for (int i = 0; i < CurrentMap->GetNumOfTiles_Height(); i++)
 			{
-				if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+				for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
 				{
-					EnemiesRendered = true;
+					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+					{
+						EnemiesRendered = true;
+					}
+				}
+			}
+		}
+
+		if (stage == 7)
+		{
+			for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+			{
+				CEnemy *go = (CEnemy *)*it;
+				if (EnemiesRendered == true && go->health > 0)
+				{
+					go->active = true;
+					go->isHit = true;
 				}
 			}
 		}
 	}
 
-	if (stage == 7)
+	if (stage == 8)
 	{
 		for (std::vector<CEnemy *>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 		{
 			CEnemy *go = (CEnemy *)*it;
-			if (EnemiesRendered == true && go->health > 0)
+			if (go->ID == CMap::BOSS_2)
 			{
 				go->active = true;
 				go->isHit = true;
@@ -3321,7 +3340,7 @@ void SceneText::RenderEnemies()
 			}
 
 			//Attacking
-			if(go->attackAnimation == true)
+			if (go->attackAnimation == true && go->ID != CMap::BOSS_2)
 			{
 				//Melee soldiers
 				if(go->direction == Vector3(0, -1, 0))
