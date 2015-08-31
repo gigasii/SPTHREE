@@ -12,6 +12,7 @@
 #include "Boss.h"
 #include "GameObject.h"
 #include "Minimap.h"
+#include"HighscoreManager.h"
 
 class SceneText : public Scene
 {
@@ -177,6 +178,7 @@ public:
 	void UpdateMiniMap(double dt);
 	void UpdateBossLevelScrolling();
 	void UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt);
+	void UpdateHighscore();
 	
 	//Game project functions
 	void RenderInit();
@@ -187,6 +189,7 @@ public:
 	void RenderBoss();
 	void RenderHUD();
 	void RenderMinimap();
+	void RenderHighscore();
 	
 	//Render Menus
 	void RenderMenu(int &InteractHighLight, int max, int min);
@@ -309,6 +312,10 @@ private:
 	Vector3 prevPos;
 	bool onHero;
 	bool lockMovement;
+
+	//highscore
+	CHighscoreManager Highscore;
+	CHighscore PlayerScore;
 
 protected:
 	float m_worldWidth;
