@@ -1402,24 +1402,24 @@ void SceneText::UpdateEnemies(double dt)
 			//Checking enemy attack status
 			if(go->attackStatus == true && go->attackAnimation == false)
 			{		
-				go->attackReactionTime += dt;
-				if(go->attackReactionTime >= 0.2)
-				{
+				//go->attackReactionTime += dt;
+				//if(go->attackReactionTime >= 0.2)
+				//{
 					if(go->ID < 100)
 					{
 						hero.health--;
-						go->attackReactionTime = 0;
+						//go->attackReactionTime = 0;
 						go->attackStatus = false;
 					}
-				}
-
+				//}
+					
 				go->attackAnimation = true;
 			}
 
-			else
+			/*else
 			{
 				go->attackReactionTime = 0;
-			}
+			}*/
 
 			//Attacking animation for enemy
 			if(go->attackAnimation == true)
@@ -3278,18 +3278,18 @@ void SceneText::RenderEnemies()
 					{
 						if(hero.health == 1)
 						{
-							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, go->GetPos_x() + 6, go->GetPos_y() - 20);
+							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - CurrentMap->mapOffset_x) + 6, go->GetPos_y() - 20);
 						}
 				
 						else
 						{
-							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, go->GetPos_x() - 15 + ((a - go->health/2) * 21), go->GetPos_y() - 20);
+							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - CurrentMap->mapOffset_x) - 15 + ((a - go->health/2) * 21), go->GetPos_y() - 20);
 						}
 					}
 			
 					else
 					{
-						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, go->GetPos_x() - 15 + ((a - go->health/2) * 21) + 11, go->GetPos_y() - 20);
+						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - CurrentMap->mapOffset_x) - 15 + ((a - go->health/2) * 21) + 11, go->GetPos_y() - 20);
 					}
 				}
 			}
