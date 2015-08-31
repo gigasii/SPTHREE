@@ -1,0 +1,3 @@
+BBBBB     10
+1BBCC     10
+Player     0

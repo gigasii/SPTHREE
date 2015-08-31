@@ -16,11 +16,13 @@ CMinimap::CMinimap()
 	, m_cMiniMap5(NULL)
 	, m_cMiniMap6(NULL)
 	, m_cMiniMap7(NULL)
+	, m_cMiniMap8(NULL)
 	, m_cMinimap_EnemyAvatar(NULL)
 	, m_cMinimap_DiamondAvatar(NULL)
 	, m_cMinimap_KeyAvatar(NULL)
 	, m_cMinimap_BarrelAvatar(NULL)
 	, m_cMinimap_BossAvatar(NULL)
+	, m_cMinimap_BossAvatar2(NULL)
 {
 }
 
@@ -67,6 +69,12 @@ CMinimap::~CMinimap(void)
 		delete m_cMiniMap7;
 		m_cMiniMap7 = NULL;
 	}
+
+	if (m_cMiniMap8)
+	{
+		delete m_cMiniMap8;
+		m_cMiniMap8 = NULL;
+	}
 }
 
 // ========================== Initializing MiniMap Inits ==========================
@@ -104,6 +112,11 @@ void CMinimap::InitMiniMap_6()
 void CMinimap::InitMiniMap_7()
 {
 	m_cMiniMap7 = new CMinimap();
+}
+
+void CMinimap::InitMiniMap_8()
+{
+	m_cMiniMap8 = new CMinimap();
 }
 
 // ========================== Set Functions ==========================
@@ -183,6 +196,17 @@ bool CMinimap::SetBossAvatar(Mesh* BossAvatar)
 	return false;
 }
 
+bool CMinimap::SetBossAvatar2(Mesh* BossAvatar2)
+{
+	if (BossAvatar2 != NULL)
+	{
+		m_cMinimap_BossAvatar2 = BossAvatar2;
+		return true;
+	}
+
+	return false;
+}
+
 bool CMinimap::SetDiamondAvatar(Mesh* DiamondAvatar)
 {
 	if (DiamondAvatar != NULL)
@@ -249,6 +273,11 @@ Mesh* CMinimap::GetBarrelAvater(void)
 Mesh* CMinimap::GetBossAvatar(void)
 {
 	return m_cMinimap_BossAvatar;
+}
+
+Mesh* CMinimap::GetBossAvatar2(void)
+{
+	return m_cMinimap_BossAvatar2;
 }
 
 Mesh* CMinimap::GetKeyAvatar(void)

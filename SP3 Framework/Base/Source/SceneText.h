@@ -89,6 +89,10 @@ class SceneText : public Scene
 		GEO_EXCLAMATIONMARK,
 		GEO_STUNSHEET,
 
+		//For Introduction Screen and Name
+		GEO_INTRO_SCREEN,
+		GEO_NAME_SCREEN,
+
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
 		GEO_BOSS2,
@@ -158,7 +162,8 @@ public:
 	void InitMiniMap_Level5();
 	void InitMiniMap_Level6();
 	void InitMiniMap_Level7();
-	
+	void InitMiniMap_Level8();
+
 	//General functions to run the program
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
