@@ -7,15 +7,15 @@
 #include "LoadTGA.h"
 
 #include <sstream>
-#include <irrKlang.h>
-#pragma comment (lib, "irrKlang.lib")
-using namespace irrklang;
+//#include <irrKlang.h>
+//#pragma comment (lib, "irrKlang.lib")
+//using namespace irrklang;
 
 bool SceneText::bReset;
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
 
-ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
+//ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
@@ -26,6 +26,12 @@ SceneText::SceneText()
 	, CurrentMiniMap(NULL)
 {
 	bReset = false;
+
+	
+	Highscore = CHighscoreManager::CHighscoreManager();
+	PlayerScore = CHighscore::CHighscore();
+
+
 }
 
 SceneText::~SceneText()
@@ -505,7 +511,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 7;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -654,6 +660,10 @@ void SceneText::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 	m_ghost->active = false;
+
+	// ========================== Initializing Highscore stuff ==========================
+	PlayerScore.SetName("Player");
+	PlayerScore.SetValue(0);
 }
 
 // ================================== PHYSICS METHODS AND FUNCTIONS ==================================
@@ -878,6 +888,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 
 void SceneText::Update(double dt)
 {
+	
 	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
 
@@ -932,6 +943,7 @@ void SceneText::Update(double dt)
 	UpdatePhysics(dt);
 	UpdateMiniMap(dt);
 	UpdateLevels(checkPosition_X, checkPosition_Y, dt);
+	UpdateHighscore();
 
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -1132,7 +1144,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-	if((go->eneCurrTile == hero.heroCurrTile && hero.hiding == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK && go->RoF >= 1.3))
+	if((go->eneCurrTile == hero.heroCurrTile && hero.invisibleStatus == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK && go->RoF >= 1.3))
 	{
 		go->attackStatus = true;
 	}
@@ -1233,11 +1245,11 @@ void SceneText::UpdateHero(double dt)
 			hero.reduceSpeed = 0;
 		}
 
-		if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+		if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 		{
 			if (hero.stamina > 0)
 			{
-				hero.stamina -= 0.075;
+				hero.stamina -= 0.05;
 				hero.sprint = true;
 			}
 
@@ -1396,33 +1408,38 @@ void SceneText::UpdateEnemies(double dt)
 				go->theStrategy->isAttacking = true;
 			}
 
-			//Force set the range enemies to die in 2 hits
-			if(go->isHit == true && go->ID >= 100 && go->health == 0)
+			//Force set the enemies to die in 2 hits
+			if(go->isHit == true && (go->ID >= 50 && go->ID < 100 || go->ID >= 100) && go->health == 0)
 			{
 				go->active = false;
 			}
 
 			//Checking enemy attack status
 			if(go->attackStatus == true && go->attackAnimation == false)
-			{		
-				//go->attackReactionTime += dt;
-				//if(go->attackReactionTime >= 0.2)
-				//{
-					if(go->ID < 100)
+			{
+				if(go->ID >= 50 && go->ID < 100)
+				{
+					go->attackReactionTime += dt;
+					if(go->attackReactionTime >= 0.15)
 					{
+
 						hero.health--;
-						//go->attackReactionTime = 0;
+						go->attackReactionTime = 0;
 						go->attackStatus = false;
+						go->attackAnimation = true;
 					}
-				//}
-					
-				go->attackAnimation = true;
+				}
+
+				else if(go->ID >= 100)
+				{
+					go->attackAnimation = true;
+				}
 			}
 
-			/*else
+			else
 			{
 				go->attackReactionTime = 0;
-			}*/
+			}
 
 			//Attacking animation for enemy
 			if(go->attackAnimation == true)
@@ -1599,7 +1616,7 @@ void SceneText::UpdateGoodies(double dt)
 	if(weaponCollectedScreen == true)
 	{
 		weaponCollectedTimer += dt;
-		if(weaponCollectedTimer >= 3)
+		if(weaponCollectedTimer >= 2)
 		{
 			weaponCollectedTimer = 0;
 			weaponCollectedScreen = false;
@@ -1664,6 +1681,7 @@ void SceneText::UpdateGoodies(double dt)
 							go->active = false;
 							diamondCount++;
 							PointSystem += 10;
+							PlayerScore.SetValue(10);
 						}
 						
 						else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
@@ -2760,6 +2778,14 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 	}
 }
 
+void SceneText::UpdateHighscore()
+{
+	Highscore.ReadFromFile("Highscore.txt");
+	Highscore.UpdateHighscore(PlayerScore);
+	Highscore.WriteToFile("Highscore.txt");
+
+}
+
 // ================================== RENDERING APPLICATION FUNCTIONS ==================================
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
@@ -3295,7 +3321,7 @@ void SceneText::RenderEnemies()
 				{
 					if(go->health%2 == 1)
 					{
-						if(hero.health == 1)
+						if(go->health == 1)
 						{
 							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - CurrentMap->mapOffset_x) + 6, go->GetPos_y() - 20);
 						}
@@ -3531,7 +3557,7 @@ void SceneText::RenderTileMap()
 
 			else if(stage == 2 || stage == 4 || stage == 6)
 			{
-				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -3561,7 +3587,7 @@ void SceneText::RenderTileMap()
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				else if (CurrentMap->theScreenMap[i][m] == CMap::DOOR)
+				else if(CurrentMap->theScreenMap[i][m] == CMap::DOOR)
 				{
 					if (hero.GetdoorOpened() == false)
 					{
@@ -3578,7 +3604,7 @@ void SceneText::RenderTileMap()
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if (CurrentMap->theScreenMap[i][m] == 17)
+				if(CurrentMap->theScreenMap[i][m] == 17)
 				{
 					a = i;
 					b = k;
@@ -3586,9 +3612,9 @@ void SceneText::RenderTileMap()
 			}
 
 			// Render Boss Scrolling Map
-			else if (stage == 8)
+			else if(stage == 8)
 			{
-				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -3601,7 +3627,7 @@ void SceneText::RenderTileMap()
 
 			else
 			{
-				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -3612,6 +3638,7 @@ void SceneText::RenderTileMap()
 					{
 						Render2DMesh(meshList[GEO_TILEDOOR], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());				
 					}
+					
 					else
 					{
 						Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
@@ -3705,19 +3732,31 @@ void SceneText::RenderGoodies()
 		else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
 		{
 			if(go->active)
+			{
 				Render2DMesh(meshList[GEO_HPPOT], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+				RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 2, 2, 39, 34, false);
+				RenderTextOnScreen(meshList[GEO_TEXT], "X3", Color(1, 0, 0), 2, 41, 34);
+			}	
 		}
 		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
 		{
 			if(go->active)
+			{
 				Render2DMesh(meshList[GEO_MAXHP], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+				RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 2, 2, 48, 34, false);
+				RenderTextOnScreen(meshList[GEO_TEXT], "X5", Color(1, 0, 0), 2, 50, 34);
+			}			
 		}
 		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
 		{
 			if(go->active)
+			{
 				Render2DMesh(meshList[GEO_SCROLL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+				RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 2, 2, 27.5, 34, false);
+				RenderTextOnScreen(meshList[GEO_TEXT], "X3", Color(1, 0, 0), 2, 29.5, 34);
+			}
 		}
 	}
 }
@@ -3846,6 +3885,32 @@ void SceneText::RenderMinimap()
 				}
 			}
 		}
+	}
+}
+
+void SceneText::RenderHighscore()
+{
+		if(Application::IsKeyPressed('O'))
+	{
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+
+		Highscore.ReadFromFile("Highscore.txt");
+		for(int a = 0; a < Highscore.GetCurrentSize();a++)
+		{
+			std::ostringstream ss;
+			ss.precision(5);
+			ss << Highscore.GetAllHighscores(a).GetName() << "     " << Highscore.GetAllHighscores(a).GetValue() << endl;
+			if(Highscore.GetAllHighscores(a).GetName() == PlayerScore.GetName())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2.3, 2, 39 - a * 3);
+			}
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 2, 39 - a * 3);
+
+			//Highscore.GetAllHighscores(a);	
+		}
+		Highscore.WriteToFile("Highscore.txt");
 	}
 }
 
@@ -4006,6 +4071,8 @@ void SceneText::Render()
 		}
 	}
 
+
+
 	RenderHero();
 	RenderGoodies();
 	RenderHUD();
@@ -4013,6 +4080,7 @@ void SceneText::Render()
 	RenderWeaponCollectedMenu();
 	RenderStageClear();
 	RenderMinimap();
+	RenderHighscore();
 	RenderGameOver();
 }
 
