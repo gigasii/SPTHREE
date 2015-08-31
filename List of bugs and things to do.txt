@@ -1,7 +1,3 @@
 5. Current point system only takes into account jewels (stealth kills, detection, etc. doesn't add or decrease points)
-6. Minimap doesn't display correctly for some levels
 7. Need to show the amount of Invisibiliy Scrolls player has in HUD
 8. Add a readme.txt/instruction menu to explain our game
-10. Link menus to features such a highscore and save/load
-11. Add day/night textures to our levels
-13. Item shop lacks information. Currently player only sees items on the ground. (atleast show how many jewels are needed to buy the item)
