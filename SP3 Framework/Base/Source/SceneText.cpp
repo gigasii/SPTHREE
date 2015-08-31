@@ -4154,10 +4154,11 @@ void SceneText::RenderName()
 {
 	if (nameMenu == true)
 	{
+
 		RenderQuadOnScreen(meshList[GEO_NAME_SCREEN], 82, 62, 40, 30, false);
 
 		if (selectorRender == true && namePos < 5)
-			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y);
+			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y - 133);
 
 		if (namePos == 5)
 		{
@@ -4168,23 +4169,23 @@ void SceneText::RenderName()
 
 		std::ostringstream sss;
 		sss << playerName;
-		RenderTextOnScreen(meshList[GEO_TEXT2], sss.str(), Color(1, 0, 0), 3, 35, 50);
+		RenderTextOnScreen(meshList[GEO_TEXT2], sss.str(), Color(1, 0, 0), 3, 35, 50 - 10);
 
 		Vector3 selectorPos(selectorTile.x * CurrentMap->GetTileSize(), 
 			CurrentMap->GetTileSize() * (CurrentMap->GetNumOfTiles_Height() - selectorTile.y) -  CurrentMap->GetTileSize());
 
 		for (int i = 0; i < 10; ++i)
 		{
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i,32.0f,320 + i * 32,480);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i,32.0f,320 + i * 32,480 - 64);
 		}
 
 		for (int i = 0; i < 13; ++i)
 		{
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 10,32.0f,320 + i * 32,448);
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 23,32.0f,320 + i * 32,416);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 10,32.0f,320 + i * 32,448- 64);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 23,32.0f,320 + i * 32,416- 64);
 		}
 
-		Render2DMesh(meshList[GEO_SELECTOR], false, 32.0f, selectorPos.x, selectorPos.y);
+		Render2DMesh(meshList[GEO_SELECTOR], false, 32.0f, selectorPos.x, selectorPos.y- 64);
 	}
 }
 
