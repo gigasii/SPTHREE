@@ -1,13 +1,3 @@
-1. HUD when opening a chest blocks the screen for too long (maybe unrender when player clicks?)
-2. Sometimes door doesn't render (e.g. when transitioning from stage 3 to 4, doors in stage 4 don't appear)
-3. Ranged enemies textures not working (turning, attacking, exclamation)
-4. Ranged enemies don't die immediately if killed by shuriken/bullet (they finish their stun animation before dying)
 5. Current point system only takes into account jewels (stealth kills, detection, etc. doesn't add or decrease points)
-6. Minimap doesn't display correctly for some levels
 7. Need to show the amount of Invisibiliy Scrolls player has in HUD
 8. Add a readme.txt/instruction menu to explain our game
-9. Add a pause menu (preferably with reset function)
-10. Link menus to features such a highscore and save/load
-11. Add day/night textures to our levels
-12. Alpha the hero when he's invisible for better visual feedback
-13. Item shop lacks information. Currently player only sees items on the ground. (atleast show how many jewels are needed to buy the item)
