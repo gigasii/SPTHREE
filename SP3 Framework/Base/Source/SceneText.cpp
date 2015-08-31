@@ -505,7 +505,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 7;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -1132,7 +1132,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 	}
 
 	//Checking if enemy can attack hero
-	if((go->eneCurrTile == hero.heroCurrTile && hero.hiding == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK && go->RoF >= 1.3))
+	if((go->eneCurrTile == hero.heroCurrTile && hero.invisibleStatus == false) || (go->ID >= 100 && go->theStrategy->CurrentState == CStrategy::ATTACK && go->RoF >= 1.3))
 	{
 		go->attackStatus = true;
 	}
@@ -1233,11 +1233,11 @@ void SceneText::UpdateHero(double dt)
 			hero.reduceSpeed = 0;
 		}
 
-		if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+		if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 		{
 			if (hero.stamina > 0)
 			{
-				hero.stamina -= 0.075;
+				hero.stamina -= 0.05;
 				hero.sprint = true;
 			}
 
@@ -1396,33 +1396,38 @@ void SceneText::UpdateEnemies(double dt)
 				go->theStrategy->isAttacking = true;
 			}
 
-			//Force set the range enemies to die in 2 hits
-			if(go->isHit == true && go->ID >= 100 && go->health == 0)
+			//Force set the enemies to die in 2 hits
+			if(go->isHit == true && (go->ID >= 50 && go->ID < 100 || go->ID >= 100) && go->health == 0)
 			{
 				go->active = false;
 			}
 
 			//Checking enemy attack status
 			if(go->attackStatus == true && go->attackAnimation == false)
-			{		
-				//go->attackReactionTime += dt;
-				//if(go->attackReactionTime >= 0.2)
-				//{
-					if(go->ID < 100)
+			{
+				if(go->ID >= 50 && go->ID < 100)
+				{
+					go->attackReactionTime += dt;
+					if(go->attackReactionTime >= 0.15)
 					{
+
 						hero.health--;
-						//go->attackReactionTime = 0;
+						go->attackReactionTime = 0;
 						go->attackStatus = false;
+						go->attackAnimation = true;
 					}
-				//}
-					
-				go->attackAnimation = true;
+				}
+
+				else if(go->ID >= 100)
+				{
+					go->attackAnimation = true;
+				}
 			}
 
-			/*else
+			else
 			{
 				go->attackReactionTime = 0;
-			}*/
+			}
 
 			//Attacking animation for enemy
 			if(go->attackAnimation == true)
@@ -1599,7 +1604,7 @@ void SceneText::UpdateGoodies(double dt)
 	if(weaponCollectedScreen == true)
 	{
 		weaponCollectedTimer += dt;
-		if(weaponCollectedTimer >= 3)
+		if(weaponCollectedTimer >= 2)
 		{
 			weaponCollectedTimer = 0;
 			weaponCollectedScreen = false;
@@ -3295,7 +3300,7 @@ void SceneText::RenderEnemies()
 				{
 					if(go->health%2 == 1)
 					{
-						if(hero.health == 1)
+						if(go->health == 1)
 						{
 							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - CurrentMap->mapOffset_x) + 6, go->GetPos_y() - 20);
 						}
@@ -3531,7 +3536,7 @@ void SceneText::RenderTileMap()
 
 			else if(stage == 2 || stage == 4 || stage == 6)
 			{
-				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -3561,7 +3566,7 @@ void SceneText::RenderTileMap()
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				else if (CurrentMap->theScreenMap[i][m] == CMap::DOOR)
+				else if(CurrentMap->theScreenMap[i][m] == CMap::DOOR)
 				{
 					if (hero.GetdoorOpened() == false)
 					{
@@ -3578,7 +3583,7 @@ void SceneText::RenderTileMap()
 					Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
 
-				if (CurrentMap->theScreenMap[i][m] == 17)
+				if(CurrentMap->theScreenMap[i][m] == 17)
 				{
 					a = i;
 					b = k;
@@ -3586,9 +3591,9 @@ void SceneText::RenderTileMap()
 			}
 
 			// Render Boss Scrolling Map
-			else if (stage == 8)
+			else if(stage == 8)
 			{
-				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -3601,7 +3606,7 @@ void SceneText::RenderTileMap()
 
 			else
 			{
-				if (CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
+				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
 					RenderTilesMap(meshList[GEO_TILESHEET_DESERT], CurrentMap->theScreenMap[i][m], 32.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
 				}
@@ -3612,6 +3617,7 @@ void SceneText::RenderTileMap()
 					{
 						Render2DMesh(meshList[GEO_TILEDOOR], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());				
 					}
+					
 					else
 					{
 						Render2DMesh(meshList[GEO_TILEBACKGROUND], false, 1.0f, k * CurrentMap->GetTileSize() - CurrentMap->mapFineOffset_x, 768 - i * CurrentMap->GetTileSize());
@@ -3705,19 +3711,31 @@ void SceneText::RenderGoodies()
 		else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
 		{
 			if(go->active)
+			{
 				Render2DMesh(meshList[GEO_HPPOT], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+				RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 2, 2, 39, 34, false);
+				RenderTextOnScreen(meshList[GEO_TEXT], "X3", Color(1, 0, 0), 2, 41, 34);
+			}	
 		}
 		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::MAXHP)
 		{
 			if(go->active)
+			{
 				Render2DMesh(meshList[GEO_MAXHP], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+				RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 2, 2, 48, 34, false);
+				RenderTextOnScreen(meshList[GEO_TEXT], "X5", Color(1, 0, 0), 2, 50, 34);
+			}			
 		}
 		
 		else if(go->GoodiesType == CGoodies::Goodies_Type::SCROLL)
 		{
 			if(go->active)
+			{
 				Render2DMesh(meshList[GEO_SCROLL], false, 1.0f, theGoodies_x - CurrentMap->mapOffset_x, theGoodies_y);
+				RenderQuadOnScreen(meshList[GEO_HUD_DIAMOND], 2, 2, 27.5, 34, false);
+				RenderTextOnScreen(meshList[GEO_TEXT], "X3", Color(1, 0, 0), 2, 29.5, 34);
+			}
 		}
 	}
 }
