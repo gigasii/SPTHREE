@@ -7,15 +7,15 @@
 #include "LoadTGA.h"
 
 #include <sstream>
-#include <irrKlang.h>
-#pragma comment (lib, "irrKlang.lib")
-using namespace irrklang;
+//#include <irrKlang.h>
+//#pragma comment (lib, "irrKlang.lib")
+//using namespace irrklang;
 
 bool SceneText::bReset;
 static char CHAR_HEROKEY;
 static const float TILE_SIZE = 32;
 
-ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
+//ISoundEngine *Name	= createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
@@ -26,6 +26,12 @@ SceneText::SceneText()
 	, CurrentMiniMap(NULL)
 {
 	bReset = false;
+
+	
+	Highscore = CHighscoreManager::CHighscoreManager();
+	PlayerScore = CHighscore::CHighscore();
+
+
 }
 
 SceneText::~SceneText()
@@ -654,6 +660,10 @@ void SceneText::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 	m_ghost->active = false;
+
+	// ========================== Initializing Highscore stuff ==========================
+	PlayerScore.SetName("Player");
+	PlayerScore.SetValue(0);
 }
 
 // ================================== PHYSICS METHODS AND FUNCTIONS ==================================
@@ -878,6 +888,7 @@ void SceneText::collisionResponse(GameObject* go, GameObject* go2)
 
 void SceneText::Update(double dt)
 {
+	
 	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
 
@@ -932,6 +943,7 @@ void SceneText::Update(double dt)
 	UpdatePhysics(dt);
 	UpdateMiniMap(dt);
 	UpdateLevels(checkPosition_X, checkPosition_Y, dt);
+	UpdateHighscore();
 
 	camera.Update(dt);
 	fps = (float)(1.f / dt);
@@ -1669,6 +1681,7 @@ void SceneText::UpdateGoodies(double dt)
 							go->active = false;
 							diamondCount++;
 							PointSystem += 10;
+							PlayerScore.SetValue(10);
 						}
 						
 						else if(go->GoodiesType == CGoodies::Goodies_Type::HPPOT)
@@ -2763,6 +2776,14 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 			}				
 		}
 	}
+}
+
+void SceneText::UpdateHighscore()
+{
+	Highscore.ReadFromFile("Highscore.txt");
+	Highscore.UpdateHighscore(PlayerScore);
+	Highscore.WriteToFile("Highscore.txt");
+
 }
 
 // ================================== RENDERING APPLICATION FUNCTIONS ==================================
@@ -3867,6 +3888,32 @@ void SceneText::RenderMinimap()
 	}
 }
 
+void SceneText::RenderHighscore()
+{
+		if(Application::IsKeyPressed('O'))
+	{
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+
+		Highscore.ReadFromFile("Highscore.txt");
+		for(int a = 0; a < Highscore.GetCurrentSize();a++)
+		{
+			std::ostringstream ss;
+			ss.precision(5);
+			ss << Highscore.GetAllHighscores(a).GetName() << "     " << Highscore.GetAllHighscores(a).GetValue() << endl;
+			if(Highscore.GetAllHighscores(a).GetName() == PlayerScore.GetName())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2.3, 2, 39 - a * 3);
+			}
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 2, 39 - a * 3);
+
+			//Highscore.GetAllHighscores(a);	
+		}
+		Highscore.WriteToFile("Highscore.txt");
+	}
+}
+
 // ================================== RENDERING MENUS ==================================
 
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
@@ -4024,6 +4071,8 @@ void SceneText::Render()
 		}
 	}
 
+
+
 	RenderHero();
 	RenderGoodies();
 	RenderHUD();
@@ -4031,6 +4080,7 @@ void SceneText::Render()
 	RenderWeaponCollectedMenu();
 	RenderStageClear();
 	RenderMinimap();
+	RenderHighscore();
 	RenderGameOver();
 }
 
