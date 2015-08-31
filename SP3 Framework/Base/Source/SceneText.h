@@ -275,6 +275,12 @@ private:
 	bool stageClear;
 	float stageClearTimer;
 	float floatDown;
+	bool gunshot;
+	bool pickweaponsound;
+	bool smokescreen;
+	bool hiding;
+	bool stageclearsound;
+	bool walking;
 
 	//Boss variables
 	float bossCounter;
@@ -326,7 +332,7 @@ private:
 	bool onHero;
 	bool lockMovement;
 
-	//highscore
+	//Highscore
 	CHighscoreManager Highscore;
 	CHighscore PlayerScore;
 

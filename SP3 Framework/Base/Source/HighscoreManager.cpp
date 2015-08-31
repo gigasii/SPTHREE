@@ -1,6 +1,5 @@
 #include "HighscoreManager.h"
 
-
 CHighscoreManager::CHighscoreManager(void):CurrentSize(0)
 										  ,MAX_SIZE(10)
 										  ,name("     ")
@@ -9,7 +8,7 @@ CHighscoreManager::CHighscoreManager(void):CurrentSize(0)
 	for (int i = 0; i <10; i++)
 	{
 		this->highscore_Menu[i] = CHighscore::CHighscore();
-		cout << i << endl;
+		//cout << i << endl;
 	}
 }
 
@@ -29,7 +28,7 @@ int CHighscoreManager::ReadFromFile(string Filename)
 		}
 		
 	}
-	cout << CurrentSize << endl;
+	//cout << CurrentSize << endl;
 	return i ;
 
 }
@@ -105,7 +104,7 @@ void CHighscoreManager::UpdateHighscore(CHighscore PlayerScore)
 		if(!CheckIfInHighscore(PlayerScore))
 		{
 			Add(PlayerScore);
-			cout << 'q' << endl;
+			cout << "Added" << endl;
 		}
 	}
 	else

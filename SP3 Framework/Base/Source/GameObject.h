@@ -15,6 +15,7 @@ struct GameObject
 		GO_BULLET,
 		GO_TOTAL, //must be last
 	};
+	
 	GAMEOBJECT_TYPE type;
 	Vector3 pos;
 	Vector3 vel;
@@ -28,6 +29,7 @@ struct GameObject
 	int ID;
 	float timer;
 	bool deflect;
+	bool shurikenthrow;
 
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();

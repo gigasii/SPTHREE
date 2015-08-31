@@ -25,6 +25,7 @@ CEnemy::CEnemy()
 	, isHit(false)
 	, RoF(0)
 	, rotation(1, 0, 0)
+	, detected(true)
 {
 }
 
