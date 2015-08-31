@@ -89,6 +89,10 @@ class SceneText : public Scene
 		GEO_EXCLAMATIONMARK,
 		GEO_STUNSHEET,
 
+		//For Introduction Screen and Name
+		GEO_INTRO_SCREEN,
+		GEO_NAME_SCREEN,
+
 		//Boss Sprite Animation
 		GEO_TILEBOSS_FRAME0,
 		GEO_BOSS2,

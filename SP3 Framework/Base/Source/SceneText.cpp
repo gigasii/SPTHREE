@@ -504,6 +504,12 @@ void SceneText::Init()
 	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
 
+	meshList[GEO_INTRO_SCREEN] = MeshBuilder::GenerateQuad("GEO_INTRO_SCREEN", Color(1, 1, 1), 1);
+	meshList[GEO_INTRO_SCREEN]->textureID = LoadTGA("Image//Instruction_Menu.tga");
+
+	meshList[GEO_NAME_SCREEN] = MeshBuilder::GenerateQuad("GEO_NAME_SCREEN", Color(1, 1, 1), 1);
+	meshList[GEO_NAME_SCREEN]->textureID = LoadTGA("Image//name_entering.tga");
+
 	meshList[GEO_LOSE] = MeshBuilder::GenerateQuad("gameover", Color(1, 1, 1), 1);
 	meshList[GEO_LOSE]->textureID = LoadTGA("Image//lose_screen.tga");
 
@@ -4148,6 +4154,8 @@ void SceneText::RenderName()
 {
 	if (nameMenu == true)
 	{
+		RenderQuadOnScreen(meshList[GEO_NAME_SCREEN], 82, 62, 40, 30, false);
+
 		if (selectorRender == true && namePos < 5)
 			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y);
 
@@ -4209,6 +4217,11 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	if(InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN))
 	{
 		menu = false;
+	}
+
+	if (menu == false && InteractHighLight == 1 && Application::IsKeyPressed(VK_BACK))
+	{
+		menu = true;
 	}
 
 	//Menu
@@ -4317,7 +4330,13 @@ void SceneText::Render()
 		RenderQuadOnScreen(meshList[GEO_MENU], 82, 62, 40, 30, false);
 		RenderMenu(InteractHighLight, 1, 0);
 	}
-	else
+	else if (menu == false && InteractHighLight == 1)
+	{
+		RenderQuadOnScreen(meshList[GEO_INTRO_SCREEN], 82, 62, 40, 30, false);
+		RenderMenu(InteractHighLight, 1, 0);
+	}
+
+	else if (menu == false && InteractHighLight == 0)
 	{
 		RenderInit();
 		RenderName();
