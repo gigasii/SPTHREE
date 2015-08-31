@@ -15,6 +15,7 @@ public:
 	Mesh* m_cMinimap_KeyAvatar;
 	Mesh* m_cMinimap_BarrelAvatar;
 	Mesh* m_cMinimap_BossAvatar;
+	Mesh* m_cMinimap_BossAvatar2;
 
 	bool SetBackground(Mesh* aBackground);				// Set the background mesh to this class
 	bool SetBorder(Mesh* aBorder);						// Set the Border mesh to this class
@@ -27,6 +28,7 @@ public:
 	bool SetKeyAvatar(Mesh* KeyAvatar);					// Set The Avatar for Key on the Minimap
 	bool SetBarrelAvatar(Mesh* BarrelAvatar);			// Set The Avatar for Barrel on the Minimap
 	bool SetBossAvatar(Mesh* BossAvatar);				// Set The Avatar for Boss on the Minimap
+	bool SetBossAvatar2(Mesh* BossAvatar2);
 
 	void InitMiniMap_1();
 	void InitMiniMap_2();
@@ -35,6 +37,7 @@ public:
 	void InitMiniMap_5();
 	void InitMiniMap_6();
 	void InitMiniMap_7();
+	void InitMiniMap_8();
 
 	Mesh* GetBackground(void);							// Get the background mesh to this class
 	Mesh* GetBorder(void);								// Get the Border mesh to this class
@@ -44,6 +47,7 @@ public:
 	Mesh* GetKeyAvatar(void);							// Get the Key Avatar Mesh to this class
 	Mesh* GetBarrelAvater(void);						// Get the Barrel Avater Mesh to this class
 	Mesh* GetBossAvatar(void);
+	Mesh* GetBossAvatar2(void);
 
 	// Minimaps Init
 	CMinimap* m_cMiniMap1;
@@ -53,6 +57,7 @@ public:
 	CMinimap* m_cMiniMap5;
 	CMinimap* m_cMiniMap6;
 	CMinimap* m_cMiniMap7;
+	CMinimap* m_cMiniMap8;
 
 	int GetAngle(void);									// Get Angle
 	int GetPosition_x(void);							// Get Position X Of Avatar In Minimap

@@ -1,3 +1,13 @@
 5. Current point system only takes into account jewels (stealth kills, detection, etc. doesn't add or decrease points)
 7. Need to show the amount of Invisibiliy Scrolls player has in HUD
 8. Add a readme.txt/instruction menu to explain our game
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BRANDON LOOK AT THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Highscore bugs:
+
+1. If you enter another name when the list is full (10), the game will break if you gain points
+2. If you enter a name that's already in the list, you'll take over his spot and won't be able to gain any points.
+3. Align the highscore to the middle of the screen, my OCD killing me.
