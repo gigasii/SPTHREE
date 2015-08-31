@@ -131,6 +131,12 @@ class SceneText : public Scene
 		//Sahara desert
 		GEO_TILESHEET_DESERT,
 
+		//Text
+		GEO_SELECTOR,
+		GEO_SELECTOR2,
+		GEO_TILESHEET_SELECTOR,
+		GEO_TEXT2,
+
 		NUM_GEOMETRY,
 	};
 
@@ -179,6 +185,7 @@ public:
 	void UpdateBossLevelScrolling();
 	void UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt);
 	void UpdateHighscore();
+	void UpdateName(double dt);
 	
 	//Game project functions
 	void RenderInit();
@@ -190,6 +197,7 @@ public:
 	void RenderHUD();
 	void RenderMinimap();
 	void RenderHighscore();
+	void RenderName();
 	
 	//Render Menus
 	void RenderMenu(int &InteractHighLight, int max, int min);
@@ -316,6 +324,16 @@ private:
 	//highscore
 	CHighscoreManager Highscore;
 	CHighscore PlayerScore;
+
+	//Name entering
+	bool nameMenu;
+	Vector3 selectorTile;
+	Vector3 selector2Tile;
+	double selectorTimer, selectorTimer2;
+	bool selectorRender;
+	int namePos;
+	int ASCIIconvert (Vector3 tile);
+	string playerName;
 
 protected:
 	float m_worldWidth;
