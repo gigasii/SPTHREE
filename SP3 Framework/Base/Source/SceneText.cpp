@@ -505,7 +505,7 @@ void SceneText::Init()
 	// === Game variables ===	
 	
 	InShop = false;
-	stage = 4;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -1401,11 +1401,11 @@ void SceneText::UpdateEnemies(double dt)
 
 			//Checking enemy attack status
 			if(go->attackStatus == true && go->attackAnimation == false)
-			{
-				if(go->ID < 100)
+			{		
+				go->attackReactionTime += dt;
+				if(go->attackReactionTime >= 0.2)
 				{
-					go->attackReactionTime += dt;
-					if(go->attackReactionTime >= 0.2)
+					if(go->ID < 100)
 					{
 						hero.health--;
 						go->attackReactionTime = 0;
@@ -3272,15 +3272,24 @@ void SceneText::RenderEnemies()
 			//For displaying Enemy's Health
 			if(go->health >= 1)
 			{
-				Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() - 5) - CurrentMap->mapOffset_x, go->GetPos_y() - 20);
-
-				if(go->health >= 2)
+				for(int a = go->health; a > 0; a--)
 				{
-					Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() + 15) - CurrentMap->mapOffset_x, go->GetPos_y() - 20);
-
-					if(go->health == 3)
+					if(go->health%2 == 1)
 					{
-						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, (go->GetPos_x() + 35) - CurrentMap->mapOffset_x, go->GetPos_y() - 20);
+						if(hero.health == 1)
+						{
+							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, go->GetPos_x() + 6, go->GetPos_y() - 20);
+						}
+				
+						else
+						{
+							Render2DMesh(meshList[GEO_HUD_HEART], false, 20, go->GetPos_x() - 15 + ((a - go->health/2) * 21), go->GetPos_y() - 20);
+						}
+					}
+			
+					else
+					{
+						Render2DMesh(meshList[GEO_HUD_HEART], false, 20, go->GetPos_x() - 15 + ((a - go->health/2) * 21) + 11, go->GetPos_y() - 20);
 					}
 				}
 			}
