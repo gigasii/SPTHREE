@@ -555,7 +555,7 @@ void SceneText::Init()
 	// === Game variables ===	
 
 	InShop = false;
-	stage = 4;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -760,11 +760,17 @@ void SceneText::RenderGO(GameObject *go)
 		if(go->timer < 3)
 		{
 			RenderSprites(meshList[GEO_SHURIKEN], hero.weapon.shurikenTileID, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
+			if(go->shurikenthrow == true && go->type == GameObject::GO_BALL)
+			{
+				engine->play2D("../irrKlang/media/shurikenspin.mp3", false);
+				go->shurikenthrow = false;
+			}
 		}
 
 		else
 		{
 			RenderSprites(meshList[GEO_SHURIKEN], 0, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
+			go->shurikenthrow = true;
 		}
 		modelStack.PopMatrix();
 		break;
@@ -1329,6 +1335,22 @@ void SceneText::UpdateHero(double dt)
 		}
 	}
 
+	//Walking sound
+	if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+	{
+		if(walking == true)
+		{
+			walk->play2D("../irrKlang/media/walking.mp3", true);
+			walking = false;
+		}
+	}
+
+	else
+	{
+		walk->stopAllSounds();
+		walking = true;
+	}
+
 	//Stamina meter
 	if(stage != 8)
 	{
@@ -1344,12 +1366,6 @@ void SceneText::UpdateHero(double dt)
 
 		if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 		{
-			if(walking == true)
-			{
-				walk->play2D("../irrKlang/media/walking.mp3", false);
-				walking = false;
-			}
-
 			if(hero.stamina > 0)
 			{
 				hero.stamina -= 0.05;
@@ -1367,10 +1383,8 @@ void SceneText::UpdateHero(double dt)
 		{
 			hero.stamina += 0.2;
 			hero.sprint = true;
-			walk->stopAllSounds();
-			walking = true;
 
-			if (hero.stamina > 20)
+			if(hero.stamina > 20)
 			{
 				hero.stamina = 20;
 			}
@@ -2459,12 +2473,6 @@ void SceneText::UpdatePhysics(double dt)
 					hero.weapon.shurikenTileID = 0;
 				}
 
-				if(go->shurikenthrow == true && go->type == GameObject::GO_BALL)
-				{
-					engine->play2D("../irrKlang/media/shurikenspin.mp3", false);
-					go->shurikenthrow = false;
-				}
-
 				if(go->vel.Length() <= 2.f)
 				{
 					go->vel.SetZero();
@@ -2475,7 +2483,7 @@ void SceneText::UpdatePhysics(double dt)
 					float combinedDist = (go->pos - Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0)).Length();
 					float radius = go->scale.x + 16;
 
-					if (combinedDist <= radius)
+					if(combinedDist <= radius)
 					{
 						go->active = false;
 						hero.health--;
@@ -2517,23 +2525,32 @@ void SceneText::UpdatePhysics(double dt)
 								//Shuriken collide with enemy
 								else if(go2->ID >= CMap::ENEMY_50)
 								{
-									engine->play2D("../irrKlang/media/shurikenhitenemies.mp3", false);
+									if(go2->active == true)
+									{
+										engine->play2D("../irrKlang/media/shurikenhitenemies.mp3", false);
+									}
+
 									for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
 									{
 										CEnemy *go4 = (CEnemy *)*it4;
 
 										if(go4->active && go4->ID == go2->ID)
 										{
-											collisionResponse(go, go2);	
+											collisionResponse(go, go2);
 
-											if(go->timer < 3 && (go4->ID < 80 || go4->ID >= 100)&& go4->stunned == false)
+											if(go->timer < 3 && (go4->ID < 80 || go4->ID >= 100) && go4->stunned == false)
 											{
 												go4->stunned = true;
 												go4->isHit = true;
 												go4->health--;
+												
+												if(go4->health <= 0)
+												{
+													go2->active = false;
+												}
 											}
 
-											else if (go4->ID >= 80)
+											else if(go4->ID >= 80)
 												go4->isHit = true;
 										}
 									}
@@ -2546,6 +2563,7 @@ void SceneText::UpdatePhysics(double dt)
 									if(go2->type == go->GO_BULLET && go->timer >= 3)
 									{
 									}
+									
 									else
 										collisionResponse(go, go2);	
 
@@ -2615,7 +2633,6 @@ void SceneText::UpdatePhysics(double dt)
 						hero.weapon.ammo++;
 						go->timer = 0;
 						hero.weapon.shurikenTileID = 0;
-						go->shurikenthrow = true;
 					}					
 				}
 			}
@@ -2877,6 +2894,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 					hero.settheHeroPositiony(128);
 					hero.heroCurrTile.x = 2;
 					hero.heroCurrTile.y = 20;
+					hero.stamina = 20;
 					enemyList.erase(enemyList.begin(), enemyList.end());
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 

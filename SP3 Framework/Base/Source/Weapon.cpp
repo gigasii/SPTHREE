@@ -2,7 +2,7 @@
 
 CWeapon::CWeapon()
 	: daggerAcquired(false)
-	, shurikensAcquired(true)
+	, shurikensAcquired(false)
 	, attackSpeed(0)
 	, ammo(2)
 	, rotation(0, -1, 0)
