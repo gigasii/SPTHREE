@@ -2725,9 +2725,18 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 			{
 				if(Application::IsKeyPressed(VK_SPACE))
 				{
-					keyCount--;
-					hero.SetdoorOpened(true);
-					engine->play2D("../irrKlang/media/opendoor.mp3", false);
+					if (stage != 8 && keyCount == 1)
+					{
+						keyCount--;
+						hero.SetdoorOpened(true);
+						engine->play2D("../irrKlang/media/opendoor.mp3", false);
+					}
+					else if (stage == 8 && keyCount >= 2)
+					{
+						keyCount -= 2;
+						hero.SetdoorOpened(true);
+						engine->play2D("../irrKlang/media/opendoor.mp3", false);
+					}
 
 					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 					{
@@ -3669,7 +3678,7 @@ void SceneText::RenderEnemies()
 		if(go->active)	
 		{
 			//For displaying Enemy's Health
-			if(go->health >= 1)
+			if(go->health >= 1 && go->ID != CMap::BOSS_2)
 			{
 				for(int a = go->health; a > 0; a--)
 				{
@@ -4438,7 +4447,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 				a = 1;
 			}
 
-			RenderTextOnScreen(meshList[GEO_TEXT], Text[text], Color(1, a, a), TextSize, 40, y + 30);
+			RenderTextOnScreen(meshList[GEO_TEXT], Text[text], Color(1, a, a), TextSize, 28, y + 30);
 
 			if(InteractHighLight == text)
 			{
