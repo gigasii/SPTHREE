@@ -131,6 +131,7 @@ class SceneText : public Scene
 		GEO_MENU,
 		GEO_LOSE,
 		GEO_WIN,
+		GEO_CREDITS,
 		GEO_STAGECLEAR,
 
 		//Sahara desert
@@ -306,7 +307,8 @@ private:
 	bool menu;
 	bool name;
 	bool instruc;
-	string Text[2];
+	bool creditsScreen;
+	string Text[3];
 
 	//Minimap Variables
 	bool MiniMapRendered;
