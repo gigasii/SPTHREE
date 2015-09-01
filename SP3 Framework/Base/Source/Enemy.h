@@ -54,6 +54,8 @@ public:
 	float RoF;
 	Vector3 rotation;
 	bool detected;
+	bool stunSound;
+	bool gunShot;
 
 	//Initialise this class instance
 	void Init();

@@ -17,6 +17,8 @@ static const float TILE_SIZE = 32;
 
 ISoundEngine *engine;
 ISoundEngine *walk;
+ISoundEngine *BGM;
+
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
@@ -37,6 +39,7 @@ SceneText::SceneText()
 	bReset = false;
 	engine = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 	walk = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
+	BGM = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 	Highscore = CHighscoreManager::CHighscoreManager();
 	PlayerScore = CHighscore::CHighscore();
 }
@@ -527,6 +530,11 @@ void SceneText::Init()
 	meshList[GEO_TILESHEET_SELECTOR] = MeshBuilder::GenerateSprites("GEO_TILESHEET_SELECTOR", 6, 6);
 	meshList[GEO_TILESHEET_SELECTOR]->textureID = LoadTGA("Image//SelectorText.tga");
 
+	meshList[GEO_WIN] = MeshBuilder::GenerateQuad("GEO_WIN", Color(1, 1, 1), 1);
+	meshList[GEO_WIN]->textureID = LoadTGA("Image//win_screen.tga");
+
+	meshList[GEO_CREDITS] = MeshBuilder::GenerateQuad("GEO_CREDITS", Color(1, 1, 1), 1);
+	meshList[GEO_CREDITS]->textureID = LoadTGA("Image//credits.tga");
 
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -551,8 +559,6 @@ void SceneText::Init()
 	// === MiniMap Variables ===
 
 	MiniMapRendered = false;
-	OpenCloseMiniMap = 0;
-	MiniMapDelay = 0;
 
 	// === Game variables ===	
 
@@ -567,12 +573,12 @@ void SceneText::Init()
 	stageClear = false;
 	stageClearTimer = 0;
 	floatDown = 0;
-	gunshot = true;
 	pickweaponsound = true;
 	smokescreen = true;
 	hiding = true;
 	stageclearsound = true;
 	walking = true;
+
 
 	// === Boss's Variables and Pointers ===
 
@@ -596,10 +602,13 @@ void SceneText::Init()
 	// === Menu Variables ===
 
 	menu = true;
+	name = false;
+	instruc = false;
 	InteractHighLight = 0;
 	delay = 0;
 	Text[0] = "Start Game";
 	Text[1] = "How To Play?";
+	Text[2] = "Credits";
 
 	// === Custom cMenu Variables ===
 
@@ -616,7 +625,10 @@ void SceneText::Init()
 	// === GameOver Variables ===
 
 	lose = false;
+	win = false;
+	creditsScreen = false;
 	LoseTimer = 0.0f;
+	winTimer = 0.0f;
 
 	// === Screen Dimensions ===
 
@@ -759,11 +771,17 @@ void SceneText::RenderGO(GameObject *go)
 		if(go->timer < 3)
 		{
 			RenderSprites(meshList[GEO_SHURIKEN], hero.weapon.shurikenTileID, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
+			if(go->shurikenthrow == true && go->type == GameObject::GO_BALL)
+			{
+				engine->play2D("../irrKlang/media/shurikenspin.mp3", false);
+				go->shurikenthrow = false;
+			}
 		}
 
 		else
 		{
 			RenderSprites(meshList[GEO_SHURIKEN], 0, go->scale.x * 5, go->pos.x - CurrentMap->mapOffset_x - 15, go->pos.y - 15);
+			go->shurikenthrow = true;
 		}
 		modelStack.PopMatrix();
 		break;
@@ -989,16 +1007,20 @@ void SceneText::Update(double dt)
 	
 	if(lose == false)
 	{
-		UpdateHero(dt);
-		UpdateEnemies(dt);
-		UpdateGoodies(dt);
-		UpdateBossLevel(checkPosition_X, checkPosition_Y);
-		UpdateCustomisation(dt);
-		UpdateMouse();
-		UpdatePhysics(dt);
-		UpdateMiniMap(dt);
-		UpdateLevels(checkPosition_X, checkPosition_Y, dt);
-		UpdateHighscore();
+		if(nameMenu == false && menu == false)
+		{
+			UpdateHero(dt);
+			UpdateEnemies(dt);
+			UpdateGoodies(dt);
+			UpdateBossLevel(checkPosition_X, checkPosition_Y);
+			UpdateCustomisation(dt);
+			UpdateMouse();
+			UpdatePhysics(dt);
+			UpdateMiniMap(dt);
+			UpdateLevels(checkPosition_X, checkPosition_Y, dt);
+			UpdateHighscore();
+		}
+
 		UpdateName(dt);
 	}
 
@@ -1328,6 +1350,22 @@ void SceneText::UpdateHero(double dt)
 		}
 	}
 
+	//Walking sound
+	if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+	{
+		if(walking == true)
+		{
+			walk->play2D("../irrKlang/media/walking.mp3", true);
+			walking = false;
+		}
+	}
+
+	else
+	{
+		walk->stopAllSounds();
+		walking = true;
+	}
+
 	//Stamina meter
 	if(stage != 8)
 	{
@@ -1343,12 +1381,6 @@ void SceneText::UpdateHero(double dt)
 
 		if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 		{
-			if(walking == true)
-			{
-				walk->play2D("../irrKlang/media/walking.mp3", false);
-				walking = false;
-			}
-
 			if(hero.stamina > 0)
 			{
 				hero.stamina -= 0.05;
@@ -1366,10 +1398,8 @@ void SceneText::UpdateHero(double dt)
 		{
 			hero.stamina += 0.2;
 			hero.sprint = true;
-			walk->stopAllSounds();
-			walking = true;
 
-			if (hero.stamina > 20)
+			if(hero.stamina > 20)
 			{
 				hero.stamina = 20;
 			}
@@ -1524,6 +1554,12 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer += dt;
 				go->stunTileID += 0.2;
 				go->attackStatus = false;
+				if(go->stunSound == true && go->health != 0)
+				{
+					engine->play2D("../irrKlang/media/stun.mp3", false);
+					go->stunSound = false;
+				}
+
 				if(go->stunTileID >= 4)
 				{
 					go->stunTileID = 0;
@@ -1536,6 +1572,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer = 0;
 				go->stunTileID = 0;
 				go->theStrategy->isAttacking = true;
+				go->stunSound = true;
 			}
 
 			//Enable enemies to go into attack after beign stun
@@ -1545,7 +1582,7 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Force set the enemies to die in 2 hits
-			if(go->isHit == true && (go->ID >= 50 && go->ID < 100 || go->ID >= 100) && go->health == 0)
+			if(go->isHit == true && (go->ID >= 50 && go->ID < 80 || go->ID >= 100) && go->health == 0)
 			{
 				go->active = false;
 			}
@@ -1556,7 +1593,7 @@ void SceneText::UpdateEnemies(double dt)
 				if(go->ID >= 50 && go->ID < 100)
 				{
 					go->attackReactionTime += dt;
-					if(go->attackReactionTime >= 0.15)
+					if(go->attackReactionTime >= 0.01)
 					{
 
 						hero.health--;
@@ -1580,10 +1617,14 @@ void SceneText::UpdateEnemies(double dt)
 			//Attacking animation for enemy
 			if(go->attackAnimation == true)
 			{
-				if(gunshot == true)
+				if(go->gunShot == true)
 				{
-					engine->play2D("../irrKlang/media/gunshot.mp3", false);
-					gunshot = false;
+					if (go->ID < 100)
+						engine->play2D("../irrKlang/media/gunshot.mp3", false);
+					else
+						engine->play2D("../irrKlang/media/gun.mp3", false);
+
+					go->gunShot = false;
 				}
 
 				go->attackAnimationTimer += dt;
@@ -1591,7 +1632,7 @@ void SceneText::UpdateEnemies(double dt)
 				{
 					go->attackAnimationTimer = 0;
 					go->attackAnimation = false;
-					gunshot = true;
+					go->gunShot = true;
 				}
 			}
 
@@ -1938,12 +1979,13 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 				if (GetKey == false && keyCount < 1)
 				{
 					keyCount++;
+					engine->play2D("../irrKlang/media/steal.mp3", false);
 				}
 
 				if (keyCount == 1)
 				{
 					hero.SetKeyAcquired(true);
-					GetKey = true;
+					GetKey = true;	
 				}
 
 				for (std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
@@ -1966,7 +2008,7 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 			{
 				for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
 				{
-					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0)
 					{
 						EnemiesRendered = true;
 					}
@@ -2070,13 +2112,18 @@ void SceneText::UpdateCustomisation(double dt)
 
 void SceneText::UpdateGameOver(double dt)
 {
-	if(hero.health <= 0)
+	if(hero.health <= 0 && lose == false)
 	{
 		lose = true;
+
+		engine->play2D("../irrKlang/media/gameover.ogg", false);
 	}
 
 	if(lose == true)
 	{
+		walk->stopAllSounds();
+		BGM->stopAllSounds();
+
 		LoseTimer += dt;
 		if(LoseTimer >= 4)
 		{
@@ -2451,12 +2498,6 @@ void SceneText::UpdatePhysics(double dt)
 					hero.weapon.shurikenTileID = 0;
 				}
 
-				if(go->shurikenthrow == true)
-				{
-					engine->play2D("../irrKlang/media/shurikenspin.mp3", false);
-					go->shurikenthrow = false;
-				}
-
 				if(go->vel.Length() <= 2.f)
 				{
 					go->vel.SetZero();
@@ -2467,7 +2508,7 @@ void SceneText::UpdatePhysics(double dt)
 					float combinedDist = (go->pos - Vector3(hero.gettheHeroPositionx() + 16 + CurrentMap->mapOffset_x,hero.gettheHeroPositiony() + 16,0)).Length();
 					float radius = go->scale.x + 16;
 
-					if (combinedDist <= radius)
+					if(combinedDist <= radius)
 					{
 						go->active = false;
 						hero.health--;
@@ -2486,14 +2527,19 @@ void SceneText::UpdatePhysics(double dt)
 								//Shuriken collide with barrel
 								if(go2->ID == CMap::BARREL)
 								{
-									engine->play2D("../irrKlang/media/shurikenhitobjects.mp3", false);
+									if(go2->active == true)
+									{
+										engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
+									}
+
 									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 									{
 										CGoodies *go3 = (CGoodies *)*it3;
 
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
-											collisionResponse(go, go2);	
+											collisionResponse(go, go2);
+											go2->active = false;
 
 											if(go->timer < 3)
 												go3->active = false;
@@ -2504,23 +2550,32 @@ void SceneText::UpdatePhysics(double dt)
 								//Shuriken collide with enemy
 								else if(go2->ID >= CMap::ENEMY_50)
 								{
-									engine->play2D("../irrKlang/media/shurikenhitenemies.mp3", false);
+									if(go2->active == true)
+									{
+										engine->play2D("../irrKlang/media/shurikenhitenemies.mp3", false);
+									}
+
 									for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
 									{
 										CEnemy *go4 = (CEnemy *)*it4;
 
 										if(go4->active && go4->ID == go2->ID)
 										{
-											collisionResponse(go, go2);	
+											collisionResponse(go, go2);
 
-											if(go->timer < 3 && (go4->ID < 80 || go4->ID >= 100)&& go4->stunned == false)
+											if(go->timer < 3 && (go4->ID < 80 || go4->ID >= 100) && go4->stunned == false)
 											{
 												go4->stunned = true;
 												go4->isHit = true;
 												go4->health--;
+												
+												if(go4->health <= 0)
+												{
+													go2->active = false;
+												}
 											}
 
-											else if (go4->ID >= 80)
+											else if(go4->ID >= 80)
 												go4->isHit = true;
 										}
 									}
@@ -2533,6 +2588,7 @@ void SceneText::UpdatePhysics(double dt)
 									if(go2->type == go->GO_BULLET && go->timer >= 3)
 									{
 									}
+									
 									else
 										collisionResponse(go, go2);	
 
@@ -2546,7 +2602,11 @@ void SceneText::UpdatePhysics(double dt)
 								//Bullet collide with barrel
 								if(go2->ID == CMap::BARREL)
 								{
-									engine->play2D("../irrKlang/media/shurikenhitobjects.mp3", false);
+									if(go2->active == true)
+									{
+										engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
+									}
+									
 									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 									{
 										CGoodies *go3 = (CGoodies *)*it3;
@@ -2554,6 +2614,7 @@ void SceneText::UpdatePhysics(double dt)
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
 											go->active = false;
+											go2->active = false;
 											go3->active = false;
 										}
 									}
@@ -2598,7 +2659,6 @@ void SceneText::UpdatePhysics(double dt)
 						hero.weapon.ammo++;
 						go->timer = 0;
 						hero.weapon.shurikenTileID = 0;
-						go->shurikenthrow = true;
 					}					
 				}
 			}
@@ -2624,25 +2684,13 @@ void SceneText::UpdatePhysics(double dt)
 
 void SceneText::UpdateMiniMap(double dt)
 {
-	MiniMapDelay += dt;
-
-	if(MiniMapDelay >= 1)
-	{
-		MiniMapDelay = 0;
-	}
-
-	//cout << MiniMapDelay << endl;
-
-	if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.3)
+	if(Application::IsKeyPressed('G'))
 	{
 		MiniMapRendered = true;
-		OpenCloseMiniMap = 1;
 	}
-
-	else if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 0.7)
+	else
 	{
 		MiniMapRendered = false;
-		OpenCloseMiniMap = 0;
 	}
 }
 
@@ -2682,9 +2730,18 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 			{
 				if(Application::IsKeyPressed(VK_SPACE))
 				{
-					keyCount--;
-					hero.SetdoorOpened(true);
-					engine->play2D("../irrKlang/media/opendoor.mp3", false);
+					if (stage != 8 && keyCount == 1)
+					{
+						keyCount--;
+						hero.SetdoorOpened(true);
+						engine->play2D("../irrKlang/media/opendoor.mp3", false);
+					}
+					else if (stage == 8 && keyCount >= 2)
+					{
+						keyCount -= 2;
+						hero.SetdoorOpened(true);
+						engine->play2D("../irrKlang/media/opendoor.mp3", false);
+					}
 
 					for(std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
 					{
@@ -2872,6 +2929,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 					hero.settheHeroPositiony(128);
 					hero.heroCurrTile.x = 2;
 					hero.heroCurrTile.y = 20;
+					hero.stamina = 20;
 					enemyList.erase(enemyList.begin(), enemyList.end());
 					GoodiesList.erase(GoodiesList.begin(), GoodiesList.end());
 
@@ -2888,6 +2946,28 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 					map.InitBossScrollingMap(enemyList, GoodiesList, BarrelList, HoleList, m_goList);
 					CurrentMap = map.m_cBossScrollingMap;
 					InitMiniMap_Level8();
+				}
+
+				else if (stage == 8)
+				{
+					if (win == false)
+						engine->play2D("../irrKlang/media/win.ogg", false);
+
+					win = true;
+
+					if (win == true)
+					{
+						walk->stopAllSounds();
+						BGM->stopAllSounds();
+						winTimer += 0.01f;
+					}
+
+					if (winTimer >= 5.0f)
+					{
+						win = false;
+						menu = true;
+						bReset = true;
+					}
 				}
 			}
 
@@ -2965,7 +3045,16 @@ void SceneText::UpdateHighscore()
 
 void SceneText::UpdateName(double dt)
 {
-	if(menu == false)
+	if (Application::IsKeyPressed(VK_RETURN) && InteractHighLight == 0 && menu == false)
+	{
+		name = true;
+	}
+	else if (nameMenu == false ||  InteractHighLight == 1 || menu == true)
+	{
+		name = false;
+	}
+
+	if(menu == false && name == true)
 		selectorTimer += dt;
 
 	if(selectorRender == true)
@@ -2982,77 +3071,84 @@ void SceneText::UpdateName(double dt)
 
 	playerName[namePos] = ASCIIconvert(selectorTile);
 
-	if(selectorTimer >= 0.15)
+	if (name == true && nameMenu == true)
 	{
-		if(Application::IsKeyPressed(VK_UP))
+		if (selectorTimer >= 0.15)
 		{
-			selectorTimer = 0;
-			selectorTile.y--;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.y <= 8)
-				selectorTile.y = 11;
-		}
-
-		if(Application::IsKeyPressed(VK_DOWN))
-		{
-			selectorTimer = 0;
-			selectorTile.y++;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.y >= 12)
-				selectorTile.y = 9;
-		}
-
-		if(Application::IsKeyPressed(VK_LEFT))
-		{
-			selectorTimer = 0;
-			selectorTile.x--;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.x <= 9)
-				selectorTile.x = 22;
-		}
-
-		if(Application::IsKeyPressed(VK_RIGHT))
-		{
-			selectorTimer = 0;
-			selectorTile.x++;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.x >= 23)
-				selectorTile.x = 10;
-		}
-
-
-		if(Application::IsKeyPressed(VK_RETURN))
-		{
-			selectorTimer = 0;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(namePos < 5)
+			if (Application::IsKeyPressed(VK_UP))
 			{
-				selector2Tile.x += 23;
-				namePos++;
+				selectorTimer = 0;
+				selectorTile.y--;
+				engine->play2D("../irrKlang/media/name.ogg", false);
+
+				if (selectorTile.y <= 8)
+					selectorTile.y = 11;
 			}
 
-			else
+			if (Application::IsKeyPressed(VK_DOWN))
 			{
-				nameMenu = false;
-				PlayerScore.SetName(playerName);
+				selectorTimer = 0;
+				selectorTile.y++;
+				engine->play2D("../irrKlang/media/name.ogg", false);
+
+				if (selectorTile.y >= 12)
+					selectorTile.y = 9;
 			}
-		}
 
-		if(Application::IsKeyPressed(VK_BACK))
-		{
-			selectorTimer = 0;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(namePos > 0)
+			if (Application::IsKeyPressed(VK_LEFT))
 			{
-				playerName[namePos] = ' ';
-				selector2Tile.x -= 23;
-				namePos--;
+				selectorTimer = 0;
+				selectorTile.x--;
+				engine->play2D("../irrKlang/media/name.ogg", false);
+
+				if (selectorTile.x <= 9)
+					selectorTile.x = 22;
+			}
+
+			if (Application::IsKeyPressed(VK_RIGHT))
+			{
+				selectorTimer = 0;
+				selectorTile.x++;
+				engine->play2D("../irrKlang/media/name.ogg", false);
+
+				if (selectorTile.x >= 23)
+					selectorTile.x = 10;
+			}
+
+
+			if (Application::IsKeyPressed(VK_RETURN))
+			{
+				selectorTimer = 0;
+
+				if (namePos < 5)
+				{
+					engine->play2D("../irrKlang/media/entername.mp3", false);
+					selector2Tile.x += 23;
+					namePos++;
+				}
+
+				else 
+				{
+					engine->play2D("../irrKlang/media/confirmname.ogg", false);
+					nameMenu = false;
+					name = false;
+					BGM->play2D("../irrKlang/media/desert.mp3", true);
+					BGM->setSoundVolume(0.5);
+					PlayerScore.SetName(playerName);
+				}
+			}
+
+			if (Application::IsKeyPressed(VK_BACK))
+			{
+				selectorTimer = 0;
+				engine->play2D("../irrKlang/media/back.ogg", false);
+
+				if (namePos > 0)
+				{
+					playerName[namePos] = ' ';
+					selector2Tile.x -= 23;
+					namePos--;
+				}
 			}
 		}
 	}
@@ -3587,7 +3683,7 @@ void SceneText::RenderEnemies()
 		if(go->active)	
 		{
 			//For displaying Enemy's Health
-			if(go->health >= 1)
+			if(go->health >= 1 && go->ID != CMap::BOSS_2)
 			{
 				for(int a = go->health; a > 0; a--)
 				{
@@ -3827,7 +3923,7 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(stage == 2 || stage == 4 || stage == 6)
+			else if(stage == 2 || stage == 4 || stage == 6 || stage == 8)
 			{
 				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
@@ -4270,7 +4366,7 @@ void SceneText::RenderName()
 		RenderQuadOnScreen(meshList[GEO_NAME_SCREEN], 82, 62, 40, 30, false);
 
 		if(selectorRender == true && namePos < 5)
-			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y);
+			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y - 133);
 
 		if(namePos == 5)
 		{
@@ -4281,23 +4377,23 @@ void SceneText::RenderName()
 
 		std::ostringstream sss;
 		sss << playerName;
-		RenderTextOnScreen(meshList[GEO_TEXT2], sss.str(), Color(1, 0, 0), 3, 35, 50);
+		RenderTextOnScreen(meshList[GEO_TEXT2], sss.str(), Color(1, 0, 0), 3, 35, 50 - 10);
 
 		Vector3 selectorPos(selectorTile.x * CurrentMap->GetTileSize(), 
 		CurrentMap->GetTileSize() * (CurrentMap->GetNumOfTiles_Height() - selectorTile.y) -  CurrentMap->GetTileSize());
 
 		for(int i = 0; i < 10; ++i)
 		{
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i,32.0f,320 + i * 32,480);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i,32.0f,320 + i * 32,480 - 64);
 		}
 
 		for(int i = 0; i < 13; ++i)
 		{
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 10,32.0f,320 + i * 32,448);
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 23,32.0f,320 + i * 32,416);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 10,32.0f,320 + i * 32,448 - 64);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 23,32.0f,320 + i * 32,416 - 64);
 		}
 
-		Render2DMesh(meshList[GEO_SELECTOR], false, 32.0f, selectorPos.x, selectorPos.y);
+		Render2DMesh(meshList[GEO_SELECTOR], false, 32.0f, selectorPos.x, selectorPos.y - 64);
 	}
 }
 
@@ -4305,16 +4401,16 @@ void SceneText::RenderName()
 
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 {
-	if(Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max)
+	if(Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/button.ogg", false);
 		InteractHighLight += 1;
 		delay = 15;
 	}
 
-	if(Application::IsKeyPressed(VK_UP) && delay == 0 && InteractHighLight > min)
+	if(Application::IsKeyPressed(VK_UP) && delay == 0 && InteractHighLight > min && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/button.ogg", false);
 		InteractHighLight -= 1;
 		delay = 15;
 	}
@@ -4324,21 +4420,28 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 		--delay;
 	}
 
-	if(InteractHighLight == 0 && Application::IsKeyPressed(VK_RETURN))
+	if(InteractHighLight == 0 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/enter.ogg", false);
 		menu = false;
 	}
 
-	if(InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN))
+	if(InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/enter.ogg", false);
 		menu = false;
 	}
 
-	if(menu == false && InteractHighLight == 1 && Application::IsKeyPressed(VK_BACK))
+	if (InteractHighLight == 2 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/enter.ogg", false);
+		menu = false;
+		creditsScreen = true;
+	}
+
+	if(menu == false && (InteractHighLight == 1 || InteractHighLight == 2) && Application::IsKeyPressed(VK_BACK) && menu == false)
+	{
+		engine->play2D("../irrKlang/media/return.ogg", false);
 		menu = true;
 	}
 
@@ -4346,7 +4449,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	int a = 0;
 	if(menu == true)
 	{
-		for(int text = 0; text < 2; text++)
+		for(int text = 0; text < 3; text++)
 		{
 			float TextSize = 5;
 			int y = 60 / TextSize / 2 - 5 - (text * TextSize);
@@ -4356,7 +4459,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 				a = 1;
 			}
 
-			RenderTextOnScreen(meshList[GEO_TEXT], Text[text], Color(1, a, a), TextSize, 40, y + 30);
+			RenderTextOnScreen(meshList[GEO_TEXT], Text[text], Color(1, a, a), TextSize, 28, y + 30);
 
 			if(InteractHighLight == text)
 			{
@@ -4377,6 +4480,16 @@ void SceneText::RenderGameOver()
 		ss.precision(5);
 		ss << "Final score: " << PointSystem;
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 3, 20, 15);
+	}
+	else if (win == true)
+	{
+		RenderQuadOnScreen(meshList[GEO_WIN], 82, 62, 40, 30, false);
+
+		//Final score
+		std::ostringstream ss;
+		ss.precision(5);
+		ss << "Final score: " << PointSystem;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 3, 20, 15);
 	}
 }
 
@@ -4446,13 +4559,19 @@ void SceneText::Render()
 	if(menu == true)
 	{
 		RenderQuadOnScreen(meshList[GEO_MENU], 82, 62, 40, 30, false);
-		RenderMenu(InteractHighLight, 1, 0);
+		RenderMenu(InteractHighLight, 2, 0);
 	}
 	
 	else if(menu == false && InteractHighLight == 1)
 	{
 		RenderQuadOnScreen(meshList[GEO_INTRO_SCREEN], 82, 62, 40, 30, false);
-		RenderMenu(InteractHighLight, 1, 0);
+		RenderMenu(InteractHighLight, 2, 0);
+	}
+
+	else if (menu == false && InteractHighLight == 2)
+	{
+		RenderQuadOnScreen(meshList[GEO_CREDITS], 82, 62, 40, 30, false);
+		RenderMenu(InteractHighLight, 2, 0);
 	}
 
 	else if(menu == false && InteractHighLight == 0)

@@ -130,6 +130,8 @@ class SceneText : public Scene
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
+		GEO_WIN,
+		GEO_CREDITS,
 		GEO_STAGECLEAR,
 
 		//Sahara desert
@@ -281,6 +283,7 @@ private:
 	bool hiding;
 	bool stageclearsound;
 	bool walking;
+	bool stun;
 
 	//Boss variables
 	float bossCounter;
@@ -302,12 +305,13 @@ private:
 	int delay;
 	int InteractHighLight;
 	bool menu;
-	string Text[2];
+	bool name;
+	bool instruc;
+	bool creditsScreen;
+	string Text[3];
 
 	//Minimap Variables
 	bool MiniMapRendered;
-	int OpenCloseMiniMap;
-	float MiniMapDelay;
 
 	//Custom Menu Variables
 	bool CustomMenuRendered, CustomMenuSelected;
@@ -319,7 +323,9 @@ private:
 	
 	//GameOver Variables
 	bool lose;
+	bool win;
 	float LoseTimer;
+	float winTimer;
 
 	//Storing Value
 	int a, b;
