@@ -1,15 +1,18 @@
 #include "HighscoreManager.h"
 
 CHighscoreManager::CHighscoreManager(void):CurrentSize(0)
-										  ,MAX_SIZE(10)
+										  ,MAX_SIZE(11)
 										  ,name("     ")
-										  ,value(0)
+										  ,value(-1)
 {
-	for (int i = 0; i <10; i++)
+	for (int i = 0; i < MAX_SIZE; i++)
 	{
 		this->highscore_Menu[i] = CHighscore::CHighscore();
 		//cout << i << endl;
 	}
+
+	this->Player.SetName(name);
+	this->Player.SetValue(value);
 }
 
 int CHighscoreManager::ReadFromFile(string Filename)
@@ -21,8 +24,14 @@ int CHighscoreManager::ReadFromFile(string Filename)
 	{
 		while(!File.eof())
 		{	
-			File >> this->highscore_Menu[i].Highscore_name;
-			File >> this->highscore_Menu[i].Highscore_value;
+			string tempName;
+			int tempScore;
+			File >> tempName;
+			File >> tempScore;
+
+			this->highscore_Menu[i].SetName(tempName);
+			this->highscore_Menu[i].SetValue(tempScore);
+
 			i++;
 			CurrentSize++;
 		}
@@ -40,10 +49,10 @@ int CHighscoreManager::WriteToFile(string Filename)
 
 	if (File.is_open())
 	{
-		while(CurrentSize > 0)
+		while(i < MAX_SIZE - 1)
 		{
-			File << this->highscore_Menu[i].Highscore_name << "     " << this->highscore_Menu[i].Highscore_value; 
-			if(CurrentSize - 1 != 0)
+			File << this->highscore_Menu[i].GetName() << "     " << this->highscore_Menu[i].GetValue(); 
+			if(i < MAX_SIZE - 2)
 			{
 				File << endl;
 			}
@@ -54,44 +63,19 @@ int CHighscoreManager::WriteToFile(string Filename)
 	return i;
 }
 
-bool CHighscoreManager::CheckIfInHighscore(CHighscore PlayerScore)
-{
-	for(int a = 0; a < CurrentSize; a++)
-	{
-		if(this->highscore_Menu[a].Highscore_name == PlayerScore.Highscore_name && this->highscore_Menu[a].Highscore_value == PlayerScore.Highscore_value)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void CHighscoreManager::Add(CHighscore Highscore)
 {
-	bool inhighscore = false;
-	for(int a = 0;a < CurrentSize; a++)
-	{
-		if(this->highscore_Menu[a].Highscore_name == Highscore.Highscore_name) 
-		{
-			inhighscore = true;
-			if(this->highscore_Menu[a].Highscore_value == Highscore.Highscore_value)
-			{
-				return;
-			}
-			else
-			{
-				this->highscore_Menu[a].Highscore_value = Highscore.Highscore_value;
-				MergeSort(this->highscore_Menu, 0, CurrentSize - 1);
-				break;
-			}
-		}
-		
-	}
-	if(inhighscore == false)
+	
+	if(CurrentSize < MAX_SIZE)
 	{
 		this->highscore_Menu[CurrentSize] = Highscore;
+		cout << this->Player.GetName() << endl;
 		CurrentSize++;
+		MergeSort(this->highscore_Menu, 0, CurrentSize - 1);
+	}
+	else
+	{
+		this->highscore_Menu[MAX_SIZE - 1] = Highscore;
 		MergeSort(this->highscore_Menu, 0, CurrentSize - 1);
 	}
 	
@@ -99,7 +83,18 @@ void CHighscoreManager::Add(CHighscore Highscore)
 
 void CHighscoreManager::UpdateHighscore(CHighscore PlayerScore)
 {
-	if(CurrentSize < MAX_SIZE)
+	if(	this->Player.GetValue() != PlayerScore.GetValue())
+	{
+		this->Player.SetValue(PlayerScore.GetValue());
+		Add(this->Player);
+		MergeSort(this->highscore_Menu, 0, MAX_SIZE - 1);
+	}
+	/*if(MAX_SIZE )	
+	if(this->Player.GetValue() == )*/
+
+	
+
+	/*if(CurrentSize < MAX_SIZE)
 	{
 		if(!CheckIfInHighscore(PlayerScore))
 		{
@@ -120,7 +115,7 @@ void CHighscoreManager::UpdateHighscore(CHighscore PlayerScore)
 				MergeSort(this->highscore_Menu, 0, MAX_SIZE - 1);
 			}
 		}
-	}
+	}*/
 }
 
 void CHighscoreManager::MergeSort(CHighscore highscore[], int first, int last)
@@ -149,8 +144,8 @@ void CHighscoreManager::Merge(CHighscore highscore[], int first, int middle, int
 	i = 0; k = first; 
 	while (k < j && j <= last) 
 	{ 
-		//if element from 1st list < 2nd list 
-		if (temp[i].Highscore_value >= highscore[j].Highscore_value) 
+		//if element from 1st list > 2nd list 
+		if (temp[i].GetValue() >= highscore[j].GetValue()) 
 		{
 			highscore[k++] = temp[i++]; //copy from 1st list 
 		}
@@ -176,13 +171,22 @@ void CHighscoreManager::PrintAllHighscore()
 
 CHighscore CHighscoreManager::GetAllHighscores(int pos)
 {
-	
 	return this->highscore_Menu[pos];
 }
 
 int CHighscoreManager::GetCurrentSize()
 {
 	return this->CurrentSize;
+}
+
+void CHighscoreManager::SetPlayer(CHighscore Highscore)
+{
+	this->Player = Highscore;
+}
+
+CHighscore CHighscoreManager::GetPlayer()
+{
+	return this->Player;
 }
 
 CHighscoreManager::~CHighscoreManager(void)

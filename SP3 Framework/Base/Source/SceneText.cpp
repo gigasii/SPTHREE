@@ -733,6 +733,7 @@ void SceneText::Init()
 	// ========================== Initializing Highscore stuff ==========================
 	PlayerScore.SetName("Player");
 	PlayerScore.SetValue(0);
+	Highscore.SetPlayer(PlayerScore);
 }
 
 // ================================== PHYSICS METHODS AND FUNCTIONS ==================================
@@ -1876,7 +1877,7 @@ void SceneText::UpdateGoodies(double dt)
 							go->active = false;
 							diamondCount++;
 							PointSystem += 10;
-							PlayerScore.SetValue(10);
+							PlayerScore.SetValue(10 + PlayerScore.GetValue());
 							engine->play2D("../irrKlang/media/pickupitem.mp3", false);
 						}
 
@@ -3039,7 +3040,10 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 void SceneText::UpdateHighscore()
 {
 	Highscore.ReadFromFile("Highscore.txt");
+
 	Highscore.UpdateHighscore(PlayerScore);
+
+	//cout << PlayerScore.GetName() << "     " << PlayerScore.GetValue() << endl;
 	Highscore.WriteToFile("Highscore.txt");
 }
 
@@ -3132,6 +3136,8 @@ void SceneText::UpdateName(double dt)
 					engine->play2D("../irrKlang/media/confirmname.ogg", false);
 					nameMenu = false;
 					name = false;
+					PlayerScore.SetName(playerName);
+					Highscore.SetPlayer(PlayerScore);
 					BGM->play2D("../irrKlang/media/desert.mp3", true);
 					BGM->setSoundVolume(0.5);
 					PlayerScore.SetName(playerName);
@@ -4333,28 +4339,46 @@ void SceneText::RenderMinimap()
 
 void SceneText::RenderHighscore()
 {
+	bool IsPlayerRenderred = false;
 	if(Application::IsKeyPressed('O'))
 	{
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 
 		Highscore.ReadFromFile("Highscore.txt");
+		
+		int NoOfRender = 0;
 		for(int a = 0; a < Highscore.GetCurrentSize();a++)
+		{
+			if(Highscore.GetAllHighscores(a).GetName() == Highscore.GetPlayer().GetName() && Highscore.GetAllHighscores(a).GetValue	() == Highscore.GetPlayer().GetValue())
+			{
+				if(a < Highscore.GetCurrentSize() - 1)
+				{
+					NoOfRender = Highscore.GetCurrentSize() - 1;
+					break;
+				}
+			}
+			NoOfRender = a + 1;
+		}
+		for(int a = 0; a < NoOfRender;a++)
 		{
 			std::ostringstream ss;
 			ss.precision(5);
 			ss << Highscore.GetAllHighscores(a).GetName() << "     " << Highscore.GetAllHighscores(a).GetValue() << endl;
 			
-			if(Highscore.GetAllHighscores(a).GetName() == PlayerScore.GetName())
+			if(IsPlayerRenderred == false && Highscore.GetAllHighscores(a).GetName() == Highscore.GetPlayer().GetName() && Highscore.GetAllHighscores(a).GetValue	() == Highscore.GetPlayer().GetValue())
 			{
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2.3, 2, 39 - a * 3);
+				IsPlayerRenderred = true;
 			}
 			else
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 2, 39 - a * 3);
 
 			//Highscore.GetAllHighscores(a);	
 		}
+		IsPlayerRenderred = false;
 		
+
 		Highscore.WriteToFile("Highscore.txt");
 	}
 }
