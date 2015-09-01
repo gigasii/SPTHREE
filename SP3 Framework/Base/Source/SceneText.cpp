@@ -17,6 +17,8 @@ static const float TILE_SIZE = 32;
 
 ISoundEngine *engine;
 ISoundEngine *walk;
+ISoundEngine *BGM;
+
 
 SceneText::SceneText()
 	: CurrentMap(NULL)
@@ -37,6 +39,7 @@ SceneText::SceneText()
 	bReset = false;
 	engine = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 	walk = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
+	BGM = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 	Highscore = CHighscoreManager::CHighscoreManager();
 	PlayerScore = CHighscore::CHighscore();
 }
@@ -503,9 +506,6 @@ void SceneText::Init()
 	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
 
-	meshList[GEO_WIN] = MeshBuilder::GenerateQuad("GEO_WIN", Color(1, 1, 1), 1);
-	meshList[GEO_WIN]->textureID = LoadTGA("Image//win_screen.tga");
-
 	meshList[GEO_INTRO_SCREEN] = MeshBuilder::GenerateQuad("GEO_INTRO_SCREEN", Color(1, 1, 1), 1);
 	meshList[GEO_INTRO_SCREEN]->textureID = LoadTGA("Image//Instruction_Menu.tga");
 
@@ -529,6 +529,9 @@ void SceneText::Init()
 
 	meshList[GEO_TILESHEET_SELECTOR] = MeshBuilder::GenerateSprites("GEO_TILESHEET_SELECTOR", 6, 6);
 	meshList[GEO_TILESHEET_SELECTOR]->textureID = LoadTGA("Image//SelectorText.tga");
+
+	meshList[GEO_WIN] = MeshBuilder::GenerateQuad("GEO_WIN", Color(1, 1, 1), 1);
+	meshList[GEO_WIN]->textureID = LoadTGA("Image//win_screen.tga");
 
 
 	Mtx44 perspective;
@@ -2104,15 +2107,17 @@ void SceneText::UpdateCustomisation(double dt)
 
 void SceneText::UpdateGameOver(double dt)
 {
-	if(hero.health <= 0)
+	if(hero.health <= 0 && lose == false)
 	{
 		lose = true;
+
+		engine->play2D("../irrKlang/media/gameover.ogg", false);
 	}
 
 	if(lose == true)
 	{
-		engine->stopAllSounds();
 		walk->stopAllSounds();
+		BGM->stopAllSounds();
 
 		LoseTimer += dt;
 		if(LoseTimer >= 4)
@@ -2931,14 +2936,19 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 
 				else if (stage == 8)
 				{
+					if (win == false)
+						engine->play2D("../irrKlang/media/win.ogg", false);
+
 					win = true;
 
 					if (win == true)
 					{
+						walk->stopAllSounds();
+						BGM->stopAllSounds();
 						winTimer += 0.01f;
 					}
 
-					if (winTimer >= 2.0f)
+					if (winTimer >= 5.0f)
 					{
 						win = false;
 						menu = true;
@@ -3047,7 +3057,7 @@ void SceneText::UpdateName(double dt)
 
 	playerName[namePos] = ASCIIconvert(selectorTile);
 
-	if (name == true)
+	if (name == true && nameMenu == true)
 	{
 		if (selectorTimer >= 0.15)
 		{
@@ -3103,10 +3113,13 @@ void SceneText::UpdateName(double dt)
 					namePos++;
 				}
 
-				else
+				else 
 				{
 					engine->play2D("../irrKlang/media/confirmname.ogg", false);
 					nameMenu = false;
+					name = false;
+					BGM->play2D("../irrKlang/media/desert.mp3", true);
+					BGM->setSoundVolume(0.5);
 					PlayerScore.SetName(playerName);
 				}
 			}
@@ -4437,7 +4450,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 
 void SceneText::RenderGameOver()
 {
-	if (lose == true)
+	if(lose == true)
 	{
 		RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
 
