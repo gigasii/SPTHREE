@@ -533,6 +533,8 @@ void SceneText::Init()
 	meshList[GEO_WIN] = MeshBuilder::GenerateQuad("GEO_WIN", Color(1, 1, 1), 1);
 	meshList[GEO_WIN]->textureID = LoadTGA("Image//win_screen.tga");
 
+	meshList[GEO_CREDITS] = MeshBuilder::GenerateQuad("GEO_CREDITS", Color(1, 1, 1), 1);
+	meshList[GEO_CREDITS]->textureID = LoadTGA("Image//credits.tga");
 
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -561,7 +563,7 @@ void SceneText::Init()
 	// === Game variables ===	
 
 	InShop = false;
-	stage = 7;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -606,6 +608,7 @@ void SceneText::Init()
 	delay = 0;
 	Text[0] = "Start Game";
 	Text[1] = "How To Play?";
+	Text[2] = "Credits";
 
 	// === Custom cMenu Variables ===
 
@@ -623,6 +626,7 @@ void SceneText::Init()
 
 	lose = false;
 	win = false;
+	creditsScreen = false;
 	LoseTimer = 0.0f;
 	winTimer = 0.0f;
 
@@ -1975,12 +1979,13 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 				if (GetKey == false && keyCount < 1)
 				{
 					keyCount++;
+					engine->play2D("../irrKlang/media/steal.mp3", false);
 				}
 
 				if (keyCount == 1)
 				{
 					hero.SetKeyAcquired(true);
-					GetKey = true;
+					GetKey = true;	
 				}
 
 				for (std::vector<CGoodies *>::iterator it = GoodiesList.begin(); it != GoodiesList.end(); ++it)
@@ -2003,7 +2008,7 @@ void SceneText::UpdateBossLevel(int checkPosition_X, int checkPosition_Y)
 			{
 				for (int k = 0; k < CurrentMap->GetNumOfTiles_Width() + 1; k++)
 				{
-					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[(CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)) + 1][hero.gettheHeroPositionx() / 32] == 0 || CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][(hero.gettheHeroPositionx() / 32) + 1] == 0)
+					if (CurrentMap->theScreenMap[CurrentMap->GetNumOfTiles_Height() - (hero.gettheHeroPositiony() / 32)][hero.gettheHeroPositionx() / 32] == 0)
 					{
 						EnemiesRendered = true;
 					}
@@ -4427,7 +4432,14 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 		menu = false;
 	}
 
-	if(menu == false && InteractHighLight == 1 && Application::IsKeyPressed(VK_BACK) && menu == false)
+	if (InteractHighLight == 2 && Application::IsKeyPressed(VK_RETURN) && menu == true)
+	{
+		engine->play2D("../irrKlang/media/enter.ogg", false);
+		menu = false;
+		creditsScreen = true;
+	}
+
+	if(menu == false && (InteractHighLight == 1 || InteractHighLight == 2) && Application::IsKeyPressed(VK_BACK) && menu == false)
 	{
 		engine->play2D("../irrKlang/media/return.ogg", false);
 		menu = true;
@@ -4437,7 +4449,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	int a = 0;
 	if(menu == true)
 	{
-		for(int text = 0; text < 2; text++)
+		for(int text = 0; text < 3; text++)
 		{
 			float TextSize = 5;
 			int y = 60 / TextSize / 2 - 5 - (text * TextSize);
@@ -4547,13 +4559,19 @@ void SceneText::Render()
 	if(menu == true)
 	{
 		RenderQuadOnScreen(meshList[GEO_MENU], 82, 62, 40, 30, false);
-		RenderMenu(InteractHighLight, 1, 0);
+		RenderMenu(InteractHighLight, 2, 0);
 	}
 	
 	else if(menu == false && InteractHighLight == 1)
 	{
 		RenderQuadOnScreen(meshList[GEO_INTRO_SCREEN], 82, 62, 40, 30, false);
-		RenderMenu(InteractHighLight, 1, 0);
+		RenderMenu(InteractHighLight, 2, 0);
+	}
+
+	else if (menu == false && InteractHighLight == 2)
+	{
+		RenderQuadOnScreen(meshList[GEO_CREDITS], 82, 62, 40, 30, false);
+		RenderMenu(InteractHighLight, 2, 0);
 	}
 
 	else if(menu == false && InteractHighLight == 0)
