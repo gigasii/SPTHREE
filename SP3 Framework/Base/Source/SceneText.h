@@ -322,8 +322,8 @@ private:
 	//GameOver Variables
 	bool lose;
 	bool win;
-	float winTimer;
 	float LoseTimer;
+	float winTimer;
 
 	//Storing Value
 	int a, b;
