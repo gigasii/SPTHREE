@@ -285,7 +285,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) -  currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::KEY;	
+				tempGoodies->GoodiesType = CGoodies::KEY;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -295,7 +295,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) -  currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::CHEST;	
+				tempGoodies->GoodiesType = CGoodies::CHEST;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 
@@ -312,7 +312,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) -  currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HAY;	
+				tempGoodies->GoodiesType = CGoodies::HAY;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -322,7 +322,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) -  currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::BARREL;	
+				tempGoodies->GoodiesType = CGoodies::BARREL;	
 				tempGoodies->tilePos.Set(j,i,0);
 				BarrelsList.push_back(tempGoodies);
 				GoodiesList.push_back(tempGoodies);
@@ -340,7 +340,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HPPOT;	
+				tempGoodies->GoodiesType = CGoodies::HPPOT;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -350,7 +350,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::MAXHP;	
+				tempGoodies->GoodiesType = CGoodies::MAXHP;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -360,7 +360,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::SCROLL;	
+				tempGoodies->GoodiesType = CGoodies::SCROLL;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}
@@ -370,7 +370,7 @@ void CMap::setMap(CMap* currMap, vector<CEnemy*> &enemyList, std::vector<CGoodie
 				tempGoodies = new CGoodies();
 				tempGoodies->SetPos(j * currMap->GetTileSize(), currMap->GetTileSize() * (currMap->GetNumOfTiles_Height() - i) - currMap->GetTileSize());
 				tempGoodies->active = true;
-				tempGoodies->GoodiesType = CGoodies::Goodies_Type::HOLE;	
+				tempGoodies->GoodiesType = CGoodies::HOLE;	
 				tempGoodies->tilePos.Set(j,i,0);
 				GoodiesList.push_back(tempGoodies);
 			}

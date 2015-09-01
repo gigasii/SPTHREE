@@ -1,9 +1,14 @@
 #include "Node.h"
 
+CNode::CNode() 
+{
+	xPos = 0; yPos = 0; level = 0; priority = 0;
+}
+
 
 CNode::CNode(int xP, int yP, int lvl, int p) 
 {
-	xPos = xP; yPos = yP; level = level; priority = p;
+	xPos = xP; yPos = yP; level = lvl; priority = p;
 }
 
 

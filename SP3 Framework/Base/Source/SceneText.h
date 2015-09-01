@@ -245,6 +245,8 @@ private:
 	CBoss boss;
 	CMinimap minimap;
 
+	int afq;
+
 	//current map/map handler
 	CMap *CurrentMap;
 	
