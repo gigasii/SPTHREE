@@ -130,6 +130,7 @@ class SceneText : public Scene
 		//Game Screens
 		GEO_MENU,
 		GEO_LOSE,
+		GEO_WIN,
 		GEO_STAGECLEAR,
 
 		//Sahara desert
@@ -320,6 +321,8 @@ private:
 	
 	//GameOver Variables
 	bool lose;
+	bool win;
+	float winTimer;
 	float LoseTimer;
 
 	//Storing Value
