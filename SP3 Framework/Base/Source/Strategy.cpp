@@ -3,7 +3,7 @@
 
 using namespace std;
 
-CStrategy::CStrategy() : isAttacking(false)
+CStrategy::CStrategy() : isAttacking(false), theDestination(0,0), theEnemyPosition(0,0), theEnemyPath(CPathing::CPathing()), CurrentState(IDLE)
 {
 }
 

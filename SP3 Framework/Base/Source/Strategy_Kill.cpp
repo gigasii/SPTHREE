@@ -1,7 +1,17 @@
 #include "Strategy_Kill.h"
 
-CStrategy_Kill::CStrategy_Kill() : oldTile(0,0,0), currTile(0,0,0), checkMoved(true)
+CStrategy_Kill::CStrategy_Kill() : oldTile(0,0,0), currTile(0,0,0), checkMoved(true), route(""), route2("")
 {
+	for (int x = 0; x < n; ++x)
+	{
+		for (int y = 0; y < m; ++y)
+		{
+			Map[x][y] = 0;
+			closed_nodes_map[x][y] = 0;
+			open_nodes_map[x][y] = 0;
+			dir_map[x][y] = 0;
+		}
+	}
 }
 
 CStrategy_Kill::~CStrategy_Kill()

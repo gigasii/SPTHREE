@@ -42,6 +42,36 @@ SceneText::SceneText()
 	BGM = createIrrKlangDevice(ESOD_AUTO_DETECT, ESEO_MULTI_THREADED | ESEO_LOAD_PLUGINS | ESEO_USE_3D_BUFFERS);
 	Highscore = CHighscoreManager::CHighscoreManager();
 	PlayerScore = CHighscore::CHighscore();
+
+	for(std::vector<CEnemy*>::iterator it = enemyList.begin(); it!= enemyList.end(); ++it)
+	{
+		CEnemy *go = (CEnemy*)*it;
+		go = NULL;
+	}
+
+	for(std::vector<CGoodies*>::iterator it = GoodiesList.begin(); it!= GoodiesList.end(); ++it)
+	{
+		CGoodies *go = (CGoodies*)*it;
+		go = NULL;
+	}
+
+	for(std::vector<CGoodies*>::iterator it = BarrelList.begin(); it!= BarrelList.end(); ++it)
+	{
+		CGoodies *go = (CGoodies*)*it;
+		go = NULL;
+	}
+
+	for(std::vector<CGoodies*>::iterator it = HoleList.begin(); it!= HoleList.end(); ++it)
+	{
+		CGoodies *go = (CGoodies*)*it;
+		go = NULL;
+	}
+
+	for(std::vector<GameObject*>::iterator it = m_goList.begin(); it!= m_goList.end(); ++it)
+	{
+		GameObject *go = (GameObject*)*it;
+		go = NULL;
+	}
 }
 
 SceneText::~SceneText()

@@ -10,6 +10,7 @@ private:
 	int priority;
 
 public:
+	CNode();
 	CNode(int xP, int yP, int lvl, int p);
 	~CNode(void);
 
