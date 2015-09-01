@@ -503,6 +503,9 @@ void SceneText::Init()
 	meshList[GEO_MENU] = MeshBuilder::GenerateQuad("menu", Color(1, 1, 1), 1);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//menu.tga");
 
+	meshList[GEO_WIN] = MeshBuilder::GenerateQuad("GEO_WIN", Color(1, 1, 1), 1);
+	meshList[GEO_WIN]->textureID = LoadTGA("Image//win_screen.tga");
+
 	meshList[GEO_INTRO_SCREEN] = MeshBuilder::GenerateQuad("GEO_INTRO_SCREEN", Color(1, 1, 1), 1);
 	meshList[GEO_INTRO_SCREEN]->textureID = LoadTGA("Image//Instruction_Menu.tga");
 
@@ -555,7 +558,7 @@ void SceneText::Init()
 	// === Game variables ===	
 
 	InShop = false;
-	stage = 1;
+	stage = 7;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -616,7 +619,9 @@ void SceneText::Init()
 	// === GameOver Variables ===
 
 	lose = false;
+	win = false;
 	LoseTimer = 0.0f;
+	winTimer = 0.0f;
 
 	// === Screen Dimensions ===
 
@@ -2923,6 +2928,23 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 					CurrentMap = map.m_cBossScrollingMap;
 					InitMiniMap_Level8();
 				}
+
+				else if (stage == 8)
+				{
+					win = true;
+
+					if (win == true)
+					{
+						winTimer += 0.01f;
+					}
+
+					if (winTimer >= 2.0f)
+					{
+						win = false;
+						menu = true;
+						bReset = true;
+					}
+				}
 			}
 
 			else
@@ -3874,7 +3896,7 @@ void SceneText::RenderTileMap()
 				}
 			}
 
-			else if(stage == 2 || stage == 4 || stage == 6)
+			else if(stage == 2 || stage == 4 || stage == 6 || stage == 8)
 			{
 				if(CurrentMap->theScreenMap[i][m] >= 20 && CurrentMap->theScreenMap[i][m] <= 49)
 				{
@@ -4415,7 +4437,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 
 void SceneText::RenderGameOver()
 {
-	if(lose == true)
+	if (lose == true)
 	{
 		RenderQuadOnScreen(meshList[GEO_LOSE], 82, 62, 40, 30, false);
 
@@ -4424,6 +4446,16 @@ void SceneText::RenderGameOver()
 		ss.precision(5);
 		ss << "Final score: " << PointSystem;
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 3, 20, 15);
+	}
+	else if (win == true)
+	{
+		RenderQuadOnScreen(meshList[GEO_WIN], 82, 62, 40, 30, false);
+
+		//Final score
+		std::ostringstream ss;
+		ss.precision(5);
+		ss << "Final score: " << PointSystem;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 3, 20, 15);
 	}
 }
 
