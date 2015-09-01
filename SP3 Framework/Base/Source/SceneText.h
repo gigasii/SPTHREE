@@ -281,6 +281,7 @@ private:
 	bool hiding;
 	bool stageclearsound;
 	bool walking;
+	bool stun;
 
 	//Boss variables
 	float bossCounter;
@@ -302,12 +303,12 @@ private:
 	int delay;
 	int InteractHighLight;
 	bool menu;
+	bool name;
+	bool instruc;
 	string Text[2];
 
 	//Minimap Variables
 	bool MiniMapRendered;
-	int OpenCloseMiniMap;
-	float MiniMapDelay;
 
 	//Custom Menu Variables
 	bool CustomMenuRendered, CustomMenuSelected;

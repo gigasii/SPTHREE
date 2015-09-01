@@ -551,13 +551,11 @@ void SceneText::Init()
 	// === MiniMap Variables ===
 
 	MiniMapRendered = false;
-	OpenCloseMiniMap = 0;
-	MiniMapDelay = 0;
 
 	// === Game variables ===	
 
 	InShop = false;
-	stage = 1;
+	stage = 4;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -573,6 +571,7 @@ void SceneText::Init()
 	hiding = true;
 	stageclearsound = true;
 	walking = true;
+	stun = true;
 
 	// === Boss's Variables and Pointers ===
 
@@ -596,6 +595,8 @@ void SceneText::Init()
 	// === Menu Variables ===
 
 	menu = true;
+	name = false;
+	instruc = false;
 	InteractHighLight = 0;
 	delay = 0;
 	Text[0] = "Start Game";
@@ -1524,6 +1525,12 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer += dt;
 				go->stunTileID += 0.2;
 				go->attackStatus = false;
+				if(stun == true && go->health != 0)
+				{
+					engine->play2D("../irrKlang/media/stun.mp3", false);
+					stun = false;
+				}
+
 				if(go->stunTileID >= 4)
 				{
 					go->stunTileID = 0;
@@ -1536,6 +1543,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer = 0;
 				go->stunTileID = 0;
 				go->theStrategy->isAttacking = true;
+				stun = true;
 			}
 
 			//Enable enemies to go into attack after beign stun
@@ -1545,7 +1553,7 @@ void SceneText::UpdateEnemies(double dt)
 			}
 
 			//Force set the enemies to die in 2 hits
-			if(go->isHit == true && (go->ID >= 50 && go->ID < 100 || go->ID >= 100) && go->health == 0)
+			if(go->isHit == true && (go->ID >= 50 && go->ID < 80 || go->ID >= 100) && go->health == 0)
 			{
 				go->active = false;
 			}
@@ -2451,7 +2459,7 @@ void SceneText::UpdatePhysics(double dt)
 					hero.weapon.shurikenTileID = 0;
 				}
 
-				if(go->shurikenthrow == true)
+				if(go->shurikenthrow == true && go->type == GameObject::GO_BALL)
 				{
 					engine->play2D("../irrKlang/media/shurikenspin.mp3", false);
 					go->shurikenthrow = false;
@@ -2486,14 +2494,19 @@ void SceneText::UpdatePhysics(double dt)
 								//Shuriken collide with barrel
 								if(go2->ID == CMap::BARREL)
 								{
-									engine->play2D("../irrKlang/media/shurikenhitobjects.mp3", false);
+									if(go2->active == true)
+									{
+										engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
+									}
+
 									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 									{
 										CGoodies *go3 = (CGoodies *)*it3;
 
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
-											collisionResponse(go, go2);	
+											collisionResponse(go, go2);
+											go2->active = false;
 
 											if(go->timer < 3)
 												go3->active = false;
@@ -2546,14 +2559,18 @@ void SceneText::UpdatePhysics(double dt)
 								//Bullet collide with barrel
 								if(go2->ID == CMap::BARREL)
 								{
-									engine->play2D("../irrKlang/media/shurikenhitobjects.mp3", false);
+									if(go2->active == true)
+									{
+										engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
+									}
+									
 									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 									{
 										CGoodies *go3 = (CGoodies *)*it3;
 
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
-											go->active = false;
+											go2->active = false;
 											go3->active = false;
 										}
 									}
@@ -2624,25 +2641,13 @@ void SceneText::UpdatePhysics(double dt)
 
 void SceneText::UpdateMiniMap(double dt)
 {
-	MiniMapDelay += dt;
-
-	if(MiniMapDelay >= 1)
-	{
-		MiniMapDelay = 0;
-	}
-
-	//cout << MiniMapDelay << endl;
-
-	if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 0 && MiniMapDelay < 0.3)
+	if(Application::IsKeyPressed('G'))
 	{
 		MiniMapRendered = true;
-		OpenCloseMiniMap = 1;
 	}
-
-	else if(Application::IsKeyPressed('G') && OpenCloseMiniMap == 1 && MiniMapDelay > 0.7)
+	else
 	{
 		MiniMapRendered = false;
-		OpenCloseMiniMap = 0;
 	}
 }
 
@@ -2965,6 +2970,15 @@ void SceneText::UpdateHighscore()
 
 void SceneText::UpdateName(double dt)
 {
+	if (Application::IsKeyPressed(VK_RETURN) && InteractHighLight == 0 && menu == false)
+	{
+		name = true;
+	}
+	else if (nameMenu == false)
+	{
+		name = false;
+	}
+
 	if(menu == false)
 		selectorTimer += dt;
 
@@ -2982,77 +2996,80 @@ void SceneText::UpdateName(double dt)
 
 	playerName[namePos] = ASCIIconvert(selectorTile);
 
-	if(selectorTimer >= 0.15)
+	if (name == true)
 	{
-		if(Application::IsKeyPressed(VK_UP))
+		if (selectorTimer >= 0.15)
 		{
-			selectorTimer = 0;
-			selectorTile.y--;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.y <= 8)
-				selectorTile.y = 11;
-		}
-
-		if(Application::IsKeyPressed(VK_DOWN))
-		{
-			selectorTimer = 0;
-			selectorTile.y++;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.y >= 12)
-				selectorTile.y = 9;
-		}
-
-		if(Application::IsKeyPressed(VK_LEFT))
-		{
-			selectorTimer = 0;
-			selectorTile.x--;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.x <= 9)
-				selectorTile.x = 22;
-		}
-
-		if(Application::IsKeyPressed(VK_RIGHT))
-		{
-			selectorTimer = 0;
-			selectorTile.x++;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(selectorTile.x >= 23)
-				selectorTile.x = 10;
-		}
-
-
-		if(Application::IsKeyPressed(VK_RETURN))
-		{
-			selectorTimer = 0;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(namePos < 5)
+			if (Application::IsKeyPressed(VK_UP))
 			{
-				selector2Tile.x += 23;
-				namePos++;
+				selectorTimer = 0;
+				selectorTile.y--;
+				engine->play2D("../irrKlang/media/button.mp3", false);
+
+				if (selectorTile.y <= 8)
+					selectorTile.y = 11;
 			}
 
-			else
+			if (Application::IsKeyPressed(VK_DOWN))
 			{
-				nameMenu = false;
-				PlayerScore.SetName(playerName);
+				selectorTimer = 0;
+				selectorTile.y++;
+				engine->play2D("../irrKlang/media/button.mp3", false);
+
+				if (selectorTile.y >= 12)
+					selectorTile.y = 9;
 			}
-		}
 
-		if(Application::IsKeyPressed(VK_BACK))
-		{
-			selectorTimer = 0;
-			engine->play2D("../irrKlang/media/button.mp3", false);
-
-			if(namePos > 0)
+			if (Application::IsKeyPressed(VK_LEFT))
 			{
-				playerName[namePos] = ' ';
-				selector2Tile.x -= 23;
-				namePos--;
+				selectorTimer = 0;
+				selectorTile.x--;
+				engine->play2D("../irrKlang/media/button.mp3", false);
+
+				if (selectorTile.x <= 9)
+					selectorTile.x = 22;
+			}
+
+			if (Application::IsKeyPressed(VK_RIGHT))
+			{
+				selectorTimer = 0;
+				selectorTile.x++;
+				engine->play2D("../irrKlang/media/button.mp3", false);
+
+				if (selectorTile.x >= 23)
+					selectorTile.x = 10;
+			}
+
+
+			if (Application::IsKeyPressed(VK_RETURN))
+			{
+				selectorTimer = 0;
+
+				if (namePos < 5)
+				{
+					engine->play2D("../irrKlang/media/button.mp3", false);
+					selector2Tile.x += 23;
+					namePos++;
+				}
+
+				else
+				{
+					nameMenu = false;
+					PlayerScore.SetName(playerName);
+				}
+			}
+
+			if (Application::IsKeyPressed(VK_BACK))
+			{
+				selectorTimer = 0;
+				engine->play2D("../irrKlang/media/button.mp3", false);
+
+				if (namePos > 0)
+				{
+					playerName[namePos] = ' ';
+					selector2Tile.x -= 23;
+					namePos--;
+				}
 			}
 		}
 	}
@@ -4305,14 +4322,14 @@ void SceneText::RenderName()
 
 void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 {
-	if(Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max)
+	if(Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max && menu == true)
 	{
 		engine->play2D("../irrKlang/media/button.mp3", false);
 		InteractHighLight += 1;
 		delay = 15;
 	}
 
-	if(Application::IsKeyPressed(VK_UP) && delay == 0 && InteractHighLight > min)
+	if(Application::IsKeyPressed(VK_UP) && delay == 0 && InteractHighLight > min && menu == true)
 	{
 		engine->play2D("../irrKlang/media/button.mp3", false);
 		InteractHighLight -= 1;
@@ -4324,19 +4341,19 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 		--delay;
 	}
 
-	if(InteractHighLight == 0 && Application::IsKeyPressed(VK_RETURN))
+	if(InteractHighLight == 0 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
 		engine->play2D("../irrKlang/media/button.mp3", false);
 		menu = false;
 	}
 
-	if(InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN))
+	if(InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
 		engine->play2D("../irrKlang/media/button.mp3", false);
 		menu = false;
 	}
 
-	if(menu == false && InteractHighLight == 1 && Application::IsKeyPressed(VK_BACK))
+	if(menu == false && InteractHighLight == 1 && Application::IsKeyPressed(VK_BACK) && menu == false)
 	{
 		engine->play2D("../irrKlang/media/button.mp3", false);
 		menu = true;
