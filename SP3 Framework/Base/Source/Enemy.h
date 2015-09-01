@@ -53,6 +53,7 @@ public:
 	int routeCounter, routeCounter2;
 	float RoF;
 	Vector3 rotation;
+	bool detected;
 
 	//Initialise this class instance
 	void Init();

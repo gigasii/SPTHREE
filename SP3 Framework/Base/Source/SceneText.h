@@ -275,6 +275,13 @@ private:
 	bool stageClear;
 	float stageClearTimer;
 	float floatDown;
+	bool gunshot;
+	bool pickweaponsound;
+	bool smokescreen;
+	bool hiding;
+	bool stageclearsound;
+	bool walking;
+	bool stun;
 
 	//Boss variables
 	float bossCounter;
@@ -296,12 +303,12 @@ private:
 	int delay;
 	int InteractHighLight;
 	bool menu;
+	bool name;
+	bool instruc;
 	string Text[2];
 
 	//Minimap Variables
 	bool MiniMapRendered;
-	int OpenCloseMiniMap;
-	float MiniMapDelay;
 
 	//Custom Menu Variables
 	bool CustomMenuRendered, CustomMenuSelected;
@@ -326,7 +333,7 @@ private:
 	bool onHero;
 	bool lockMovement;
 
-	//highscore
+	//Highscore
 	CHighscoreManager Highscore;
 	CHighscore PlayerScore;
 
