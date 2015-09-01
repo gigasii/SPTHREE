@@ -15,6 +15,9 @@ private:
 	int CurrentSize;
 	string name;
 	int value;
+	CHighscore Player;
+	
+
 public:
 	CHighscoreManager(void);
 	~CHighscoreManager(void);
@@ -24,7 +27,7 @@ public:
 
 	void UpdateHighscore(CHighscore PlayerScore);
 
-	bool CheckIfInHighscore(CHighscore PlayerScore);
+	
 	void Add(CHighscore Highscore);
 	void MergeSort(CHighscore highscore[], int first, int last);
 	void Merge(CHighscore highscore[], int first, int middle, int last);
@@ -34,6 +37,9 @@ public:
 	CHighscore GetAllHighscores(int pos);
 
 	int GetCurrentSize();
+
+	void SetPlayer(CHighscore Highscore);
+	CHighscore GetPlayer();
 
 };
 

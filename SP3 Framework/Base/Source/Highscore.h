@@ -9,9 +9,12 @@ using std::string;
 
 class CHighscore
 {
-public:
+private:
 	int Highscore_value;
 	string Highscore_name;
+
+public:
+	
 
 	CHighscore(void);
 	~CHighscore(void);
