@@ -565,13 +565,12 @@ void SceneText::Init()
 	stageClear = false;
 	stageClearTimer = 0;
 	floatDown = 0;
-	gunshot = true;
 	pickweaponsound = true;
 	smokescreen = true;
 	hiding = true;
 	stageclearsound = true;
 	walking = true;
-	stun = true;
+
 
 	// === Boss's Variables and Pointers ===
 
@@ -996,16 +995,20 @@ void SceneText::Update(double dt)
 	
 	if(lose == false)
 	{
-		UpdateHero(dt);
-		UpdateEnemies(dt);
-		UpdateGoodies(dt);
-		UpdateBossLevel(checkPosition_X, checkPosition_Y);
-		UpdateCustomisation(dt);
-		UpdateMouse();
-		UpdatePhysics(dt);
-		UpdateMiniMap(dt);
-		UpdateLevels(checkPosition_X, checkPosition_Y, dt);
-		UpdateHighscore();
+		if(nameMenu == false && menu == false)
+		{
+			UpdateHero(dt);
+			UpdateEnemies(dt);
+			UpdateGoodies(dt);
+			UpdateBossLevel(checkPosition_X, checkPosition_Y);
+			UpdateCustomisation(dt);
+			UpdateMouse();
+			UpdatePhysics(dt);
+			UpdateMiniMap(dt);
+			UpdateLevels(checkPosition_X, checkPosition_Y, dt);
+			UpdateHighscore();
+		}
+
 		UpdateName(dt);
 	}
 
@@ -1539,10 +1542,10 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer += dt;
 				go->stunTileID += 0.2;
 				go->attackStatus = false;
-				if(stun == true && go->health != 0)
+				if(go->stunSound == true && go->health != 0)
 				{
 					engine->play2D("../irrKlang/media/stun.mp3", false);
-					stun = false;
+					go->stunSound = false;
 				}
 
 				if(go->stunTileID >= 4)
@@ -1557,7 +1560,7 @@ void SceneText::UpdateEnemies(double dt)
 				go->stunTimer = 0;
 				go->stunTileID = 0;
 				go->theStrategy->isAttacking = true;
-				stun = true;
+				go->stunSound = true;
 			}
 
 			//Enable enemies to go into attack after beign stun
@@ -1578,7 +1581,7 @@ void SceneText::UpdateEnemies(double dt)
 				if(go->ID >= 50 && go->ID < 100)
 				{
 					go->attackReactionTime += dt;
-					if(go->attackReactionTime >= 0.15)
+					if(go->attackReactionTime >= 0.01)
 					{
 
 						hero.health--;
@@ -1602,10 +1605,14 @@ void SceneText::UpdateEnemies(double dt)
 			//Attacking animation for enemy
 			if(go->attackAnimation == true)
 			{
-				if(gunshot == true)
+				if(go->gunShot == true)
 				{
-					engine->play2D("../irrKlang/media/gunshot.mp3", false);
-					gunshot = false;
+					if (go->ID < 100)
+						engine->play2D("../irrKlang/media/gunshot.mp3", false);
+					else
+						engine->play2D("../irrKlang/media/gun.mp3", false);
+
+					go->gunShot = false;
 				}
 
 				go->attackAnimationTimer += dt;
@@ -1613,7 +1620,7 @@ void SceneText::UpdateEnemies(double dt)
 				{
 					go->attackAnimationTimer = 0;
 					go->attackAnimation = false;
-					gunshot = true;
+					go->gunShot = true;
 				}
 			}
 
@@ -2099,6 +2106,9 @@ void SceneText::UpdateGameOver(double dt)
 
 	if(lose == true)
 	{
+		engine->stopAllSounds();
+		walk->stopAllSounds();
+
 		LoseTimer += dt;
 		if(LoseTimer >= 4)
 		{
@@ -2588,6 +2598,7 @@ void SceneText::UpdatePhysics(double dt)
 
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
+											go->active = false;
 											go2->active = false;
 											go3->active = false;
 										}
@@ -2992,12 +3003,12 @@ void SceneText::UpdateName(double dt)
 	{
 		name = true;
 	}
-	else if (nameMenu == false)
+	else if (nameMenu == false ||  InteractHighLight == 1 || menu == true)
 	{
 		name = false;
 	}
 
-	if(menu == false)
+	if(menu == false && name == true)
 		selectorTimer += dt;
 
 	if(selectorRender == true)
@@ -3022,7 +3033,7 @@ void SceneText::UpdateName(double dt)
 			{
 				selectorTimer = 0;
 				selectorTile.y--;
-				engine->play2D("../irrKlang/media/button.mp3", false);
+				engine->play2D("../irrKlang/media/name.ogg", false);
 
 				if (selectorTile.y <= 8)
 					selectorTile.y = 11;
@@ -3032,7 +3043,7 @@ void SceneText::UpdateName(double dt)
 			{
 				selectorTimer = 0;
 				selectorTile.y++;
-				engine->play2D("../irrKlang/media/button.mp3", false);
+				engine->play2D("../irrKlang/media/name.ogg", false);
 
 				if (selectorTile.y >= 12)
 					selectorTile.y = 9;
@@ -3042,7 +3053,7 @@ void SceneText::UpdateName(double dt)
 			{
 				selectorTimer = 0;
 				selectorTile.x--;
-				engine->play2D("../irrKlang/media/button.mp3", false);
+				engine->play2D("../irrKlang/media/name.ogg", false);
 
 				if (selectorTile.x <= 9)
 					selectorTile.x = 22;
@@ -3052,7 +3063,7 @@ void SceneText::UpdateName(double dt)
 			{
 				selectorTimer = 0;
 				selectorTile.x++;
-				engine->play2D("../irrKlang/media/button.mp3", false);
+				engine->play2D("../irrKlang/media/name.ogg", false);
 
 				if (selectorTile.x >= 23)
 					selectorTile.x = 10;
@@ -3065,13 +3076,14 @@ void SceneText::UpdateName(double dt)
 
 				if (namePos < 5)
 				{
-					engine->play2D("../irrKlang/media/button.mp3", false);
+					engine->play2D("../irrKlang/media/entername.mp3", false);
 					selector2Tile.x += 23;
 					namePos++;
 				}
 
 				else
 				{
+					engine->play2D("../irrKlang/media/confirmname.ogg", false);
 					nameMenu = false;
 					PlayerScore.SetName(playerName);
 				}
@@ -3080,7 +3092,7 @@ void SceneText::UpdateName(double dt)
 			if (Application::IsKeyPressed(VK_BACK))
 			{
 				selectorTimer = 0;
-				engine->play2D("../irrKlang/media/button.mp3", false);
+				engine->play2D("../irrKlang/media/back.ogg", false);
 
 				if (namePos > 0)
 				{
@@ -4305,7 +4317,7 @@ void SceneText::RenderName()
 		RenderQuadOnScreen(meshList[GEO_NAME_SCREEN], 82, 62, 40, 30, false);
 
 		if(selectorRender == true && namePos < 5)
-			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y);
+			Render2DMesh(meshList[GEO_SELECTOR2], false, 32.0f, selector2Tile.x, selector2Tile.y - 133);
 
 		if(namePos == 5)
 		{
@@ -4316,23 +4328,23 @@ void SceneText::RenderName()
 
 		std::ostringstream sss;
 		sss << playerName;
-		RenderTextOnScreen(meshList[GEO_TEXT2], sss.str(), Color(1, 0, 0), 3, 35, 50);
+		RenderTextOnScreen(meshList[GEO_TEXT2], sss.str(), Color(1, 0, 0), 3, 35, 50 - 10);
 
 		Vector3 selectorPos(selectorTile.x * CurrentMap->GetTileSize(), 
 		CurrentMap->GetTileSize() * (CurrentMap->GetNumOfTiles_Height() - selectorTile.y) -  CurrentMap->GetTileSize());
 
 		for(int i = 0; i < 10; ++i)
 		{
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i,32.0f,320 + i * 32,480);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i,32.0f,320 + i * 32,480 - 64);
 		}
 
 		for(int i = 0; i < 13; ++i)
 		{
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 10,32.0f,320 + i * 32,448);
-			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 23,32.0f,320 + i * 32,416);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 10,32.0f,320 + i * 32,448 - 64);
+			RenderTilesMap(meshList[GEO_TILESHEET_SELECTOR],i + 23,32.0f,320 + i * 32,416 - 64);
 		}
 
-		Render2DMesh(meshList[GEO_SELECTOR], false, 32.0f, selectorPos.x, selectorPos.y);
+		Render2DMesh(meshList[GEO_SELECTOR], false, 32.0f, selectorPos.x, selectorPos.y - 64);
 	}
 }
 
@@ -4342,14 +4354,14 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 {
 	if(Application::IsKeyPressed(VK_DOWN) && delay == 0 && InteractHighLight < max && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/button.ogg", false);
 		InteractHighLight += 1;
 		delay = 15;
 	}
 
 	if(Application::IsKeyPressed(VK_UP) && delay == 0 && InteractHighLight > min && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/button.ogg", false);
 		InteractHighLight -= 1;
 		delay = 15;
 	}
@@ -4361,19 +4373,19 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 
 	if(InteractHighLight == 0 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/enter.ogg", false);
 		menu = false;
 	}
 
 	if(InteractHighLight == 1 && Application::IsKeyPressed(VK_RETURN) && menu == true)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/enter.ogg", false);
 		menu = false;
 	}
 
 	if(menu == false && InteractHighLight == 1 && Application::IsKeyPressed(VK_BACK) && menu == false)
 	{
-		engine->play2D("../irrKlang/media/button.mp3", false);
+		engine->play2D("../irrKlang/media/return.ogg", false);
 		menu = true;
 	}
 

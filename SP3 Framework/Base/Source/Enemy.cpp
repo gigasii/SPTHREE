@@ -26,6 +26,8 @@ CEnemy::CEnemy()
 	, RoF(0)
 	, rotation(1, 0, 0)
 	, detected(true)
+	, stunSound(true)
+	, gunShot(true)
 {
 }
 
