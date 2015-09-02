@@ -288,7 +288,6 @@ private:
 	bool walking;
 	bool cheatActivate;
 	int toggle;
-	float cheatDelayTimer;
 	bool cheatSound;
 
 	//Boss variables
