@@ -1102,6 +1102,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 		{
 			if(DistanceFromEnemyX >= 0 && DistanceFromEnemyX <= 32)
 			{
+				//Range enemies
+				if(go->ID >= 100)
+				{
+					go->health -= 2;
+					engine->play2D("../irrKlang/media/backstab.mp3", false);
+				}
+
 				//Hero facing left
 				if(hero.heroTileID >= 4 && hero.heroTileID <= 6)
 				{
@@ -1109,13 +1116,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(-1, 0, 0))
 					{
 						//Normal soldier
-						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
+						if(go->ID >= 50 && go->ID < 80)
 						{
 							go->health -= 2;
 						}
 
 						//Amoured soldier
-						else if(go->ID >= 80)
+						else if(go->ID >= 80 && go->ID < 100)
 						{
 							go->health -= 3;
 						}
@@ -1137,6 +1144,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 
 			else if(DistanceFromEnemyX <= 0 && DistanceFromEnemyX >= -32)
 			{
+				//Range enemies
+				if(go->ID >= 100)
+				{
+					go->health -= 2;
+					engine->play2D("../irrKlang/media/backstab.mp3", false);
+				}
+
 				//Hero facing right
 				if(hero.heroTileID >= 8 && hero.heroTileID <= 10)
 				{
@@ -1144,13 +1158,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(1, 0, 0))
 					{
 						//Normal soldier
-						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
+						if(go->ID >= 50 && go->ID < 80)
 						{
 							go->health -= 2;
 						}
 
 						//Amoured soldier
-						else if(go->ID >= 80)
+						else if(go->ID >= 80 && go->ID < 100)
 						{
 							go->health -= 3;
 						}
@@ -1176,6 +1190,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 		{
 			if(DistanceFromEnemyY >= 0 && DistanceFromEnemyY <= 32)
 			{
+				//Range enemies
+				if(go->ID >= 100)
+				{
+					go->health -= 2;
+					engine->play2D("../irrKlang/media/backstab.mp3", false);
+				}
+
 				//Hero is facing down
 				if(hero.heroTileID >= 0 && hero.heroTileID <= 2)
 				{
@@ -1183,13 +1204,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(0, -1, 0))
 					{
 						//Normal soldier
-						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
+						if(go->ID >= 50 && go->ID < 80)
 						{
 							go->health -= 2;
 						}
 
 						//Amoured soldier
-						else if(go->ID >= 80)
+						else if(go->ID >= 80 && go->ID < 100)
 						{
 							go->health -= 3;
 						}
@@ -1211,6 +1232,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 
 			else if(DistanceFromEnemyY <= 0 && DistanceFromEnemyY >= -32)
 			{
+				//Range enemies
+				if(go->ID >= 100)
+				{
+					go->health -= 2;
+					engine->play2D("../irrKlang/media/backstab.mp3", false);
+				}
+
 				//Hero is facing up
 				if(hero.heroTileID >= 12 && hero.heroTileID <= 14)
 				{
@@ -1218,13 +1246,13 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 					if(go->direction == Vector3(0, 1, 0))
 					{
 						//Normal soldier
-						if((go->ID >= 50 && go->ID < 80) || go->ID >= 100)
+						if(go->ID >= 50 && go->ID < 80)
 						{
 							go->health -= 2;
 						}
 
 						//Amoured soldier
-						else if(go->ID >= 80)
+						else if(go->ID >= 80 && go->ID < 100)
 						{
 							go->health -= 3;
 						}
