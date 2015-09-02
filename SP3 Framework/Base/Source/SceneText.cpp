@@ -591,7 +591,7 @@ void SceneText::Init()
 	// === Game variables ===	
 
 	InShop = false;
-	stage = 1;
+	stage = 7;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -2214,7 +2214,7 @@ void SceneText::UpdateMouse()
 
 		static bool bRButtonState = false;
 		if(!bRButtonState && Application::IsMousePressed(1) && hero.invisibleStatus == false && hero.weapon.GetShurikensAcquired() == true)
-		{
+		{	
 			bRButtonState = true;
 			//std::cout << "RBUTTON DOWN" << std::endl;
 
@@ -2574,14 +2574,14 @@ void SceneText::UpdatePhysics(double dt)
 								//Shuriken collide with barrel
 								if(go2->ID == CMap::BARREL)
 								{
-									if(go2->active == true)
-									{
-										engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
-									}
-
 									for(std::vector<CGoodies *>::iterator it3 = BarrelList.begin(); it3 != BarrelList.end(); ++it3)
 									{
 										CGoodies *go3 = (CGoodies *)*it3;
+
+										if(go3->active == true)
+										{
+											engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
+										}
 
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
@@ -2597,11 +2597,6 @@ void SceneText::UpdatePhysics(double dt)
 								//Shuriken collide with enemy
 								else if(go2->ID >= CMap::ENEMY_50)
 								{
-									if(go2->active == true)
-									{
-										engine->play2D("../irrKlang/media/shurikenhitenemies.mp3", false);
-									}
-
 									for(std::vector<CEnemy *>::iterator it4 = enemyList.begin(); it4 != enemyList.end(); ++it4)
 									{
 										CEnemy *go4 = (CEnemy *)*it4;
@@ -2609,6 +2604,9 @@ void SceneText::UpdatePhysics(double dt)
 										if(go4->active && go4->ID == go2->ID)
 										{
 											collisionResponse(go, go2);
+
+											if (go4->health > 0)
+												engine->play2D("../irrKlang/media/shurikenhitenemies.mp3", false);
 
 											if(go->timer < 3 && (go4->ID < 80 || go4->ID >= 100) && go4->stunned == false)
 											{
@@ -2783,7 +2781,7 @@ void SceneText::UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt
 						hero.SetdoorOpened(true);
 						engine->play2D("../irrKlang/media/opendoor.mp3", false);
 					}
-					else if (stage == 8 && keyCount >= 2)
+					else if (stage == 8 && keyCount >= 3)
 					{
 						keyCount -= 2;
 						hero.SetdoorOpened(true);
