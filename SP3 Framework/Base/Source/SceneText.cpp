@@ -2152,7 +2152,7 @@ void SceneText::UpdateCustomisation(double dt)
 	}
 
 	//Open Menu
-	if(Application::IsKeyPressed('T') && weaponCollectedScreen == false && stageClear == false && hero.NoOfScroll >= 1)
+	if(Application::IsKeyPressed('T') && weaponCollectedScreen == false && stageClear == false && hero.NoOfScroll == 1)
 	{
 		if(CloseOpenCustomMenu == 1)
 		{
