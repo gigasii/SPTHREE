@@ -3,6 +3,17 @@
 
 CPathing::CPathing(void) : location(0), dir(DOWN), xFix(false), yFix(xFix)
 {
+	for(std::vector<Vector3>::iterator it = WayPointList.begin(); it!= WayPointList.end(); ++it)
+	{
+		Vector3 go = (Vector3)*it;
+		go.SetZero();
+	}
+
+	for(std::vector<Vector3>::iterator it = WayPointTileList.begin(); it!= WayPointTileList.end(); ++it)
+	{
+		Vector3 go = (Vector3)*it;
+		go.SetZero();
+	}
 }
 
 

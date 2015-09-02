@@ -28,7 +28,15 @@ CEnemy::CEnemy()
 	, detected(true)
 	, stunSound(true)
 	, gunShot(true)
+	, theDestination(0,0)
+	, currentStrat(STRAT_NULL)
+	, path (CPathing())
 {
+	for(std::vector<Vector3>::iterator it = detectionGrid.begin(); it!= detectionGrid.end(); ++it)
+	{
+		Vector3 go = (Vector3)*it;
+		go.SetZero();
+	}
 }
 
 CEnemy::~CEnemy()
