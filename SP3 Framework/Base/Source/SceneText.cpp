@@ -1128,6 +1128,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 						}
 
 						PointSystem += 20;
+						PlayerScore.SetValue(20 + PlayerScore.GetValue());
 						engine->play2D("../irrKlang/media/backstab.mp3", false);
 					}
 
@@ -1170,6 +1171,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 						}
 
 						PointSystem += 20;
+						PlayerScore.SetValue(20 + PlayerScore.GetValue());
 						engine->play2D("../irrKlang/media/backstab.mp3", false);
 					}
 
@@ -1216,6 +1218,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 						}
 
 						PointSystem += 20;
+						PlayerScore.SetValue(20 + PlayerScore.GetValue());
 						engine->play2D("../irrKlang/media/backstab.mp3", false);
 					}
 
@@ -1258,6 +1261,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 						}
 
 						PointSystem += 20;
+						PlayerScore.SetValue(20 + PlayerScore.GetValue());
 						engine->play2D("../irrKlang/media/backstab.mp3", false);
 					}
 
@@ -1297,6 +1301,7 @@ void SceneText::CheckEnemiesInRange(CEnemy *go,  Hero hero, int DistanceFromEnem
 							}
 
 							PointSystem += 20;
+							PlayerScore.SetValue(20 + PlayerScore.GetValue());
 							engine->play2D("../irrKlang/media/backstab.mp3", false);
 							stabOnce = true;	
 						}
@@ -1600,6 +1605,7 @@ void SceneText::UpdateEnemies(double dt)
 					engine->play2D("../irrKlang/media/detected.mp3", false);
 					go->detected = false;
 					PointSystem -= 10;
+					PlayerScore.SetValue(PlayerScore.GetValue() - 10);
 				}	
 			}
 
@@ -2608,11 +2614,6 @@ void SceneText::UpdatePhysics(double dt)
 									{
 										CGoodies *go3 = (CGoodies *)*it3;
 
-										if(go3->active == true)
-										{
-											engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
-										}
-
 										if(go3->active && (go3->GetPos_x() == go2->pos.x - 16) && (go3->GetPos_y() == go2->pos.y - 16))
 										{
 											collisionResponse(go, go2);
@@ -2620,6 +2621,11 @@ void SceneText::UpdatePhysics(double dt)
 
 											if(go->timer < 3)
 												go3->active = false;
+
+											if(go3->active == true)
+											{
+												engine->play2D("../irrKlang/media/barrelbreak.mp3", false);
+											}
 										}
 									}
 								}
