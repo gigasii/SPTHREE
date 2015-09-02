@@ -193,6 +193,7 @@ public:
 	void UpdateLevels(int checkPosition_X, int checkPosition_Y, double dt);
 	void UpdateHighscore();
 	void UpdateName(double dt);
+	void UpdateCheats();
 	
 	//Game project functions
 	void RenderInit();
@@ -208,7 +209,7 @@ public:
 	
 	//Render Menus
 	void RenderMenu(int &InteractHighLight, int max, int min);
-	void RenderGameOver();
+	void RenderWinLose();
 	void RenderCustomMenu();
 	void RenderWeaponCollectedMenu();
 	void RenderStageClear();
@@ -285,7 +286,10 @@ private:
 	bool hiding;
 	bool stageclearsound;
 	bool walking;
-	bool stun;
+	bool cheatActivate;
+	int toggle;
+	float cheatDelayTimer;
+	bool cheatSound;
 
 	//Boss variables
 	float bossCounter;

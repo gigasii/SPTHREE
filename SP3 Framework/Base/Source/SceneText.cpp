@@ -19,7 +19,6 @@ ISoundEngine *engine;
 ISoundEngine *walk;
 ISoundEngine *BGM;
 
-
 SceneText::SceneText()
 	: CurrentMap(NULL)
 	, BossPointer(NULL)
@@ -489,7 +488,6 @@ void SceneText::Init()
 
 	meshList[GEO_SCROLL] = MeshBuilder::Generate2DMesh("GEO_SCROLL", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_SCROLL]->textureID = LoadTGA("Image//Goodies//scroll.tga");
-	//meshList[GEO_SCROLL]->textureID = LoadTGA("Image//OldMan.tga");
 
 	meshList[GEO_HOLE] = MeshBuilder::Generate2DMesh("GEO_HOLE", Color(1, 1, 1), 0.0f, 0.0f, TILE_SIZE, TILE_SIZE);
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Goodies//hole.tga");
@@ -608,7 +606,10 @@ void SceneText::Init()
 	hiding = true;
 	stageclearsound = true;
 	walking = true;
-
+	cheatActivate = false;
+	toggle = 0;
+	cheatDelayTimer = 0;
+	cheatSound = true;
 
 	// === Boss's Variables and Pointers ===
 
@@ -625,7 +626,7 @@ void SceneText::Init()
 
 	// === HUD Variables ===
 
-	diamondCount = 10;
+	diamondCount = 0;
 	keyCount = 0;
 	PointSystem = 0;
 
@@ -1050,6 +1051,7 @@ void SceneText::Update(double dt)
 			UpdateMiniMap(dt);
 			UpdateLevels(checkPosition_X, checkPosition_Y, dt);
 			UpdateHighscore();
+			UpdateCheats();
 		}
 
 		UpdateName(dt);
@@ -1564,7 +1566,7 @@ void SceneText::UpdateEnemies(double dt)
 				CheckEnemiesInRange(go, hero, DistanceFromEnemyX, DistanceFromEnemyY);
 			}
 
-			if(go->theStrategy->CurrentState == CStrategy::ATTACK)
+			if(go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID != CMap::BOSS_2)
 			{
 				if(go->detected == true)
 				{
@@ -1572,6 +1574,15 @@ void SceneText::UpdateEnemies(double dt)
 					go->detected = false;
 					PointSystem -= 10;
 				}	
+			}
+
+			else if(go->theStrategy->CurrentState == CStrategy::ATTACK && go->ID == CMap::BOSS_2)
+			{
+				if(go->detected == true)
+				{
+					engine->play2D("../irrKlang/media/detected2.mp3", false);
+					go->detected = false;
+				}
 			}
 
 			else if(go->theStrategy->CurrentState == CStrategy::PATROL)
@@ -1650,10 +1661,15 @@ void SceneText::UpdateEnemies(double dt)
 			{
 				if(go->gunShot == true)
 				{
-					if (go->ID < 100)
+					if(go->ID < 100)
+					{
 						engine->play2D("../irrKlang/media/gunshot.mp3", false);
+					}
+					
 					else
+					{
 						engine->play2D("../irrKlang/media/gun.mp3", false);
+					}
 
 					go->gunShot = false;
 				}
@@ -3190,6 +3206,63 @@ void SceneText::UpdateName(double dt)
 	}
 }
 
+void SceneText::UpdateCheats()
+{
+	//Enable and disable cheats
+	if(Application::IsKeyPressed('F') && toggle == 0)
+	{
+		cheatActivate = true;
+		if(cheatSound == true)
+		{
+			engine->play2D("../irrKlang/media/cheaton.mp3", false);
+			cheatSound = false;
+		}
+	}
+
+	else if(Application::IsKeyPressed('F') && toggle == 1)
+	{
+		cheatActivate = false;
+		if(cheatSound == true)
+		{
+			engine->play2D("../irrKlang/media/cheatoff.mp3", false);
+			cheatSound = false;
+		}
+	}
+
+	else
+	{
+		cheatSound = true;
+	}
+
+	//Cheat on
+	if(cheatActivate == true)
+	{
+		cheatDelayTimer += 0.05;
+		if(cheatDelayTimer >= 0.3)
+		{
+			cheatDelayTimer = 0.3;
+			toggle = 1;
+		}
+
+		//God mode
+		if(hero.health <= 2)
+		{
+			hero.health = hero.full_health;
+		}
+	}
+
+	//Cheat off
+	else if(cheatActivate == false && toggle == 1)
+	{
+		cheatDelayTimer += 0.05;
+		if(cheatDelayTimer >= 0.6)
+		{
+			cheatDelayTimer = 0;
+			toggle = 0;
+		}
+	}
+}
+
 // ================================== RENDERING APPLICATION FUNCTIONS ==================================
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
@@ -4523,7 +4596,7 @@ void SceneText::RenderMenu(int &InteractHighLight, int max, int min)
 	}
 }
 
-void SceneText::RenderGameOver()
+void SceneText::RenderWinLose()
 {
 	if(lose == true)
 	{
@@ -4535,7 +4608,8 @@ void SceneText::RenderGameOver()
 		ss << "Final score: " << PointSystem;
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 3, 20, 15);
 	}
-	else if (win == true)
+	
+	else if(win == true)
 	{
 		RenderQuadOnScreen(meshList[GEO_WIN], 82, 62, 40, 30, false);
 
@@ -4622,7 +4696,7 @@ void SceneText::Render()
 		RenderMenu(InteractHighLight, 2, 0);
 	}
 
-	else if (menu == false && InteractHighLight == 2)
+	else if(menu == false && InteractHighLight == 2)
 	{
 		RenderQuadOnScreen(meshList[GEO_CREDITS], 82, 62, 40, 30, false);
 		RenderMenu(InteractHighLight, 2, 0);
@@ -4661,7 +4735,7 @@ void SceneText::Render()
 			RenderStageClear();
 			RenderMinimap();
 			RenderHighscore();
-			RenderGameOver();
+			RenderWinLose();
 		}
 	}
 }
