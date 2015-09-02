@@ -381,7 +381,7 @@ void SceneText::Init()
 	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("quad", Color(1, 0, 0), 1.f);
 
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
-	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//c.tga");
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font//typhocraphy.tga");
 
 	meshList[GEO_TEXT2] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT2]->textureID = LoadTGA("Image//Font//Consolas.tga");
@@ -591,7 +591,7 @@ void SceneText::Init()
 	// === Game variables ===	
 
 	InShop = false;
-	stage = 7;
+	stage = 1;
 	stabOnce = false;
 	RenderDim = false;
 	chestOpen = false;
@@ -608,7 +608,6 @@ void SceneText::Init()
 	walking = true;
 	cheatActivate = false;
 	toggle = 0;
-	cheatDelayTimer = 0;
 	cheatSound = true;
 
 	// === Boss's Variables and Pointers ===
@@ -1412,7 +1411,7 @@ void SceneText::UpdateHero(double dt)
 			hero.reduceSpeed = 0;
 		}
 
-		if(Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+		if((Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D')) && cheatActivate == false)
 		{
 			if(hero.stamina > 0)
 			{
@@ -1966,12 +1965,15 @@ void SceneText::UpdateGoodies(double dt)
 						{
 							if(hero.heroCurrTile == go->tilePos)
 							{
-								if(diamondCount >= 3)
+								if(hero.NoOfScroll == 0)
 								{
-									go->active = false;
-									hero.NoOfScroll++;
-									diamondCount -= 3;
-									engine->play2D("../irrKlang/media/buyitem.mp3", false);
+									if(diamondCount >= 3)
+									{
+										go->active = false;
+										hero.NoOfScroll++;
+										diamondCount -= 3;
+										engine->play2D("../irrKlang/media/buyitem.mp3", false);
+									}
 								}
 							}
 						}
@@ -3206,10 +3208,15 @@ void SceneText::UpdateName(double dt)
 
 void SceneText::UpdateCheats()
 {
-	//Enable and disable cheats
-	if(Application::IsKeyPressed('F') && toggle == 0)
+	static bool click = false;
+	
+	//Enable cheats
+	if(!click && Application::IsKeyPressed('F') && toggle == 0)
 	{
+		click = true;
 		cheatActivate = true;
+		toggle = 1;
+
 		if(cheatSound == true)
 		{
 			engine->play2D("../irrKlang/media/cheaton.mp3", false);
@@ -3217,9 +3224,13 @@ void SceneText::UpdateCheats()
 		}
 	}
 
-	else if(Application::IsKeyPressed('F') && toggle == 1)
+	//Disable cheats
+	else if(!click && Application::IsKeyPressed('F') && toggle == 1)
 	{
+		click = true;
 		cheatActivate = false;
+		toggle = 0;
+
 		if(cheatSound == true)
 		{
 			engine->play2D("../irrKlang/media/cheatoff.mp3", false);
@@ -3227,37 +3238,30 @@ void SceneText::UpdateCheats()
 		}
 	}
 
-	else
+	//Reset click
+	else if(click && !Application::IsKeyPressed('F'))
 	{
+		click = false;
 		cheatSound = true;
 	}
 
-	//Cheat on
+	//Benefits for cheat
 	if(cheatActivate == true)
 	{
-		cheatDelayTimer += 0.05;
-		if(cheatDelayTimer >= 0.3)
-		{
-			cheatDelayTimer = 0.3;
-			toggle = 1;
-		}
-
 		//God mode
 		if(hero.health <= 2)
 		{
 			hero.health = hero.full_health;
 		}
-	}
 
-	//Cheat off
-	else if(cheatActivate == false && toggle == 1)
-	{
-		cheatDelayTimer += 0.05;
-		if(cheatDelayTimer >= 0.6)
+		//Diamond hacks
+		else if(diamondCount < 11)
 		{
-			cheatDelayTimer = 0;
-			toggle = 0;
+			diamondCount = 11;
 		}
+
+		//Unlimitied stamina
+		hero.stamina = 20;
 	}
 }
 
@@ -4287,7 +4291,7 @@ void SceneText::RenderHUD()
 	}
 
 	//Stamina meter
-	RenderTextOnScreen(meshList[GEO_TEXT], "Stam ina", Color(0, 0.7, 0), 2.3, 43, 57);
+	RenderTextOnScreen(meshList[GEO_TEXT], "Stamina", Color(0, 0.7, 0), 2.3, 43, 57);
 	for(int i = 0; i <= hero.stamina; i++)
 	{
 		RenderQuadOnScreen(meshList[GEO_STAMINAMETER], 3, 1, 57 + i, 58.2, false);
@@ -4446,14 +4450,14 @@ void SceneText::RenderHighscore()
 	//textsize for text on screen
 	float textsize_Banner = 6.4f;
 	float textsize_Highscore = 3.2f;
-	// position setting for text on screen
-	// size of screen == 80 (in terms of units), middle of screen == 40 (in terms of units), max size of highscore per line == 26 (in terms of units), max size of banner = 40 (in terms of units)
-	// size of each text : units == 1 : 2
+	
+	//Position setting for text on screen
 	int SetPosToMiddle_Highscore = 40 - 26/2;
 	int SetPosToMiddle_Banner = 40 - 40/2;
 
-	//starting height of scores render
+	//Starting height of scores render
 	int height = 36;
+	
 	//Check if player score is rendered
 	bool IsPlayerRenderred = false;
 
@@ -4464,7 +4468,7 @@ void SceneText::RenderHighscore()
 
 		std::ostringstream banner;
 		banner.precision(5);
-		banner << "Highscores";
+		banner << " Highscore";
 		RenderTextOnScreen(meshList[GEO_TEXT], banner.str(), Color(1, 0, 0), textsize_Banner, SetPosToMiddle_Banner, 48);
 
 		std::ostringstream header;
@@ -4705,7 +4709,7 @@ void SceneText::RenderStageClear()
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 
-		Render2DMesh(meshList[GEO_STAGECLEAR], false, 700, 200, 900 - floatDown);
+		Render2DMesh(meshList[GEO_STAGECLEAR], false, 610, 200, 900 - floatDown);
 	}
 }
 
