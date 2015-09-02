@@ -4267,14 +4267,17 @@ void SceneText::RenderHUD()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(0.5, 0.5, 0.5), 2.3, 16, 57);
 
 	//For Point System
-	std::ostringstream ss3;
-	ss3.precision(5);
-	if(PointSystem < 0 )
+	if(!Application::IsKeyPressed('O'))
 	{
-		PointSystem = 0;
+		std::ostringstream ss3;
+		ss3.precision(5);
+		if(PointSystem < 0 )
+		{
+			PointSystem = 0;
+		}
+		ss3 << "Points: " << PointSystem;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 1, 0.5);
 	}
-	ss3 << "Points: " << PointSystem;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 2.3, 1, 0.5);
 
 	//For indicating number of shurikens left
 	if(hero.weapon.GetShurikensAcquired() == true)
@@ -4442,11 +4445,34 @@ void SceneText::RenderMinimap()
 
 void SceneText::RenderHighscore()
 {
+	//textsize for text on screen
+	float textsize_Banner = 6.4f;
+	float textsize_Highscore = 3.2f;
+	// position setting for text on screen
+	// size of screen == 80 (in terms of units), middle of screen == 40 (in terms of units), max size of highscore per line == 26 (in terms of units), max size of banner = 40 (in terms of units)
+	// size of each text : units == 1 : 2
+	int SetPosToMiddle_Highscore = 40 - 26/2;
+	int SetPosToMiddle_Banner = 40 - 40/2;
+
+	//starting height of scores render
+	int height = 36;
+	//Check if player score is rendered
 	bool IsPlayerRenderred = false;
+
 	if(Application::IsKeyPressed('O'))
 	{
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
 		Render2DMesh(meshList[GEO_DIM], false, 500.0f, 0, 0);
+
+		std::ostringstream banner;
+		banner.precision(5);
+		banner << "Highscores";
+		RenderTextOnScreen(meshList[GEO_TEXT], banner.str(), Color(1, 0, 0), textsize_Banner, SetPosToMiddle_Banner, 48);
+
+		std::ostringstream header;
+		header.precision(5);
+		header << "Player" << setw(8) << "Score" << endl;
+		RenderTextOnScreen(meshList[GEO_TEXT], header.str(), Color(1, 0, 0), textsize_Highscore, SetPosToMiddle_Highscore, 42);
 
 		Highscore.ReadFromFile("Highscore.txt");
 		
@@ -4463,25 +4489,30 @@ void SceneText::RenderHighscore()
 			}
 			NoOfRender = a + 1;
 		}
+
 		for(int a = 0; a < NoOfRender;a++)
 		{
 			std::ostringstream ss;
 			ss.precision(5);
-			ss << Highscore.GetAllHighscores(a).GetName() << "     " << Highscore.GetAllHighscores(a).GetValue() << endl;
+			//ss << Highscore.GetAllHighscores(a).GetName() << "     " << Highscore.GetAllHighscores(a).GetValue() << endl;
+			ss << Highscore.GetAllHighscores(a).GetName() << setw(8) << Highscore.GetAllHighscores(a).GetValue() << endl;
 			
 			if(IsPlayerRenderred == false && Highscore.GetAllHighscores(a).GetName() == Highscore.GetPlayer().GetName() && Highscore.GetAllHighscores(a).GetValue	() == Highscore.GetPlayer().GetValue())
 			{
-				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2.3, 2, 39 - a * 3);
+				//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3.2, 2 + Highscore.GetAllHighscores(a).GetName().size()/2, 39 - a * 3);
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), textsize_Highscore, SetPosToMiddle_Highscore, height - a * 3);
 				IsPlayerRenderred = true;
 			}
+			
 			else
-				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 2.3, 2, 39 - a * 3);
+				//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 3.2, 2, 39 - a * 3);
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), textsize_Highscore, SetPosToMiddle_Highscore, height - a * 3);
 
 			//Highscore.GetAllHighscores(a);	
 		}
+		
 		IsPlayerRenderred = false;
 		
-
 		Highscore.WriteToFile("Highscore.txt");
 	}
 }
